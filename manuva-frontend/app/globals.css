@@ -17,34 +17,34 @@
   }
 
   :root {
-    /* Brand Colors - Orange/White/Black High Contrast */
-    --color-brand-black: #1a1a1a;
-    --color-brand-orange: #e86f2c;
-    --color-brand-dark: #2d2d2d;
-    --color-brand-light: #fff0e5;
-    --color-brand-white: #fffaf6;
+    /* Brand Colors - Strict High Contrast */
+    --color-brand-black: #000000;
+    --color-brand-orange: #ff6600;
+    --color-brand-dark: #111111;
+    --color-brand-light: #ffffff;
+    --color-brand-white: #ffffff;
 
-    /* Manuva Brand Palette - High Contrast Orange/White/Black */
-    --primary: 24 78% 54%; /* Vibrant Orange */
-    --primary-foreground: 0 0% 100%; /* White for buttons */
+    /* Manuva Brand Palette - Strict High Contrast Orange/White/Black */
+    --primary: 24 100% 50%; /* Pure Orange */
+    --primary-foreground: 0 0% 100%; /* White */
 
-    --secondary: 0 0% 11%; /* Rich Black */
-    --secondary-foreground: 0 0% 100%; /* White text */
+    --secondary: 0 0% 0%; /* Pure Black */
+    --secondary-foreground: 0 0% 100%; /* White */
 
-    --accent: 24 100% 95%; /* Warm Cream */
-    --accent-foreground: 0 0% 10%; /* Black text on accent */
+    --accent: 0 0% 95%; /* Light Gray */
+    --accent-foreground: 0 0% 0%; /* Black text on accent */
 
-    --background: 30 60% 99%; /* Near-white warm */
-    --foreground: 0 0% 10%; /* Black */
+    --background: 0 0% 100%; /* Pure White */
+    --foreground: 0 0% 0%; /* Pure Black */
 
     --surface: 0 0% 100%;
-    --surface-foreground: 0 0% 10%;
+    --surface-foreground: 0 0% 0%; /* Pure Black */
 
-    --muted: 24 40% 94%; /* Very light warm orange */
-    --muted-foreground: 0 0% 25%; /* Dark grey */
+    --muted: 0 0% 92%; /* Light Gray */
+    --muted-foreground: 0 0% 30%; /* Dark grey */
 
-    --border: 24 15% 88%; /* Subtle warm grey */
-    --ring: 24 78% 54%; /* Orange */
+    --border: 0 0% 88%; /* Light grey */
+    --ring: 24 100% 50%; /* Pure Orange */
 
     --radius: 1rem;
   }

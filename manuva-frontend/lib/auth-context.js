@@ -1,109 +1,77 @@
 'use client'
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useRouter } from 'next/navigation';
+import { useUser, useAuth as useClerkAuth } from '@clerk/nextjs';
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
+  const { user: clerkUser, isLoaded: clerkLoaded } = useUser();
+  const { getToken, signOut } = useClerkAuth();
+  
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
-  const router = useRouter();
 
   useEffect(() => {
-    // Check if user is logged in
-    const token = localStorage.getItem('token');
-    const userData = localStorage.getItem('user');
-    
-    if (token && userData) {
-      setUser(JSON.parse(userData));
-    }
-    setLoading(false);
-  }, []);
-
-  const login = async (email, password) => {
-    try {
-      const response = await fetch('http://localhost:3000/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'فشل تسجيل الدخول');
+    const fetchLocalUser = async () => {
+      if (!clerkLoaded) return;
+      
+      if (!clerkUser) {
+        setUser(null);
+        setLoading(false);
+        return;
       }
 
-      // Save token and user data
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
+      try {
+        const token = await getToken();
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
+          headers: {
+            Authorization: `Bearer ${token}`
+          }
+        });
 
-      return { success: true, user: data.user };
-    } catch (error) {
-      console.error('Login error:', error);
-      return { success: false, error: error.message };
-    }
-  };
-
-  const register = async (userData) => {
-    try {
-      const response = await fetch('http://localhost:3000/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(userData),
-      });
-
-      const data = await response.json();
-
-      if (!response.ok) {
-        throw new Error(data.error || 'فشل التسجيل');
+        if (response.ok) {
+          const data = await response.json();
+          setUser(data);
+        } else {
+          // Fallback while webhook creates the user in the backend
+          setUser({
+            id: clerkUser.id,
+            name: clerkUser.fullName || 'User',
+            email: clerkUser.primaryEmailAddress?.emailAddress || '',
+            role: 'customer',
+            profile_img: clerkUser.imageUrl
+          });
+        }
+      } catch (error) {
+        console.error('Error fetching local user:', error);
+      } finally {
+        setLoading(false);
       }
+    };
 
-      // Save token and user data
-      localStorage.setItem('token', data.token);
-      localStorage.setItem('user', JSON.stringify(data.user));
-      setUser(data.user);
-
-      return { success: true, user: data.user };
-    } catch (error) {
-      console.error('Register error:', error);
-      return { success: false, error: error.message };
-    }
-  };
+    fetchLocalUser();
+  }, [clerkUser, clerkLoaded, getToken]);
 
   const logout = () => {
-    localStorage.removeItem('token');
-    localStorage.removeItem('user');
-    setUser(null);
-    router.push('/');
-  };
-
-  const getToken = () => {
-    return localStorage.getItem('token');
+    signOut();
   };
 
   const updateUser = (updatedData) => {
-    const updatedUser = { ...user, ...updatedData };
-    localStorage.setItem('user', JSON.stringify(updatedUser));
-    setUser(updatedUser);
+    setUser({ ...user, ...updatedData });
   };
 
   return (
     <AuthContext.Provider
       value={{
         user,
-        loading,
-        login,
-        register,
+        loading: loading || !clerkLoaded,
         logout,
         getToken,
         updateUser,
         isAuthenticated: !!user,
+        login: async () => ({ success: false, error: 'Use Clerk for login' }),
+        register: async () => ({ success: false, error: 'Use Clerk for register' }),
+        loginWithGoogle: async () => ({ success: false, error: 'Use Clerk for Google auth' }),
       }}
     >
       {children}

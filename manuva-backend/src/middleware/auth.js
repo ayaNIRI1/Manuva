@@ -1,5 +1,7 @@
-const jwt = require('jsonwebtoken');
+const { createClerkClient } = require('@clerk/clerk-sdk-node');
 const db = require('../config/database');
+
+const clerkClient = createClerkClient({ secretKey: process.env.CLERK_SECRET_KEY });
 
 const auth = async (req, res, next) => {
   try {
@@ -9,15 +11,16 @@ const auth = async (req, res, next) => {
       return res.status(401).json({ error: 'Authentication required' });
     }
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
+    const decoded = await clerkClient.verifyToken(token);
+    const clerkId = decoded.sub;
     
     const result = await db.query(
-      'SELECT id, email, name, role, is_active FROM users WHERE id = $1',
-      [decoded.userId]
+      'SELECT id, email, name, role, is_active FROM users WHERE clerk_id = $1',
+      [clerkId]
     );
 
     if (result.rows.length === 0) {
-      throw new Error();
+      return res.status(401).json({ error: 'User not found' });
     }
 
     const user = result.rows[0];
