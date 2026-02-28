@@ -1,0 +1,277 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuva - Design Preview</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        @import url('https://fonts.googleapis.com/css2?family=Cairo:wght@400;600;700;900&display=swap');
+        
+        body {
+            font-family: 'Cairo', sans-serif;
+        }
+        
+        .gradient-text {
+            background: linear-gradient(to right, #ea580c, #dc2626);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+    </style>
+</head>
+<body class="bg-gray-50">
+    <!-- Navbar Preview -->
+    <nav class="bg-gradient-to-r from-white to-orange-50 border-b border-orange-100 sticky top-0 z-50 shadow-sm">
+        <div class="max-w-7xl mx-auto px-6">
+            <div class="flex items-center justify-between py-4">
+                <!-- Logo -->
+                <div class="flex items-center gap-2">
+                    <span class="text-4xl font-bold gradient-text">Manuva</span>
+                    <span class="text-xs font-semibold px-2 py-0.5 bg-gradient-to-r from-orange-500 to-red-500 text-white rounded-full">
+                        صنع يدوي
+                    </span>
+                </div>
+                
+                <!-- Menu -->
+                <div class="hidden md:flex items-center gap-8 text-slate-700 font-medium">
+                    <a href="#" class="hover:text-orange-600 transition-colors">الرئيسية</a>
+                    <a href="#" class="hover:text-orange-600 transition-colors">المتجر</a>
+                    <a href="#" class="hover:text-orange-600 transition-colors">من نحن</a>
+                    <a href="#" class="hover:text-orange-600 transition-colors">تواصل معنا</a>
+                    
+                    <button class="px-8 py-2 bg-gradient-to-r from-orange-600 to-red-600 hover:shadow-lg hover:scale-105 transition-all text-white rounded-full font-medium">
+                        تسجيل الدخول
+                    </button>
+                </div>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section Preview -->
+    <section class="max-w-7xl mx-auto px-6 py-10">
+        <div class="bg-gradient-to-br from-orange-100 via-amber-50 to-red-50 rounded-3xl p-8 md:p-16 shadow-lg">
+            <div class="inline-flex items-center gap-3 bg-amber-100 text-orange-700 pr-4 p-1 rounded-full text-sm border border-orange-200 mb-4">
+                <span class="bg-gradient-to-r from-orange-600 to-red-600 px-3 py-1 rounded-full text-white text-xs font-medium">جديد</span>
+                دعم الحرفيين المحليين - كل قطعة فريدة
+            </div>
+            
+            <h1 class="text-4xl md:text-6xl font-bold gradient-text mb-4">
+                منتجات حرفية أصيلة.<br>بلمسة جزائرية.
+            </h1>
+            
+            <p class="text-slate-700 text-lg mb-8 max-w-2xl leading-relaxed">
+                اكتشف روائع الحرف اليدوية الجزائرية - من الفخار إلى المنسوجات، كل منتج يحكي قصة تراثنا العريق
+            </p>
+            
+            <div class="text-slate-800 font-medium mb-6">
+                <p class="text-orange-700">تبدأ الأسعار من</p>
+                <p class="text-4xl font-bold text-orange-800">500 دج</p>
+            </div>
+            
+            <button class="bg-gradient-to-r from-orange-600 to-red-600 text-white text-lg font-medium py-4 px-12 rounded-full hover:shadow-xl hover:scale-105 transition-all duration-300">
+                استكشف المنتجات
+            </button>
+        </div>
+    </section>
+
+    <!-- Categories Preview -->
+    <section class="max-w-7xl mx-auto px-6 py-10">
+        <h2 class="text-3xl font-bold text-center mb-8 gradient-text">فئات المنتجات الحرفية</h2>
+        
+        <div class="overflow-x-auto">
+            <div class="flex gap-4 pb-4">
+                <button class="px-5 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 hover:text-white transition-all whitespace-nowrap">الفخار</button>
+                <button class="px-5 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 hover:text-white transition-all whitespace-nowrap">المنسوجات</button>
+                <button class="px-5 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 hover:text-white transition-all whitespace-nowrap">النحاس</button>
+                <button class="px-5 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 hover:text-white transition-all whitespace-nowrap">الخزف</button>
+                <button class="px-5 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 hover:text-white transition-all whitespace-nowrap">الجلود</button>
+                <button class="px-5 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 hover:text-white transition-all whitespace-nowrap">الحلي</button>
+                <button class="px-5 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 hover:text-white transition-all whitespace-nowrap">السلال</button>
+                <button class="px-5 py-2 bg-orange-100 text-orange-700 rounded-lg hover:bg-gradient-to-r hover:from-orange-600 hover:to-red-600 hover:text-white transition-all whitespace-nowrap">الزرابي</button>
+            </div>
+        </div>
+    </section>
+
+    <!-- Product Cards Preview -->
+    <section class="max-w-7xl mx-auto px-6 py-10">
+        <h2 class="text-3xl font-bold text-center mb-8 gradient-text">أحدث المنتجات</h2>
+        
+        <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+            <!-- Product Card 1 -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+                <div class="aspect-square bg-gradient-to-br from-orange-100 to-amber-100 flex items-center justify-center">
+                    <span class="text-6xl">🏺</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-lg text-slate-800 mb-1">إبريق نحاس تقليدي</h3>
+                    <p class="text-sm text-slate-600 mb-3">النحاس</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-slate-500 line-through">8000 دج</p>
+                            <p class="text-xl font-bold text-orange-600">6500 دج</p>
+                        </div>
+                        <button class="bg-orange-600 hover:bg-red-600 text-white p-2 rounded-full transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 2 -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+                <div class="aspect-square bg-gradient-to-br from-red-100 to-orange-100 flex items-center justify-center">
+                    <span class="text-6xl">🏺</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-lg text-slate-800 mb-1">فازة فخارية مرسومة</h3>
+                    <p class="text-sm text-slate-600 mb-3">الفخار</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-slate-500 line-through">4500 دج</p>
+                            <p class="text-xl font-bold text-orange-600">3800 دج</p>
+                        </div>
+                        <button class="bg-orange-600 hover:bg-red-600 text-white p-2 rounded-full transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 3 -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+                <div class="aspect-square bg-gradient-to-br from-green-100 to-emerald-100 flex items-center justify-center">
+                    <span class="text-6xl">🪡</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-lg text-slate-800 mb-1">زربية صوفية بربرية</h3>
+                    <p class="text-sm text-slate-600 mb-3">الزرابي</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-slate-500 line-through">25000 دج</p>
+                            <p class="text-xl font-bold text-orange-600">22000 دج</p>
+                        </div>
+                        <button class="bg-orange-600 hover:bg-red-600 text-white p-2 rounded-full transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Product Card 4 -->
+            <div class="bg-white rounded-2xl overflow-hidden shadow-md hover:shadow-xl transition-shadow">
+                <div class="aspect-square bg-gradient-to-br from-amber-100 to-yellow-100 flex items-center justify-center">
+                    <span class="text-6xl">👜</span>
+                </div>
+                <div class="p-4">
+                    <h3 class="font-bold text-lg text-slate-800 mb-1">حقيبة جلدية تقليدية</h3>
+                    <p class="text-sm text-slate-600 mb-3">الجلود</p>
+                    <div class="flex items-center justify-between">
+                        <div>
+                            <p class="text-sm text-slate-500 line-through">12000 دج</p>
+                            <p class="text-xl font-bold text-orange-600">9500 دج</p>
+                        </div>
+                        <button class="bg-orange-600 hover:bg-red-600 text-white p-2 rounded-full transition-colors">
+                            <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z"></path>
+                            </svg>
+                        </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Features Preview -->
+    <section class="max-w-7xl mx-auto px-6 py-10">
+        <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+            <div class="bg-white rounded-2xl p-6 text-center shadow-md">
+                <div class="w-16 h-16 bg-orange-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-orange-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 19l9 2-9-18-9 18 9-2zm0 0v-8"></path>
+                    </svg>
+                </div>
+                <h3 class="font-bold text-xl text-slate-800 mb-2">توصيل مجاني</h3>
+                <p class="text-slate-600">توصيل سريع ومجاني لجميع الطلبات داخل الوطن</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 text-center shadow-md">
+                <div class="w-16 h-16 bg-amber-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-amber-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 8v4l3 3m6-3a9 9 0 11-18 0 9 9 0 0118 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="font-bold text-xl text-slate-800 mb-2">إرجاع سهل خلال 7 أيام</h3>
+                <p class="text-slate-600">غيرت رأيك؟ لا مشكلة. يمكنك إرجاع المنتج خلال 7 أيام</p>
+            </div>
+
+            <div class="bg-white rounded-2xl p-6 text-center shadow-md">
+                <div class="w-16 h-16 bg-green-100 rounded-full flex items-center justify-center mx-auto mb-4">
+                    <svg class="w-8 h-8 text-green-600" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M18.364 5.636l-3.536 3.536m0 5.656l3.536 3.536M9.172 9.172L5.636 5.636m3.536 9.192l-3.536 3.536M21 12a9 9 0 11-18 0 9 9 0 0118 0zm-5 0a4 4 0 11-8 0 4 4 0 018 0z"></path>
+                    </svg>
+                </div>
+                <h3 class="font-bold text-xl text-slate-800 mb-2">دعم 24/7</h3>
+                <p class="text-slate-600">نحن هنا لمساعدتك في أي وقت مع خدمة عملاء احترافية</p>
+            </div>
+        </div>
+    </section>
+
+    <!-- Footer Preview -->
+    <footer class="bg-gradient-to-b from-white to-orange-50 mt-20">
+        <div class="max-w-7xl mx-auto px-6 py-10 border-t border-orange-200">
+            <div class="flex flex-col md:flex-row justify-between gap-10 mb-8">
+                <div>
+                    <span class="text-4xl font-bold gradient-text">Manuva</span>
+                    <p class="mt-4 text-slate-600 max-w-md">
+                        Manuva - منصتك الأولى لاكتشاف المنتجات الحرفية الجزائرية الأصيلة. 
+                        من الفخار إلى المنسوجات، كل قطعة تحكي قصة تراثنا العريق.
+                    </p>
+                </div>
+                
+                <div class="grid grid-cols-2 md:grid-cols-3 gap-8">
+                    <div>
+                        <h4 class="font-bold text-orange-700 mb-3">الأقسام</h4>
+                        <ul class="space-y-2 text-slate-600">
+                            <li><a href="#" class="hover:text-orange-600">الفخار</a></li>
+                            <li><a href="#" class="hover:text-orange-600">المنسوجات</a></li>
+                            <li><a href="#" class="hover:text-orange-600">النحاس</a></li>
+                            <li><a href="#" class="hover:text-orange-600">الجلود</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-orange-700 mb-3">روابط مفيدة</h4>
+                        <ul class="space-y-2 text-slate-600">
+                            <li><a href="#" class="hover:text-orange-600">الرئيسية</a></li>
+                            <li><a href="#" class="hover:text-orange-600">من نحن</a></li>
+                            <li><a href="#" class="hover:text-orange-600">كن حرفيًا</a></li>
+                        </ul>
+                    </div>
+                    
+                    <div>
+                        <h4 class="font-bold text-orange-700 mb-3">تواصل معنا</h4>
+                        <ul class="space-y-2 text-slate-600 text-sm">
+                            <li>contact@manuva.dz</li>
+                            <li>+213 555 123 456</li>
+                            <li>عنابة، الجزائر</li>
+                        </ul>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="border-t border-orange-200 pt-6 flex flex-col md:flex-row justify-between items-center gap-4 text-sm text-slate-600">
+                <p>حقوق النشر 2026 © Manuva. جميع الحقوق محفوظة.</p>
+                <p class="text-orange-600 font-medium">صنع بحب في الجزائر 🇩🇿</p>
+            </div>
+        </div>
+    </footer>
+
+</body>
+</html>

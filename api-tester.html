@@ -1,0 +1,361 @@
+<!DOCTYPE html>
+<html lang="ar" dir="rtl">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Manuva API Test</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            min-height: 100vh;
+            padding: 20px;
+        }
+        
+        .container {
+            max-width: 800px;
+            margin: 0 auto;
+            background: white;
+            border-radius: 15px;
+            padding: 30px;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.3);
+        }
+        
+        h1 {
+            color: #333;
+            margin-bottom: 10px;
+            text-align: center;
+        }
+        
+        .subtitle {
+            text-align: center;
+            color: #666;
+            margin-bottom: 30px;
+        }
+        
+        .test-section {
+            margin: 20px 0;
+            padding: 20px;
+            background: #f8f9fa;
+            border-radius: 10px;
+            border-right: 4px solid #667eea;
+        }
+        
+        button {
+            background: linear-gradient(135deg, #667eea 0%, #764ba2 100%);
+            color: white;
+            border: none;
+            padding: 12px 25px;
+            border-radius: 8px;
+            cursor: pointer;
+            font-size: 16px;
+            font-weight: bold;
+            margin: 5px;
+            transition: all 0.3s ease;
+        }
+        
+        button:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(102, 126, 234, 0.4);
+        }
+        
+        button:active {
+            transform: translateY(0);
+        }
+        
+        .result {
+            margin-top: 15px;
+            padding: 15px;
+            background: white;
+            border-radius: 8px;
+            border: 2px solid #e9ecef;
+            max-height: 400px;
+            overflow-y: auto;
+        }
+        
+        .success {
+            border-right: 4px solid #28a745;
+            background: #d4edda;
+        }
+        
+        .error {
+            border-right: 4px solid #dc3545;
+            background: #f8d7da;
+        }
+        
+        pre {
+            margin: 0;
+            white-space: pre-wrap;
+            word-wrap: break-word;
+            font-family: 'Courier New', monospace;
+            font-size: 14px;
+        }
+        
+        .status {
+            display: inline-block;
+            padding: 5px 15px;
+            border-radius: 20px;
+            font-size: 14px;
+            font-weight: bold;
+            margin-bottom: 10px;
+        }
+        
+        .status.online {
+            background: #28a745;
+            color: white;
+        }
+        
+        .status.offline {
+            background: #dc3545;
+            color: white;
+        }
+        
+        .loading {
+            display: inline-block;
+            width: 20px;
+            height: 20px;
+            border: 3px solid #f3f3f3;
+            border-top: 3px solid #667eea;
+            border-radius: 50%;
+            animation: spin 1s linear infinite;
+            margin-right: 10px;
+        }
+        
+        @keyframes spin {
+            0% { transform: rotate(0deg); }
+            100% { transform: rotate(360deg); }
+        }
+        
+        .endpoint-info {
+            background: #fff3cd;
+            padding: 10px;
+            border-radius: 5px;
+            margin-bottom: 10px;
+            font-family: monospace;
+            font-size: 14px;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>🧪 Manuva API Tester</h1>
+        <p class="subtitle">اختبار الاتصال بين Frontend و Backend</p>
+        
+        <!-- Health Check -->
+        <div class="test-section">
+            <h2>✅ فحص حالة الخادم</h2>
+            <div class="endpoint-info">GET http://localhost:3000/health</div>
+            <button onclick="testHealth()">اختبار Health Check</button>
+            <div id="health-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- Products -->
+        <div class="test-section">
+            <h2>📦 المنتجات</h2>
+            <div class="endpoint-info">GET http://localhost:3000/api/products</div>
+            <button onclick="testProducts()">جلب جميع المنتجات</button>
+            <div id="products-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- Categories -->
+        <div class="test-section">
+            <h2>🏷️ الفئات</h2>
+            <div class="endpoint-info">GET http://localhost:3000/api/categories</div>
+            <button onclick="testCategories()">جلب الفئات</button>
+            <div id="categories-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- Artisans -->
+        <div class="test-section">
+            <h2>👨‍🎨 الحرفيين</h2>
+            <div class="endpoint-info">GET http://localhost:3000/api/artisans</div>
+            <button onclick="testArtisans()">جلب قائمة الحرفيين</button>
+            <div id="artisans-result" class="result" style="display: none;"></div>
+        </div>
+        
+        <!-- Connection Test -->
+        <div class="test-section">
+            <h2>🔗 اختبار شامل</h2>
+            <button onclick="testAll()">اختبار جميع الـ Endpoints</button>
+            <div id="all-result" class="result" style="display: none;"></div>
+        </div>
+    </div>
+    
+    <script>
+        const API_URL = 'http://localhost:3000';
+        
+        async function testHealth() {
+            const resultDiv = document.getElementById('health-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="loading"></div> جاري الاتصال...';
+            
+            try {
+                const response = await fetch(`${API_URL}/health`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    resultDiv.innerHTML = `
+                        <div class="status online">✅ الخادم يعمل</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    throw new Error('Server returned error');
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <div class="status offline">❌ فشل الاتصال</div>
+                    <pre>خطأ: ${error.message}
+
+تأكد من:
+1. تشغيل Backend على المنفذ 3000
+2. عدم وجود مشاكل في CORS
+3. عمل PostgreSQL بشكل صحيح</pre>
+                `;
+            }
+        }
+        
+        async function testProducts() {
+            const resultDiv = document.getElementById('products-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="loading"></div> جاري جلب المنتجات...';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/products`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    const count = Array.isArray(data) ? data.length : 0;
+                    resultDiv.innerHTML = `
+                        <div class="status online">✅ نجح (${count} منتج)</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <div class="status offline">❌ فشل</div>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+        
+        async function testCategories() {
+            const resultDiv = document.getElementById('categories-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="loading"></div> جاري جلب الفئات...';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/categories`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    const count = Array.isArray(data) ? data.length : 0;
+                    resultDiv.innerHTML = `
+                        <div class="status online">✅ نجح (${count} فئة)</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <div class="status offline">❌ فشل</div>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+        
+        async function testArtisans() {
+            const resultDiv = document.getElementById('artisans-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="loading"></div> جاري جلب الحرفيين...';
+            
+            try {
+                const response = await fetch(`${API_URL}/api/artisans`);
+                const data = await response.json();
+                
+                if (response.ok) {
+                    resultDiv.className = 'result success';
+                    const count = Array.isArray(data) ? data.length : 0;
+                    resultDiv.innerHTML = `
+                        <div class="status online">✅ نجح (${count} حرفي)</div>
+                        <pre>${JSON.stringify(data, null, 2)}</pre>
+                    `;
+                } else {
+                    throw new Error(`HTTP ${response.status}`);
+                }
+            } catch (error) {
+                resultDiv.className = 'result error';
+                resultDiv.innerHTML = `
+                    <div class="status offline">❌ فشل</div>
+                    <pre>${error.message}</pre>
+                `;
+            }
+        }
+        
+        async function testAll() {
+            const resultDiv = document.getElementById('all-result');
+            resultDiv.style.display = 'block';
+            resultDiv.innerHTML = '<div class="loading"></div> جاري اختبار جميع الـ Endpoints...';
+            
+            const endpoints = [
+                { name: 'Health Check', url: '/health' },
+                { name: 'Products', url: '/api/products' },
+                { name: 'Categories', url: '/api/categories' },
+                { name: 'Artisans', url: '/api/artisans' }
+            ];
+            
+            let results = [];
+            
+            for (const endpoint of endpoints) {
+                try {
+                    const response = await fetch(`${API_URL}${endpoint.url}`);
+                    results.push({
+                        name: endpoint.name,
+                        status: response.ok ? '✅ نجح' : '❌ فشل',
+                        code: response.status
+                    });
+                } catch (error) {
+                    results.push({
+                        name: endpoint.name,
+                        status: '❌ خطأ في الاتصال',
+                        code: 'N/A'
+                    });
+                }
+            }
+            
+            const allSuccess = results.every(r => r.status.includes('✅'));
+            resultDiv.className = allSuccess ? 'result success' : 'result error';
+            
+            let html = `<div class="status ${allSuccess ? 'online' : 'offline'}">
+                ${allSuccess ? '✅ جميع الـ APIs تعمل بشكل صحيح' : '⚠️ بعض الـ APIs لا تعمل'}
+            </div><pre>`;
+            
+            results.forEach(r => {
+                html += `${r.name}: ${r.status} (${r.code})\n`;
+            });
+            
+            html += '</pre>';
+            resultDiv.innerHTML = html;
+        }
+        
+        // Auto-test health on page load
+        window.addEventListener('load', () => {
+            setTimeout(testHealth, 500);
+        });
+    </script>
+</body>
+</html>
