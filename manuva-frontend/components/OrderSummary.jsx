@@ -81,11 +81,6 @@ const OrderSummary = ({ totalPrice, items }) => {
                 } else {
                     throw new Error('Failed to get checkout URL');
                 }
-            } else {
-                // Handle Cash on Delivery
-                dispatch(clearCart());
-                router.push('/store/orders');
-                toast.success('Order placed successfully!');
             }
         } catch (error) {
             console.error('Order placement error:', error);
@@ -97,10 +92,6 @@ const OrderSummary = ({ totalPrice, items }) => {
         <div className='w-full max-w-lg lg:max-w-[340px] bg-slate-50/30 border border-slate-200 text-slate-500 text-sm rounded-xl p-7'>
             <h2 className='text-xl font-medium text-slate-600'>Payment Summary</h2>
             <p className='text-slate-400 text-xs my-4'>Payment Method</p>
-            <div className='flex gap-2 items-center'>
-                <input type="radio" id="COD" onChange={() => setPaymentMethod('COD')} checked={paymentMethod === 'COD'} className='accent-gray-500' />
-                <label htmlFor="COD" className='cursor-pointer'>COD</label>
-            </div>
             <div className='flex gap-2 items-center mt-1'>
                 <input type="radio" id="CHARGILY" name='payment' onChange={() => setPaymentMethod('CHARGILY')} checked={paymentMethod === 'CHARGILY'} className='accent-gray-500' />
                 <label htmlFor="CHARGILY" className='cursor-pointer'>Chargily (Edahabia/CIB)</label>
