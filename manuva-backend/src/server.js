@@ -20,6 +20,7 @@ const artisanRoutes = require('./routes/artisans');
 const chatRoutes = require('./routes/chat');
 const contactRoutes = require('./routes/contact');
 const webhookRoutes = require('./routes/webhooks');
+const paymentRoutes = require('./routes/payments');
 
 const app = express();
 const server = http.createServer(app);
@@ -149,6 +150,7 @@ app.use('/api/user', userRoutes);
 app.use('/api/artisans', artisanRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/contact', contactRoutes);
+app.use('/api/payments', paymentRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });

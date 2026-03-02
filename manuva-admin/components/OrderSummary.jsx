@@ -4,22 +4,16 @@ import AddressModal from './AddressModal';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@clerk/nextjs';
-import { apiRequest } from '@/lib/api';
-import { useDispatch } from 'react-redux';
-import { clearCart } from '@/lib/features/cart/cartSlice';
 
 const OrderSummary = ({ totalPrice, items }) => {
 
     const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$';
 
     const router = useRouter();
-    const { getToken } = useAuth();
-    const dispatch = useDispatch();
 
     const addressList = useSelector(state => state.address.list);
 
-    const [paymentMethod, setPaymentMethod] = useState('CHARGILY');
+    const [paymentMethod, setPaymentMethod] = useState('COD');
     const [selectedAddress, setSelectedAddress] = useState(null);
     const [showAddressModal, setShowAddressModal] = useState(false);
     const [couponCodeInput, setCouponCodeInput] = useState('');
@@ -33,64 +27,7 @@ const OrderSummary = ({ totalPrice, items }) => {
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
 
-        if (!selectedAddress) {
-            toast.error('Please select a shipping address');
-            return;
-        }
-
-        try {
-            const token = await getToken();
-            
-            // 1. Create Order
-            const orderData = {
-                items: items.map(item => ({
-                    product_id: item.id,
-                    quantity: item.quantity
-                })),
-                shipping_address: {
-                    address: `${selectedAddress.name}, ${selectedAddress.city}`,
-                    city: selectedAddress.city,
-                    state: selectedAddress.state,
-                    zip: selectedAddress.zip
-                },
-                payment_method: paymentMethod
-            };
-
-            const order = await apiRequest('/orders', {
-                method: 'POST',
-                body: JSON.stringify(orderData),
-                headers: { Authorization: `Bearer ${token}` }
-            });
-
-            if (paymentMethod === 'CHARGILY') {
-                // 2. Create Chargily Session
-                const paymentResponse = await apiRequest('/payments/checkout', {
-                    method: 'POST',
-                    body: JSON.stringify({
-                        order_id: order.id,
-                        amount: totalPrice,
-                        success_url: `${window.location.origin}/store/orders?success=true`,
-                        failure_url: `${window.location.origin}/store/orders?canceled=true`
-                    }),
-                    headers: { Authorization: `Bearer ${token}` }
-                });
-
-                if (paymentResponse.checkout_url) {
-                    dispatch(clearCart());
-                    window.location.href = paymentResponse.checkout_url;
-                } else {
-                    throw new Error('Failed to get checkout URL');
-                }
-            } else {
-                // Handle Cash on Delivery
-                dispatch(clearCart());
-                router.push('/store/orders');
-                toast.success('Order placed successfully!');
-            }
-        } catch (error) {
-            console.error('Order placement error:', error);
-            toast.error(error.message || 'Failed to place order');
-        }
+        router.push('/orders')
     }
 
     return (
@@ -102,8 +39,8 @@ const OrderSummary = ({ totalPrice, items }) => {
                 <label htmlFor="COD" className='cursor-pointer'>COD</label>
             </div>
             <div className='flex gap-2 items-center mt-1'>
-                <input type="radio" id="CHARGILY" name='payment' onChange={() => setPaymentMethod('CHARGILY')} checked={paymentMethod === 'CHARGILY'} className='accent-gray-500' />
-                <label htmlFor="CHARGILY" className='cursor-pointer'>Chargily (Edahabia/CIB)</label>
+                <input type="radio" id="STRIPE" name='payment' onChange={() => setPaymentMethod('STRIPE')} checked={paymentMethod === 'STRIPE'} className='accent-gray-500' />
+                <label htmlFor="STRIPE" className='cursor-pointer'>Stripe Payment</label>
             </div>
             <div className='my-4 py-4 border-y border-slate-200 text-slate-400'>
                 <p>Address</p>

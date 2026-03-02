@@ -39,12 +39,12 @@ export const categories = [
 ];
 
 export const dummyRatingsData = [
-    { id: "11111111-1111-4111-8111-222222222221", rating: 4.8, review: "منتج رائع جدا، صناعة يدوية متقنة بجودة عالية. التفاصيل جميلة والألوان طبيعية. أنصح بشدة بالشراء من هذا الحرفي الماهر.", user: { name: 'أمينة بن علي', image: artisan_placeholder }, productId: "5a2fcf2f-36f4-4ffd-84de-052161effe18", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'إبريق نحاس تقليدي', category:'النحاس', id:'5a2fcf2f-36f4-4ffd-84de-052161effe18'} },
-    { id: "11111111-1111-4111-8111-222222222222", rating: 5.0, review: "ماشاء الله، القطعة وصلت بحالة ممتازة. الصنعة احترافية والسعر معقول جدا. شكرا للحرفي على هذا العمل الرائع!", user: { name: 'كريم مزياني', image: artisan_placeholder }, productId: "814e8711-97e3-471a-a1db-e84bb266a6d5", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'سلة خزف تقليدية', category:'الفخار', id:'814e8711-97e3-471a-a1db-e84bb266a6d5'} },
-    { id: "11111111-1111-4111-8111-222222222223", rating: 4.5, review: "منتج جميل ومميز، الخامات طبيعية والألوان زاهية. استلمتها في الوقت المحدد. سعيدة جدا بالشراء.", user: { name: 'نسرين حمادي', image: artisan_placeholder }, productId: "c03bd0da-b04e-48ae-b776-86d07e024623", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'زربية صوفية', category:'الزرابي', id:'c03bd0da-b04e-48ae-b776-86d07e024623'} },
-    { id: "11111111-1111-4111-8111-222222222224", rating: 5.0, review: "قطعة فنية حقيقية! الصناعة اليدوية واضحة في كل التفاصيل. سأطلب المزيد قريبا.", user: { name: 'سامي بوعلام', image: artisan_placeholder }, productId: "11111111-1111-4111-8111-111111111114", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'حقيبة جلدية', category:'الجلود', id:'11111111-1111-4111-8111-111111111114'} },
-    { id: "11111111-1111-4111-8111-222222222225", rating: 4.7, review: "منتج ممتاز بجودة عالية. التعامل مع البائع كان محترم والتسليم سريع. أنصح بالتجربة.", user: { name: 'ليلى قاسمي', image: artisan_placeholder }, productId: "11111111-1111-4111-8111-111111111115", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'صحن خزفي مزخرف', category:'الخزف', id:'11111111-1111-4111-8111-111111111115'} },
-    { id: "11111111-1111-4111-8111-222222222226", rating: 5.0, review: "تحفة فنية بكل المقاييس! اللمسة اليدوية واضحة والسعر مناسب. شكرا Manuva على هذه المنصة الرائعة.", user: { name: 'رشيد بلقاسم', image: artisan_placeholder }, productId: "11111111-1111-4111-8111-111111111116", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'سوار فضي تقليدي', category:'الحلي', id:'11111111-1111-4111-8111-111111111116'} },
+    { id: "rat_1", rating: 4.8, review: "منتج رائع جدا، صناعة يدوية متقنة بجودة عالية. التفاصيل جميلة والألوان طبيعية. أنصح بشدة بالشراء من هذا الحرفي الماهر.", user: { name: 'أمينة بن علي', image: artisan_placeholder }, productId: "prod_1", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'إبريق نحاس تقليدي', category:'النحاس', id:'prod_1'} },
+    { id: "rat_2", rating: 5.0, review: "ماشاء الله، القطعة وصلت بحالة ممتازة. الصنعة احترافية والسعر معقول جدا. شكرا للحرفي على هذا العمل الرائع!", user: { name: 'كريم مزياني', image: artisan_placeholder }, productId: "prod_2", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'سلة خزف تقليدية', category:'الفخار', id:'prod_2'} },
+    { id: "rat_3", rating: 4.5, review: "منتج جميل ومميز، الخامات طبيعية والألوان زاهية. استلمتها في الوقت المحدد. سعيدة جدا بالشراء.", user: { name: 'نسرين حمادي', image: artisan_placeholder }, productId: "prod_3", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'زربية صوفية', category:'الزرابي', id:'prod_3'} },
+    { id: "rat_4", rating: 5.0, review: "قطعة فنية حقيقية! الصناعة اليدوية واضحة في كل التفاصيل. سأطلب المزيد قريبا.", user: { name: 'سامي بوعلام', image: artisan_placeholder }, productId: "prod_4", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'حقيبة جلدية', category:'الجلود', id:'prod_4'} },
+    { id: "rat_5", rating: 4.7, review: "منتج ممتاز بجودة عالية. التعامل مع البائع كان محترم والتسليم سريع. أنصح بالتجربة.", user: { name: 'ليلى قاسمي', image: artisan_placeholder }, productId: "prod_5", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'صحن خزفي مزخرف', category:'الخزف', id:'prod_5'} },
+    { id: "rat_6", rating: 5.0, review: "تحفة فنية بكل المقاييس! اللمسة اليدوية واضحة والسعر مناسب. شكرا Manuva على هذه المنصة الرائعة.", user: { name: 'رشيد بلقاسم', image: artisan_placeholder }, productId: "prod_6", createdAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)', product: { name: 'سوار فضي تقليدي', category:'الحلي', id:'prod_6'} },
 ]
 
 export const dummyStoreData = {
@@ -71,7 +71,7 @@ export const dummyStoreData = {
 
 export const productDummyData = [
     {
-        id: "5a2fcf2f-36f4-4ffd-84de-052161effe18",
+        id: "prod_1",
         name: "إبريق نحاس تقليدي مزخرف",
         description: "إبريق نحاسي تقليدي مصنوع يدويا بحرفية عالية. يتميز بزخارف إسلامية أصيلة ونقوش دقيقة. مثالي للاستخدام اليومي أو كقطعة ديكور تراثية. صنع من النحاس الخالص على يد حرفيين ماهرين من القصبة العتيقة.",
         mrp: 8000,
@@ -86,7 +86,7 @@ export const productDummyData = [
         updatedAt: 'Sat Jul 29 2025 14:51:25 GMT+0530 (India Standard Time)',
     },
     {
-        id: "814e8711-97e3-471a-a1db-e84bb266a6d5",
+        id: "prod_2",
         name: "فازة فخارية مرسومة يدويا",
         description: "فازة فخارية جميلة مصنوعة بالطرق التقليدية ومزينة برسومات يدوية بألوان طبيعية. قطعة فريدة من نوعها.",
         mrp: 4500,
@@ -101,7 +101,7 @@ export const productDummyData = [
         updatedAt: 'Sat Jul 28 2025 14:51:25 GMT+0530 (India Standard Time)',
     },
     {
-        id: "c03bd0da-b04e-48ae-b776-86d07e024623",
+        id: "prod_3",
         name: "زربية صوفية بربرية",
         description: "زربية تقليدية منسوجة يدويا من الصوف الطبيعي بألوان زاهية. تصميم بربري أصيل يضيف لمسة دفء لمنزلك.",
         mrp: 25000,
@@ -116,13 +116,13 @@ export const productDummyData = [
         updatedAt: 'Sat Jul 27 2025 14:51:25 GMT+0530 (India Standard Time)',
     },
     {
-        id: "11111111-1111-4111-8111-111111111114",
+        id: "prod_4",
         name: "حقيبة جلدية تقليدية",
         description: "حقيبة جلدية مصنوعة من الجلد الطبيعي بحرفية عالية. تصميم عصري يمزج بين الأصالة والحداثة.",
         mrp: 12000,
         price: 9500,
         images: [hero_background],
-        storeId: "fdbb32ab-1636-4e9a-9edb-4a461c6035cf",
+        storeId: "seller_1",
         inStock: true,
         store: dummyStoreData,
         category: "الجلود",
@@ -131,13 +131,13 @@ export const productDummyData = [
         updatedAt: 'Sat Jul 26 2025 14:51:25 GMT+0530 (India Standard Time)',
     },
     {
-        id: "11111111-1111-4111-8111-111111111115",
+        id: "prod_5",
         name: "صحن خزفي بزخارف تقليدية",
         description: "صحن خزفي جميل مزين بزخارف تقليدية وألوان زاهية. صنع يدويا بإتقان ويمكن استخدامه أو عرضه كقطعة ديكور.",
         mrp: 3500,
         price: 2800,
         images: [category_pottery],
-        storeId: "fdbb32ab-1636-4e9a-9edb-4a461c6035cf",
+        storeId: "seller_1",
         inStock: true,
         store: dummyStoreData,
         category: "الخزف",
@@ -146,13 +146,13 @@ export const productDummyData = [
         updatedAt: 'Sat Jul 25 2025 14:51:25 GMT+0530 (India Standard Time)',
     },
     {
-        id: "11111111-1111-4111-8111-111111111116",
+        id: "prod_6",
         name: "سوار فضي بنقوش أمازيغية",
         description: "سوار فضي أصلي منقوش برموز أمازيغية تقليدية. صياغة يدوية دقيقة ومميزة.",
         mrp: 8500,
         price: 7200,
         images: [category_jewelry],
-        storeId: "fdbb32ab-1636-4e9a-9edb-4a461c6035cf",
+        storeId: "seller_1",
         inStock: true,
         store: dummyStoreData,
         category: "الحلي",
@@ -161,13 +161,13 @@ export const productDummyData = [
         updatedAt: 'Sat Jul 24 2025 14:51:25 GMT+0530 (India Standard Time)',
     },
     {
-        id: "11111111-1111-4111-8111-111111111117",
+        id: "prod_7",
         name: "سلة خوص تقليدية",
         description: "سلة منسوجة يدويا من الخوص الطبيعي. مثالية للاستخدام المنزلي أو كقطعة ديكور.",
         mrp: 4000,
         price: 3200,
         images: [category_textiles],
-        storeId: "fdbb32ab-1636-4e9a-9edb-4a461c6035cf",
+        storeId: "seller_1",
         inStock: true,
         store: dummyStoreData,
         category: "السلال",
@@ -176,13 +176,13 @@ export const productDummyData = [
         updatedAt: 'Sat Jul 23 2025 14:51:25 GMT+0530 (India Standard Time)',
     },
     {
-        id: "11111111-1111-4111-8111-111111111118",
+        id: "prod_8",
         name: "قلادة فضية بحجر تركواز",
         description: "قلادة فضية أنيقة مزينة بحجر تركواز طبيعي. تصميم فريد وصياغة احترافية.",
         mrp: 9500,
         price: 8000,
         images: [category_jewelry],
-        storeId: "fdbb32ab-1636-4e9a-9edb-4a461c6035cf",
+        storeId: "seller_1",
         inStock: true,
         store: dummyStoreData,
         category: "الحلي",
@@ -191,13 +191,13 @@ export const productDummyData = [
         updatedAt: 'Sat Jul 22 2025 14:51:25 GMT+0530 (India Standard Time)',
     },
     {
-        id: "11111111-1111-4111-8111-111111111119",
+        id: "prod_9",
         name: "إطار مرآة خشبي منقوش",
         description: "إطار مرآة خشبي مزخرف بنقوش يدوية تقليدية. قطعة فنية لمنزلك.",
         mrp: 6500,
         price: 5500,
         images: [hero_background],
-        storeId: "fdbb32ab-1636-4e9a-9edb-4a461c6035cf",
+        storeId: "seller_1",
         inStock: true,
         store: dummyStoreData,
         category: "الخشب",
@@ -206,13 +206,13 @@ export const productDummyData = [
         updatedAt: 'Sat Jul 21 2025 14:51:25 GMT+0530 (India Standard Time)',
     },
     {
-        id: "11111111-1111-4111-8111-111111111110",
+        id: "prod_10",
         name: "طقم فناجين قهوة فخارية",
         description: "طقم من 6 فناجين قهوة فخارية مصنوعة ومزينة يدويا. مثالية لضيافة أصيلة.",
         mrp: 7000,
         price: 5800,
         images: [category_pottery],
-        storeId: "fdbb32ab-1636-4e9a-9edb-4a461c6035cf",
+        storeId: "seller_1",
         inStock: true,
         store: dummyStoreData,
         category: "الفخار",
@@ -221,13 +221,13 @@ export const productDummyData = [
         updatedAt: 'Sat Jul 20 2025 14:51:25 GMT+0530 (India Standard Time)',
     },
     {
-        id: "11111111-1111-4111-8111-111111111111",
+        id: "prod_11",
         name: "وشاح صوفي منسوج يدويا",
         description: "وشاح صوفي دافئ منسوج بالطرق التقليدية بألوان جميلة.",
         mrp: 5500,
         price: 4500,
         images: [category_textiles],
-        storeId: "fdbb32ab-1636-4e9a-9edb-4a461c6035cf",
+        storeId: "seller_1",
         inStock: true,
         store: dummyStoreData,
         category: "المنسوجات",
@@ -236,20 +236,20 @@ export const productDummyData = [
         updatedAt: 'Sat Jul 19 2025 14:51:25 GMT+0530 (India Standard Time)',
     },
     {
-        id: "11111111-1111-4111-8111-111111111112",
+        id: "prod_12",
         name: "صندوق خشبي مزخرف",
         description: "صندوق خشبي صغير مزين بزخارف تقليدية. مثالي لحفظ المجوهرات.",
         mrp: 4500,
         price: 3800,
         images: [hero_background],
-        storeId: "fdbb32ab-1636-4e9a-9edb-4a461c6035cf",
+        storeId: "seller_1",
         inStock: true,
         store: dummyStoreData,
         category: "الخشب",
         rating: dummyRatingsData,
         createdAt: 'Sat Jul 18 2025 14:51:25 GMT+0530 (India Standard Time)',
         updatedAt: 'Sat Jul 18 2025 14:51:25 GMT+0530 (India Standard Time)',
-    },
+    }
 ];
 
 export const ourSpecsData = [
@@ -259,7 +259,7 @@ export const ourSpecsData = [
 ]
 
 export const addressDummyData = {
-    id: "11111111-1111-4111-8111-333333333331",
+    id: "addr_1",
     userId: "user_1",
     name: "أحمد بن محمد",
     email: "ahmed@example.com",

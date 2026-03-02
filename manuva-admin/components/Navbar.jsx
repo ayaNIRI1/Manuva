@@ -135,7 +135,7 @@ const Navbar = () => {
                           user?.role === "artisan"
                             ? "/store"
                             : user?.role === "admin"
-                              ? "http://localhost:3002"
+                              ? "/admin"
                               : "/profile"
                         }
                         className="flex items-center gap-3 px-4 py-2 hover:bg-muted text-sm transition-colors text-foreground"
@@ -214,7 +214,7 @@ const Navbar = () => {
                       user?.role === "artisan"
                         ? "/store"
                         : user?.role === "admin"
-                          ? "http://localhost:3002"
+                          ? "/admin"
                           : "/profile"
                     }
                     className="flex items-center gap-3 px-4 py-2 hover:bg-muted text-sm transition-colors text-foreground"
