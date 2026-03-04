@@ -1,29 +1,25 @@
 'use client'
 import { createContext, useContext, useState, useEffect } from 'react';
-import { useUser, useAuth as useClerkAuth } from '@clerk/nextjs';
+import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
+import { auth } from '@/lib/firebase';
 
 const AuthContext = createContext({});
 
 export const AuthProvider = ({ children }) => {
-  const { user: clerkUser, isLoaded: clerkLoaded } = useUser();
-  const { getToken, signOut } = useClerkAuth();
-  
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const fetchLocalUser = async () => {
-      if (!clerkLoaded) return;
-      
-      if (!clerkUser) {
+    const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
+      if (!firebaseUser) {
         setUser(null);
         setLoading(false);
         return;
       }
 
       try {
-        const token = await getToken();
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
+        const token = await firebaseUser.getIdToken();
+        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -33,45 +29,57 @@ export const AuthProvider = ({ children }) => {
           const data = await response.json();
           setUser(data);
         } else {
-          // Fallback while webhook creates the user in the backend
+          // Fallback when backend user profile is not linked to Firebase token yet
           setUser({
-            id: clerkUser.id,
-            name: clerkUser.fullName || 'User',
-            email: clerkUser.primaryEmailAddress?.emailAddress || '',
+            id: firebaseUser.uid,
+            name: firebaseUser.displayName || 'User',
+            email: firebaseUser.email || '',
             role: 'customer',
-            profile_img: clerkUser.imageUrl
+            profile_img: firebaseUser.photoURL || ''
           });
         }
       } catch (error) {
         console.error('Error fetching local user:', error);
+        setUser({
+          id: firebaseUser.uid,
+          name: firebaseUser.displayName || 'User',
+          email: firebaseUser.email || '',
+          role: 'customer',
+          profile_img: firebaseUser.photoURL || ''
+        });
       } finally {
         setLoading(false);
       }
-    };
+    });
+    return () => unsubscribe();
+  }, []);
 
-    fetchLocalUser();
-  }, [clerkUser, clerkLoaded, getToken]);
-
-  const logout = () => {
-    signOut();
+  const logout = async () => {
+    await firebaseSignOut(auth);
+    setUser(null);
   };
 
   const updateUser = (updatedData) => {
     setUser({ ...user, ...updatedData });
   };
 
+  const getToken = async () => {
+    if (!auth.currentUser) return null;
+    return auth.currentUser.getIdToken();
+  };
+
   return (
     <AuthContext.Provider
       value={{
         user,
-        loading: loading || !clerkLoaded,
+        loading,
         logout,
         getToken,
         updateUser,
         isAuthenticated: !!user,
-        login: async () => ({ success: false, error: 'Use Clerk for login' }),
-        register: async () => ({ success: false, error: 'Use Clerk for register' }),
-        loginWithGoogle: async () => ({ success: false, error: 'Use Clerk for Google auth' }),
+        login: async () => ({ success: false, error: 'Use Firebase login page' }),
+        register: async () => ({ success: false, error: 'Use Firebase register page' }),
+        loginWithGoogle: async () => ({ success: false, error: 'Use Firebase Google login button' }),
       }}
     >
       {children}

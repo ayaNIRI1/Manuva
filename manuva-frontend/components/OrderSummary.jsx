@@ -4,7 +4,7 @@ import AddressModal from './AddressModal';
 import { useSelector } from 'react-redux';
 import toast from 'react-hot-toast';
 import { useRouter } from 'next/navigation';
-import { useAuth } from '@clerk/nextjs';
+import { useAuth } from '@/lib/auth-context';
 import { apiRequest } from '@/lib/api';
 import { useDispatch } from 'react-redux';
 import { clearCart } from '@/lib/features/cart/cartSlice';

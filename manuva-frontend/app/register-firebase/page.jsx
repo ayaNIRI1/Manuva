@@ -5,81 +5,46 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { auth, googleProvider } from '@/lib/firebase';
 import {
-  FacebookAuthProvider,
-  signInWithEmailAndPassword,
+  createUserWithEmailAndPassword,
   signInWithPopup,
+  updateProfile,
 } from 'firebase/auth';
 
-export default function LoginPage() {
+export default function FirebaseRegisterPage() {
   const router = useRouter();
+  const [fullName, setFullName] = useState('');
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const syncUserWithBackend = async (firebaseUser) => {
-    const token = await firebaseUser.getIdToken();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
-
-    if (!response.ok) {
-      let errorMessage = 'Failed to sync user with backend.';
-      try {
-        const payload = await response.json();
-        errorMessage = payload.error || payload.details || errorMessage;
-      } catch (_) {
-        // Ignore JSON parsing errors and keep fallback message.
-      }
-      throw new Error(errorMessage);
-    }
-  };
-
-  const handleEmailLogin = async (event) => {
+  const handleEmailSignup = async (event) => {
     event.preventDefault();
     setError('');
     setLoading(true);
 
     try {
-      const credential = await signInWithEmailAndPassword(auth, email, password);
-      await syncUserWithBackend(credential.user);
+      const credential = await createUserWithEmailAndPassword(auth, email, password);
+      if (fullName.trim()) {
+        await updateProfile(credential.user, { displayName: fullName.trim() });
+      }
       router.push('/');
     } catch (err) {
-      setError(err?.message || 'Unable to sign in right now.');
+      setError(err?.message || 'Unable to create account right now.');
     } finally {
       setLoading(false);
     }
   };
 
-  const handleGoogleLogin = async () => {
+  const handleGoogleSignup = async () => {
     setError('');
     setLoading(true);
 
     try {
-      const credential = await signInWithPopup(auth, googleProvider);
-      await syncUserWithBackend(credential.user);
+      await signInWithPopup(auth, googleProvider);
       router.push('/');
     } catch (err) {
-      setError(err?.message || 'Google sign in failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
-
-  const handleFacebookLogin = async () => {
-    setError('');
-    setLoading(true);
-
-    try {
-      const facebookProvider = new FacebookAuthProvider();
-      const credential = await signInWithPopup(auth, facebookProvider);
-      await syncUserWithBackend(credential.user);
-      router.push('/');
-    } catch (err) {
-      setError(err?.message || 'Facebook sign in failed.');
+      setError(err?.message || 'Google sign up failed.');
     } finally {
       setLoading(false);
     }
@@ -88,10 +53,17 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md rounded-2xl bg-white shadow-lg border border-orange-100 p-6 sm:p-8">
-        <h1 className="text-2xl font-semibold text-gray-900 mb-2 text-center">Welcome back</h1>
-        <p className="text-sm text-gray-500 mb-6 text-center">Sign in with Firebase</p>
+        <h1 className="text-2xl font-semibold text-gray-900 mb-2 text-center">Create account</h1>
+        <p className="text-sm text-gray-500 mb-6 text-center">Firebase authentication</p>
 
-        <form onSubmit={handleEmailLogin} className="space-y-4">
+        <form onSubmit={handleEmailSignup} className="space-y-4">
+          <input
+            type="text"
+            placeholder="Full name (optional)"
+            value={fullName}
+            onChange={(e) => setFullName(e.target.value)}
+            className="w-full rounded-lg border border-gray-200 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-300"
+          />
           <input
             type="email"
             placeholder="Email"
@@ -102,9 +74,10 @@ export default function LoginPage() {
           />
           <input
             type="password"
-            placeholder="Password"
+            placeholder="Password (min 6 chars)"
             value={password}
             onChange={(e) => setPassword(e.target.value)}
+            minLength={6}
             required
             className="w-full rounded-lg border border-gray-200 px-3 py-2.5 focus:outline-none focus:ring-2 focus:ring-orange-300"
           />
@@ -113,25 +86,18 @@ export default function LoginPage() {
             disabled={loading}
             className="w-full rounded-lg bg-orange-500 text-white py-2.5 font-medium hover:bg-orange-600 disabled:opacity-60 disabled:cursor-not-allowed"
           >
-            {loading ? 'Signing in...' : 'Sign in with email'}
+            {loading ? 'Creating account...' : 'Sign up with email'}
           </button>
         </form>
 
         <div className="my-4 text-center text-sm text-gray-400">or</div>
 
         <button
-          onClick={handleGoogleLogin}
+          onClick={handleGoogleSignup}
           disabled={loading}
           className="w-full rounded-lg border border-gray-200 py-2.5 font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed"
         >
           Continue with Google
-        </button>
-        <button
-          onClick={handleFacebookLogin}
-          disabled={loading}
-          className="w-full mt-3 rounded-lg border border-gray-200 py-2.5 font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          Continue with Facebook
         </button>
 
         {error ? (
@@ -139,9 +105,9 @@ export default function LoginPage() {
         ) : null}
 
         <p className="mt-5 text-sm text-center text-gray-500">
-          Don&apos;t have an account?{' '}
-          <Link className="text-orange-600 hover:text-orange-700 font-medium" href="/register">
-            Create one
+          Already have an account?{' '}
+          <Link className="text-orange-600 hover:text-orange-700 font-medium" href="/login">
+            Log in
           </Link>
         </p>
       </div>
