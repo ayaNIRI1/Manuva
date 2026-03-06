@@ -7,12 +7,15 @@ const ratingSlice = createSlice({
         ratings: [],
     },
     reducers: {
+        setRatings: (state, action) => {
+            state.ratings = action.payload;
+        },
         addRating: (state, action) => {
             state.ratings.push(action.payload)
         },
     }
 })
 
-export const { addRating } = ratingSlice.actions
+export const { addRating, setRatings } = ratingSlice.actions
 
 export default ratingSlice.reducer

@@ -47,9 +47,13 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
   try {
     const { id } = req.params;
+    
+    // Check if ID is a valid UUID
+    const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+    const whereClause = isUUID ? 'u.id = $1' : 'u.firebase_uid = $1';
 
     const result = await db.query(
-      `SELECT u.id, u.name, u.bio, u.profile_img, u.location, u.created_at,
+      `SELECT u.id, u.name, u.bio, u.profile_img, u.location, u.created_at, u.email,
               (SELECT COUNT(*) FROM products WHERE seller_id = u.id AND status = 'approved') as product_count,
               (SELECT COUNT(*) FROM follows WHERE seller_id = u.id) as follower_count,
               (SELECT SUM(sold) FROM products WHERE seller_id = u.id) as total_sales,
@@ -58,7 +62,7 @@ router.get('/:id', async (req, res) => {
        FROM users u
        LEFT JOIN products p ON u.id = p.seller_id
        LEFT JOIN reviews r ON p.id = r.product_id
-       WHERE u.id = $1 AND u.role = 'artisan'
+       WHERE ${whereClause} AND u.role = 'artisan'
        GROUP BY u.id`,
       [id]
     );
@@ -81,6 +85,17 @@ router.get('/:id/products', async (req, res) => {
     const { page = 1, limit = 20 } = req.query;
     const offset = (page - 1) * limit;
 
+    const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(id);
+    let sellerId = id;
+    
+    if (!isUUID) {
+      const userCheck = await db.query("SELECT id FROM users WHERE firebase_uid = $1 AND role = 'artisan'", [id]);
+      if (userCheck.rows.length === 0) {
+        return res.json([]);
+      }
+      sellerId = userCheck.rows[0].id;
+    }
+
     const result = await db.query(
       `SELECT p.*, c.name as category_name,
               COALESCE(AVG(r.rating), 0) as avg_rating,
@@ -92,7 +107,7 @@ router.get('/:id/products', async (req, res) => {
        GROUP BY p.id, c.name
        ORDER BY p.created_at DESC
        LIMIT $2 OFFSET $3`,
-      [id, limit, offset]
+      [sellerId, limit, offset]
     );
 
     res.json(result.rows);
@@ -167,11 +182,28 @@ router.get('/dashboard/analytics', auth, isArtisan, async (req, res) => {
       [req.user.id]
     );
 
+    // Get recent reviews
+    const recentReviews = await db.query(
+      `SELECT r.id, r.rating, r.comment as review, r.created_at as "createdAt",
+              p.id as product_id, p.name as product_name, p.image_url as product_image,
+              c.name as category,
+              u.name as user_name, u.profile_img as user_image
+       FROM reviews r
+       JOIN products p ON r.product_id = p.id
+       LEFT JOIN categories c ON p.category_id = c.id
+       JOIN users u ON r.buyer_id = u.id
+       WHERE p.seller_id = $1
+       ORDER BY r.created_at DESC
+       LIMIT 10`,
+      [req.user.id]
+    );
+
     res.json({
       stats: stats.rows[0],
       recent_orders: recentOrders.rows,
       top_products: topProducts.rows,
-      monthly_revenue: monthlyRevenue.rows
+      monthly_revenue: monthlyRevenue.rows,
+      recent_reviews: recentReviews.rows
     });
   } catch (error) {
     console.error('Get analytics error:', error);

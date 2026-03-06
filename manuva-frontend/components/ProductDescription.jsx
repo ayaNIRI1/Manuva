@@ -8,6 +8,15 @@ import { assets } from "@/assets/assets"
 const ProductDescription = ({ product }) => {
 
     const [selectedTab, setSelectedTab] = useState('Description')
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:3001'
+
+    const getFullImageUrl = (img) => {
+        if (!img) return assets.artisan_placeholder;
+        if (typeof img === 'string') {
+            return img.startsWith('http') ? img : `${backendUrl}${img.startsWith('/') ? '' : '/'}${img}`;
+        }
+        return img;
+    }
 
     return (
         <div className="my-18 text-sm text-slate-600">
@@ -31,7 +40,7 @@ const ProductDescription = ({ product }) => {
                 <div className="flex flex-col gap-3 mt-14">
                     {product.rating?.length > 0 ? product.rating.map((item,index) => (
                         <div key={index} className="flex gap-5 mb-10">
-                            <Image src={item.user.image} alt="" className="size-10 rounded-full" width={100} height={100} />
+                            <Image src={getFullImageUrl(item.user.image)} alt="" className="size-10 rounded-full object-cover" width={100} height={100} />
                             <div>
                                 <div className="flex items-center" >
                                     {Array(5).fill('').map((_, index) => (
@@ -40,13 +49,15 @@ const ProductDescription = ({ product }) => {
                                 </div>
                                 <p className="text-sm max-w-lg my-4">{item.review}</p>
                                 <p className="font-medium text-slate-800">{item.user.name}</p>
-                                <p className="mt-3 font-light">{new Date(item.createdAt).toDateString()}</p>
+                                <p className="mt-3 font-light text-xs text-slate-400">{new Date(item.createdAt).toDateString()}</p>
                             </div>
                         </div>
                     )) : (
-                        <p className="text-slate-400 italic">
-                            {product.review_count > 0 ? 'Loading reviews...' : 'No reviews yet for this product.'}
-                        </p>
+                        <div className="text-center py-20 bg-slate-50/50 rounded-[40px] border border-slate-100 border-dashed max-w-2xl">
+                            <p className="text-slate-400 italic">
+                                {product.review_count > 0 ? 'Loading reviews...' : 'No reviews yet for this product.'}
+                            </p>
+                        </div>
                     )}
                 </div>
             )}

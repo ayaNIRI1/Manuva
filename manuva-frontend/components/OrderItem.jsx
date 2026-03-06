@@ -27,7 +27,7 @@ const OrderItem = ({ order }) => {
     return (
         <>
             <tr className="text-sm">
-                <td className="text-left">
+                <td className="text-start">
                     <div className="flex flex-col gap-6">
                         {order.items.map((item, index) => (
                             <div key={index} className="flex items-center gap-4">
@@ -45,12 +45,15 @@ const OrderItem = ({ order }) => {
                                 </div>
                                 <div className="flex flex-col justify-center text-sm">
                                     <p className="font-medium text-slate-600 text-base">{item.product_name}</p>
-                                    <p>{currency}{item.price_at_purchase} Qty : {item.quantity} </p>
+                                    <div className="flex items-center gap-2 mt-1 mb-2">
+                                        <span className="font-bold">{currency}{item.price_at_purchase}</span>
+                                        <span className="text-slate-400 text-xs">Qty: {item.quantity}</span>
+                                    </div>
                                     <p className="mb-1 text-xs text-slate-400">{new Date(order.created_at).toDateString()}</p>
                                     <div>
-                                        {ratings && ratings.find(rating => order.id === rating.orderId && item.product_id === rating.productId)
-                                            ? <Rating value={ratings.find(rating => order.id === rating.orderId && item.product_id === rating.productId).rating} />
-                                            : <button onClick={() => setRatingModal({ orderId: order.id, productId: item.product_id })} className={`text-green-500 hover:bg-green-50 transition ${order.status.toLowerCase() !== "delivered" && 'hidden'}`}>Rate Product</button>
+                                        {ratings && ratings.find(rating => item.product_id === rating.productId)
+                                            ? <Rating value={ratings.find(rating => item.product_id === rating.productId).rating} />
+                                            : <button onClick={() => setRatingModal({ orderId: order.id, productId: item.product_id })} className={`text-green-500 hover:bg-green-50 transition border border-green-500/20 px-3 py-1 rounded-full text-xs font-bold ${order.status.toLowerCase() !== "delivered" && 'hidden'}`}>Rate Product</button>
                                         }</div>
                                     {ratingModal && <RatingModal ratingModal={ratingModal} setRatingModal={setRatingModal} />}
                                 </div>
@@ -61,7 +64,7 @@ const OrderItem = ({ order }) => {
 
                 <td className="text-center max-md:hidden font-bold">{currency}{order.total}</td>
 
-                <td className="text-left max-md:hidden text-xs text-slate-500">
+                <td className="text-start max-md:hidden text-xs text-slate-500">
                     {shippingAddress ? (
                         <>
                             <p className="font-medium text-slate-700">{shippingAddress.name || order.buyer_name}</p>
@@ -74,9 +77,9 @@ const OrderItem = ({ order }) => {
                     )}
                 </td>
 
-                <td className="text-left space-y-2 text-sm max-md:hidden">
+                <td className="text-start space-y-2 text-sm max-md:hidden">
                     <div
-                        className={`flex items-center justify-center gap-1 rounded-full p-1 px-3 ${order.status.toLowerCase() === 'confirmed'
+                        className={`inline-flex items-center justify-center gap-1 rounded-full py-1 px-3 ${order.status.toLowerCase() === 'confirmed'
                             ? 'text-yellow-500 bg-yellow-100'
                             : order.status.toLowerCase() === 'delivered'
                                 ? 'text-green-500 bg-green-100'

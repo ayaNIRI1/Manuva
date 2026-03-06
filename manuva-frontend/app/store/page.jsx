@@ -39,7 +39,22 @@ export default function Dashboard() {
                 totalProducts: data.stats?.total_products || 0,
                 totalEarnings: data.stats?.total_revenue || 0,
                 totalOrders: data.recent_orders?.length || 0,
-                ratings: [] // Reviews might need a separate endpoint or be part of analytics
+                ratings: data.recent_reviews?.map(review => ({
+                    id: review.id,
+                    rating: review.rating,
+                    review: review.review,
+                    createdAt: review.createdAt,
+                    product: {
+                        id: review.product_id,
+                        name: review.product_name,
+                        image: review.product_image,
+                        category: review.category || 'Product'
+                    },
+                    user: {
+                        name: review.user_name || 'Customer',
+                        image: review.user_image || '/images/default-avatar.png'
+                    }
+                })) || []
             });
         } catch (error) {
             console.error("Failed to fetch dashboard data:", error);
@@ -83,13 +98,15 @@ export default function Dashboard() {
                         <div key={index} className="flex max-sm:flex-col gap-5 sm:items-center justify-between py-6 border-b border-slate-200 text-sm text-slate-600 max-w-4xl">
                             <div>
                                 <div className="flex gap-3">
-                                    <Image src={review.user.image} alt="" className="w-10 aspect-square rounded-full" width={100} height={100} />
+                                    <div className="w-10 aspect-square rounded-full overflow-hidden relative">
+                                        <Image src={review.user.image?.startsWith('http') ? review.user.image : `${process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:3001'}${review.user.image?.startsWith('/') ? '' : '/'}${review.user.image}`} alt={review.user.name} fill className="object-cover" />
+                                    </div>
                                     <div>
                                         <p className="font-medium">{review.user.name}</p>
                                         <p className="font-light text-slate-500">{new Date(review.createdAt).toDateString()}</p>
                                     </div>
                                 </div>
-                                <p className="mt-3 text-slate-500 max-w-xs leading-6">{review.review}</p>
+                                <p className="mt-3 text-slate-500 max-w-xs leading-6">{review.review || 'No comment provided.'}</p>
                             </div>
                             <div className="flex flex-col justify-between gap-6 sm:items-end">
                                 <div className="flex flex-col sm:items-end">

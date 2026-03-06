@@ -30,8 +30,8 @@ router.post('/checkout', auth, async (req, res) => {
     const checkout = await client.createCheckout({
       amount: parseFloat(amount),
       currency: 'dzd',
-      success_url: success_url || `${process.env.FRONTEND_URL}/store/orders?success=true`,
-      failure_url: failure_url || `${process.env.FRONTEND_URL}/store/orders?canceled=true`,
+      success_url: success_url || `${process.env.FRONTEND_URL}/orders?success=true`,
+      failure_url: failure_url || `${process.env.FRONTEND_URL}/cart?canceled=true`,
       metadata: {
         order_id: order_id.toString()
       },

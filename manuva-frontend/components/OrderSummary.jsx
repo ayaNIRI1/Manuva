@@ -69,8 +69,8 @@ const OrderSummary = ({ totalPrice, items }) => {
                     body: JSON.stringify({
                         order_id: order.id,
                         amount: totalPrice,
-                        success_url: `${window.location.origin}/store/orders?success=true`,
-                        failure_url: `${window.location.origin}/store/orders?canceled=true`
+                        success_url: `${window.location.origin}/orders?success=true`,
+                        failure_url: `${window.location.origin}/cart?canceled=true`
                     }),
                     headers: { Authorization: `Bearer ${token}` }
                 });

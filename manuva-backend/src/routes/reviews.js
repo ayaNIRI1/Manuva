@@ -50,12 +50,13 @@ router.post('/', auth,
       const purchaseCheck = await db.query(
         `SELECT o.id FROM orders o
          JOIN order_items oi ON o.id = oi.order_id
-         WHERE o.buyer_id = $1 AND oi.product_id = $2 AND o.payment_status = 'paid'`,
+         WHERE o.buyer_id = $1 AND oi.product_id = $2 AND (o.payment_status = 'paid' OR o.status = 'delivered')
+         LIMIT 1`,
         [req.user.id, product_id]
       );
 
       if (purchaseCheck.rows.length === 0) {
-        return res.status(400).json({ error: 'You can only review products you have purchased' });
+        return res.status(400).json({ error: 'You can only review products from completed or delivered orders' });
       }
 
       // Check if review already exists
@@ -146,6 +147,26 @@ router.delete('/:id', auth, async (req, res) => {
   } catch (error) {
     console.error('Delete review error:', error);
     res.status(500).json({ error: 'Failed to delete review' });
+  }
+});
+
+// Get all reviews for the authenticated user
+router.get('/user', auth, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT r.*, 
+              p.name as product_name, p.image_url as product_image
+       FROM reviews r
+       JOIN products p ON r.product_id = p.id
+       WHERE r.buyer_id = $1
+       ORDER BY r.created_at DESC`,
+      [req.user.id]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Get user reviews error:', error);
+    res.status(500).json({ error: 'Failed to fetch your reviews' });
   }
 });
 
