@@ -236,4 +236,54 @@ router.post('/change-password', auth,
   }
 );
 
+// Become Artisan
+router.post('/become-artisan', auth,
+  [
+    body('name').trim().notEmpty(),
+    body('bio').optional().trim(),
+    body('location').optional().trim(),
+    body('phone').optional().trim()
+  ],
+  async (req, res) => {
+    try {
+      const errors = validationResult(req);
+      if (!errors.isEmpty()) {
+        return res.status(400).json({ errors: errors.array() });
+      }
+
+      // Only customers can become artisans
+      if (req.user.role !== 'customer') {
+        return res.status(400).json({ error: 'Only customers can become artisans' });
+      }
+
+      const { name, bio, location, phone } = req.body;
+
+      // Update user to artisan
+      const result = await db.query(
+        `UPDATE users 
+         SET role = 'artisan',
+             name = COALESCE($1, name),
+             bio = COALESCE($2, bio),
+             location = COALESCE($3, location),
+             phone = COALESCE($4, phone)
+         WHERE id = $5
+         RETURNING id, email, name, role, bio, location, phone, is_active, is_verified, created_at`,
+        [name, bio, location, phone, req.user.id]
+      );
+
+      const user = result.rows[0];
+
+      // Generate new token with updated role
+      const token = jwt.sign({ userId: user.id, role: user.role }, process.env.JWT_SECRET, {
+        expiresIn: process.env.JWT_EXPIRE
+      });
+
+      res.json({ user, token });
+    } catch (error) {
+      console.error('Become artisan error:', error);
+      res.status(500).json({ error: 'Failed to upgrade to artisan' });
+    }
+  }
+);
+
 module.exports = router;

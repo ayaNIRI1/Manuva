@@ -221,7 +221,11 @@ router.patch('/:id/status', auth, async (req, res) => {
     const result = await db.query(
       `UPDATE orders 
        SET status = $1
-       WHERE id = $2 AND buyer_id = $3
+       WHERE id = $2 AND (buyer_id = $3 OR EXISTS (
+         SELECT 1 FROM order_items oi 
+         JOIN products p ON oi.product_id = p.id 
+         WHERE oi.order_id = orders.id AND p.seller_id = $3
+       ))
        RETURNING *`,
       [status, id, req.user.id]
     );
@@ -278,8 +282,17 @@ router.get('/seller/orders', auth, async (req, res) => {
     const offset = (page - 1) * limit;
 
     let query = `
-      SELECT o.*, oi.*, p.name as product_name, p.image_url as product_image,
-             u.name as buyer_name, u.email as buyer_email
+      SELECT o.*, 
+             u.name as buyer_name, u.email as buyer_email,
+             json_agg(json_build_object(
+               'id', oi.id,
+               'product_id', oi.product_id,
+               'product_name', p.name,
+               'product_image', p.image_url,
+               'quantity', oi.quantity,
+               'price_at_purchase', oi.price_at_purchase,
+               'subtotal', oi.subtotal
+             )) as items
       FROM orders o
       JOIN order_items oi ON o.id = oi.order_id
       JOIN products p ON oi.product_id = p.id
@@ -295,11 +308,10 @@ router.get('/seller/orders', auth, async (req, res) => {
       values.push(status);
     }
 
-    query += ` ORDER BY o.created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
+    query += ` GROUP BY o.id, u.name, u.email ORDER BY o.created_at DESC LIMIT $${paramCount} OFFSET $${paramCount + 1}`;
     values.push(limit, offset);
 
     const result = await db.query(query, values);
-
     res.json(result.rows);
   } catch (error) {
     console.error('Get seller orders error:', error);

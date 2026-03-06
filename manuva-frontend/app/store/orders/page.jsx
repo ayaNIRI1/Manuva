@@ -1,9 +1,15 @@
 'use client'
 import { useEffect, useState } from "react"
+import { toast } from "react-hot-toast"
 import Loading from "@/components/Loading"
-import { orderDummyData } from "@/assets/assets"
+import { apiRequest } from "@/lib/api"
+import { useLanguage } from "@/lib/language-context"
 
 export default function StoreOrders() {
+    const { language } = useLanguage()
+    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:3001'
+
     const [orders, setOrders] = useState([])
     const [loading, setLoading] = useState(true)
     const [selectedOrder, setSelectedOrder] = useState(null)
@@ -11,14 +17,29 @@ export default function StoreOrders() {
 
 
     const fetchOrders = async () => {
-       setOrders(orderDummyData)
-       setLoading(false)
+        try {
+            const data = await apiRequest('/orders/seller/orders')
+            setOrders(data)
+        } catch (error) {
+            console.error('Fetch artisan orders error:', error)
+            toast.error(language === 'ar' ? 'فشل جلب الطلبات' : 'Failed to fetch orders')
+        } finally {
+            setLoading(false)
+        }
     }
 
     const updateOrderStatus = async (orderId, status) => {
-        // Logic to update the status of an order
-
-
+        try {
+            await apiRequest(`/orders/${orderId}/status`, {
+                method: 'PATCH',
+                body: JSON.stringify({ status })
+            })
+            toast.success(language === 'ar' ? 'تم تحديث حالة الطلب' : 'Order status updated')
+            fetchOrders()
+        } catch (error) {
+            console.error('Update order status error:', error)
+            toast.error(language === 'ar' ? 'فشل تحديث حالة الطلب' : 'Failed to update order status')
+        }
     }
 
     const openModal = (order) => {
@@ -37,123 +58,184 @@ export default function StoreOrders() {
 
     if (loading) return <Loading />
 
+    const getStatusColor = (status) => {
+        switch(status) {
+            case 'pending': return 'bg-amber-50 text-amber-600 border-amber-100'
+            case 'confirmed': return 'bg-blue-50 text-blue-600 border-blue-100'
+            case 'shipped': return 'bg-indigo-50 text-indigo-600 border-indigo-100'
+            case 'delivered': return 'bg-green-50 text-green-600 border-green-100'
+            case 'cancelled': return 'bg-red-50 text-red-600 border-red-100'
+            default: return 'bg-slate-50 text-slate-600 border-slate-100'
+        }
+    }
+
+    const getStatusLabel = (status) => {
+        if (language === 'ar') {
+            switch(status) {
+                case 'pending': return 'قيد الانتظار'
+                case 'confirmed': return 'تم التأكيد'
+                case 'shipped': return 'تم الشحن'
+                case 'delivered': return 'تم التوصيل'
+                case 'cancelled': return 'ملغى'
+                default: return status
+            }
+        }
+        return status.charAt(0).toUpperCase() + status.slice(1)
+    }
+
     return (
-        <>
-            <h1 className="text-2xl text-slate-500 mb-5">Store <span className="text-slate-800 font-medium">Orders</span></h1>
+        <div className="max-w-6xl mx-auto">
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground mb-8">
+                {language === 'ar' ? 'طلبات' : 'Store'} <span className="text-brand-orange">{language === 'ar' ? 'المتجر' : 'Orders'}</span>
+            </h1>
+
             {orders.length === 0 ? (
-                <p>No orders found</p>
+                <div className="bg-white rounded-3xl border border-slate-100 p-20 text-center shadow-sm">
+                    <p className="text-slate-400 font-medium">
+                        {language === 'ar' ? 'لا توجد طلبات بعد' : 'No orders found yet'}
+                    </p>
+                </div>
             ) : (
-                <div className="overflow-x-auto max-w-4xl rounded-md shadow border border-gray-200">
-                    <table className="w-full text-sm text-left text-gray-600">
-                        <thead className="bg-gray-50 text-gray-700 text-xs uppercase tracking-wider">
-                            <tr>
-                                {["Sr. No.", "Customer", "Total", "Payment", "Coupon", "Status", "Date"].map((heading, i) => (
-                                    <th key={i} className="px-4 py-3">{heading}</th>
-                                ))}
-                            </tr>
-                        </thead>
-                        <tbody className="divide-y divide-gray-100">
-                            {orders.map((order, index) => (
-                                <tr
-                                    key={order.id}
-                                    className="hover:bg-gray-50 transition-colors duration-150 cursor-pointer"
-                                    onClick={() => openModal(order)}
-                                >
-                                    <td className="pl-6 text-green-600" >
-                                        {index + 1}
-                                    </td>
-                                    <td className="px-4 py-3">{order.user?.name}</td>
-                                    <td className="px-4 py-3 font-medium text-slate-800">${order.total}</td>
-                                    <td className="px-4 py-3">{order.paymentMethod}</td>
-                                    <td className="px-4 py-3">
-                                        {order.isCouponUsed ? (
-                                            <span className="bg-green-100 text-green-700 text-xs px-2 py-1 rounded-full">
-                                                {order.coupon?.code}
-                                            </span>
-                                        ) : (
-                                            "—"
-                                        )}
-                                    </td>
-                                    <td className="px-4 py-3" onClick={(e) => { e.stopPropagation() }}>
-                                        <select
-                                            value={order.status}
-                                            onChange={e => updateOrderStatus(order.id, e.target.value)}
-                                            className="border-gray-300 rounded-md text-sm focus:ring focus:ring-blue-200"
-                                        >
-                                            <option value="ORDER_PLACED">ORDER_PLACED</option>
-                                            <option value="PROCESSING">PROCESSING</option>
-                                            <option value="SHIPPED">SHIPPED</option>
-                                            <option value="DELIVERED">DELIVERED</option>
-                                        </select>
-                                    </td>
-                                    <td className="px-4 py-3 text-gray-500">
-                                        {new Date(order.createdAt).toLocaleString()}
-                                    </td>
+                <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                    <div className="overflow-x-auto">
+                        <table className="w-full text-left border-collapse">
+                            <thead>
+                                <tr className="bg-slate-50 border-b border-slate-100">
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{language === 'ar' ? '#' : 'Sr.'}</th>
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{language === 'ar' ? 'الزبون' : 'Customer'}</th>
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{language === 'ar' ? 'الإجمالي' : 'Total'}</th>
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{language === 'ar' ? 'الدفع' : 'Payment'}</th>
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{language === 'ar' ? 'الحالة' : 'Status'}</th>
+                                    <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{language === 'ar' ? 'التاريخ' : 'Date'}</th>
                                 </tr>
-                            ))}
-                        </tbody>
-                    </table>
+                            </thead>
+                            <tbody className="divide-y divide-slate-50 font-medium">
+                                {orders.map((order, index) => (
+                                    <tr
+                                        key={order.id}
+                                        className="hover:bg-slate-50/50 transition-colors cursor-pointer group"
+                                        onClick={() => openModal(order)}
+                                    >
+                                        <td className="px-6 py-4 text-brand-orange font-bold">
+                                            {index + 1}
+                                        </td>
+                                        <td className="px-6 py-4">
+                                            <p className="text-slate-800 font-bold">{order.buyer_name}</p>
+                                            <p className="text-[10px] text-slate-400">{order.buyer_email}</p>
+                                        </td>
+                                        <td className="px-6 py-4 font-extrabold text-brand-mauve">{currency}{order.total}</td>
+                                        <td className="px-6 py-4 text-[10px] uppercase font-bold text-slate-500">{order.payment_method}</td>
+                                        <td className="px-6 py-4" onClick={(e) => { e.stopPropagation() }}>
+                                            <select
+                                                value={order.status}
+                                                onChange={e => updateOrderStatus(order.id, e.target.value)}
+                                                className={`text-[10px] font-bold border rounded-full px-3 py-1 outline-none appearance-none cursor-pointer transition-all ${getStatusColor(order.status)}`}
+                                            >
+                                                <option value="pending">{getStatusLabel('pending')}</option>
+                                                <option value="confirmed">{getStatusLabel('confirmed')}</option>
+                                                <option value="shipped">{getStatusLabel('shipped')}</option>
+                                                <option value="delivered">{getStatusLabel('delivered')}</option>
+                                                <option value="cancelled">{getStatusLabel('cancelled')}</option>
+                                            </select>
+                                        </td>
+                                        <td className="px-6 py-4 text-[10px] text-slate-400">
+                                            {new Date(order.created_at).toLocaleDateString(language === 'ar' ? 'ar-EG' : 'en-US', {
+                                                year: 'numeric', month: 'short', day: 'numeric'
+                                            })}
+                                        </td>
+                                    </tr>
+                                ))}
+                            </tbody>
+                        </table>
+                    </div>
                 </div>
             )}
 
             {/* Modal */}
             {isModalOpen && selectedOrder && (
-                <div onClick={closeModal} className="fixed inset-0 flex items-center justify-center bg-black/50 text-slate-700 text-sm backdrop-blur-xs z-50" >
-                    <div onClick={e => e.stopPropagation()} className="bg-white rounded-lg shadow-lg max-w-2xl w-full p-6 relative">
-                        <h2 className="text-xl font-semibold text-slate-900 mb-4 text-center">
-                            Order Details
+                <div onClick={closeModal} className="fixed inset-0 flex items-center justify-center bg-black/60 backdrop-blur-sm z-50 p-4" >
+                    <div onClick={e => e.stopPropagation()} className="bg-white rounded-[40px] shadow-2xl max-w-2xl w-full max-h-[90vh] overflow-y-auto p-8 relative scale-100 transition-transform">
+                        <button onClick={closeModal} className="absolute top-6 right-6 w-10 h-10 flex items-center justify-center rounded-full bg-slate-50 text-slate-400 hover:text-red-500 transition-colors">
+                            ✕
+                        </button>
+                        
+                        <h2 className="text-2xl font-black text-slate-900 mb-8 flex items-center gap-3">
+                            <span className="w-2 h-8 bg-brand-orange rounded-full"></span>
+                            {language === 'ar' ? 'تفاصيل الطلب' : 'Order Details'}
                         </h2>
 
-                        {/* Customer Details */}
-                        <div className="mb-4">
-                            <h3 className="font-semibold mb-2">Customer Details</h3>
-                            <p><span className="text-green-700">Name:</span> {selectedOrder.user?.name}</p>
-                            <p><span className="text-green-700">Email:</span> {selectedOrder.user?.email}</p>
-                            <p><span className="text-green-700">Phone:</span> {selectedOrder.address?.phone}</p>
-                            <p><span className="text-green-700">Address:</span> {`${selectedOrder.address?.street}, ${selectedOrder.address?.city}, ${selectedOrder.address?.state}, ${selectedOrder.address?.zip}, ${selectedOrder.address?.country}`}</p>
-                        </div>
-
-                        {/* Products */}
-                        <div className="mb-4">
-                            <h3 className="font-semibold mb-2">Products</h3>
-                            <div className="space-y-2">
-                                {selectedOrder.orderItems.map((item, i) => (
-                                    <div key={i} className="flex items-center gap-4 border border-slate-100 shadow rounded p-2">
-                                        <img
-                                            src={item.product.images?.[0].src || item.product.images?.[0]}
-                                            alt={item.product?.name}
-                                            className="w-16 h-16 object-cover rounded"
-                                        />
-                                        <div className="flex-1">
-                                            <p className="text-slate-800">{item.product?.name}</p>
-                                            <p>Qty: {item.quantity}</p>
-                                            <p>Price: ${item.price}</p>
-                                        </div>
-                                    </div>
-                                ))}
+                        <div className="grid md:grid-cols-2 gap-8 mb-8">
+                            <div className="bg-slate-50 p-6 rounded-3xl">
+                                <h3 className="font-black text-xs uppercase tracking-widest text-slate-400 mb-4">{language === 'ar' ? 'بيانات الزبون' : 'Customer Info'}</h3>
+                                <div className="space-y-2">
+                                    <p className="font-bold text-slate-800">{selectedOrder.buyer_name}</p>
+                                    <p className="text-sm text-slate-500">{selectedOrder.buyer_email}</p>
+                                    <p className="text-sm text-slate-500">{selectedOrder.shipping_address?.phone || '-'}</p>
+                                </div>
+                            </div>
+                            
+                            <div className="bg-slate-50 p-6 rounded-3xl">
+                                <h3 className="font-black text-xs uppercase tracking-widest text-slate-400 mb-4">{language === 'ar' ? 'عنوان الشحن' : 'Shipping Address'}</h3>
+                                <p className="text-sm text-slate-600 leading-relaxed font-medium">
+                                    {`${selectedOrder.shipping_address?.address || ''}, ${selectedOrder.shipping_address?.city || ''}`}
+                                </p>
                             </div>
                         </div>
 
-                        {/* Payment & Status */}
-                        <div className="mb-4">
-                            <p><span className="text-green-700">Payment Method:</span> {selectedOrder.paymentMethod}</p>
-                            <p><span className="text-green-700">Paid:</span> {selectedOrder.isPaid ? "Yes" : "No"}</p>
-                            {selectedOrder.isCouponUsed && (
-                                <p><span className="text-green-700">Coupon:</span> {selectedOrder.coupon.code} ({selectedOrder.coupon.discount}% off)</p>
-                            )}
-                            <p><span className="text-green-700">Status:</span> {selectedOrder.status}</p>
-                            <p><span className="text-green-700">Order Date:</span> {new Date(selectedOrder.createdAt).toLocaleString()}</p>
+                        <div className="mb-8">
+                            <h3 className="font-black text-xs uppercase tracking-widest text-slate-400 mb-4">{language === 'ar' ? 'المنتجات' : 'Products'}</h3>
+                            <div className="space-y-4">
+                                {selectedOrder.items.map((item, i) => {
+                                    const itemImageUrl = item.product_image 
+                                        ? (item.product_image.startsWith('http') 
+                                            ? item.product_image 
+                                            : `${backendUrl}${item.product_image.startsWith('/') ? '' : '/'}${item.product_image}`)
+                                        : null;
+
+                                    return (
+                                        <div key={i} className="flex items-center gap-4 bg-white border border-slate-100 p-4 rounded-3xl hover:border-brand-orange/20 transition-colors">
+                                            <div className="w-16 h-16 rounded-2xl bg-slate-50 overflow-hidden flex-shrink-0 border border-slate-50">
+                                                {itemImageUrl ? (
+                                                    <img src={itemImageUrl} alt={item.product_name} className="w-full h-full object-cover" />
+                                                ) : (
+                                                    <div className="w-full h-full flex items-center justify-center bg-slate-100">📦</div>
+                                                )}
+                                            </div>
+                                            <div className="flex-1 min-w-0">
+                                                <p className="font-bold text-slate-800 truncate">{item.product_name}</p>
+                                                <div className="flex items-center gap-3 mt-1">
+                                                    <span className="text-[10px] font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">
+                                                        QTY: {item.quantity}
+                                                    </span>
+                                                    <span className="text-sm font-extrabold text-brand-orange">
+                                                        {currency}{item.price_at_purchase}
+                                                    </span>
+                                                </div>
+                                            </div>
+                                        </div>
+                                    )
+                                })}
+                            </div>
                         </div>
 
-                        {/* Actions */}
-                        <div className="flex justify-end">
-                            <button onClick={closeModal} className="px-4 py-2 bg-slate-200 rounded hover:bg-slate-300" >
-                                Close
-                            </button>
+                        <div className="flex flex-wrap items-center justify-between gap-6 pt-6 border-t border-slate-100">
+                           <div className="flex items-center gap-4">
+                               <div className={`px-4 py-2 rounded-2xl border text-sm font-black ${getStatusColor(selectedOrder.status)}`}>
+                                   {getStatusLabel(selectedOrder.status)}
+                               </div>
+                               <div className="text-[10px] font-bold text-slate-400">
+                                   {new Date(selectedOrder.created_at).toLocaleString()}
+                               </div>
+                           </div>
+                           
+                           <div className="text-right">
+                               <p className="text-[10px] font-black text-slate-400 uppercase tracking-widest mb-1">{language === 'ar' ? 'الإجمالي الكلي' : 'Order Total'}</p>
+                               <p className="text-3xl font-black text-brand-mauve">{currency}{selectedOrder.total}</p>
+                           </div>
                         </div>
                     </div>
                 </div>
             )}
-        </>
+        </div>
     )
 }

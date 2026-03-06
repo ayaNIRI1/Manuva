@@ -2,6 +2,7 @@ const express = require('express');
 const { body, validationResult } = require('express-validator');
 const db = require('../config/database');
 const { auth, isArtisan, isAdmin } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -134,6 +135,25 @@ router.get('/', async (req, res) => {
   }
 });
 
+// Get all products for the authenticated artisan
+router.get('/artisan-list', auth, isArtisan, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT p.*, c.name as category_name
+       FROM products p
+       LEFT JOIN categories c ON p.category_id = c.id
+       WHERE p.seller_id = $1
+       ORDER BY p.created_at DESC`,
+      [req.user.id]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Get artisan products error:', error);
+    res.status(500).json({ error: 'Failed to fetch your products' });
+  }
+});
+
 // Get single product
 router.get('/:id', async (req, res) => {
   try {
@@ -142,17 +162,36 @@ router.get('/:id', async (req, res) => {
     const result = await db.query(
       `SELECT p.*, 
               c.name as category_name,
-              u.id as seller_id, u.name as seller_name, u.bio as seller_bio,
-              u.profile_img as seller_img, u.location as seller_location,
-              COALESCE(AVG(r.rating), 0) as avg_rating,
-              COUNT(DISTINCT r.id) as review_count,
+              json_build_object(
+                'id', u.id,
+                'name', u.name,
+                'bio', u.bio,
+                'logo', COALESCE(u.profile_img, '/uploads/artisan-placeholder.png'),
+                'username', u.firebase_uid,
+                'location', u.location
+              ) as store,
+              COALESCE((
+                SELECT json_agg(json_build_object(
+                  'id', r.id,
+                  'rating', r.rating,
+                  'review', r.comment,
+                  'createdAt', r.created_at,
+                  'user', json_build_object(
+                    'name', bu.name,
+                    'image', COALESCE(bu.profile_img, '/uploads/artisan-placeholder.png')
+                  )
+                ))
+                FROM reviews r
+                JOIN users bu ON r.buyer_id = bu.id
+                WHERE r.product_id = p.id
+              ), '[]'::json) as rating,
+              COALESCE((SELECT AVG(rating) FROM reviews WHERE product_id = p.id), 0) as avg_rating,
+              (SELECT COUNT(*) FROM reviews WHERE product_id = p.id) as review_count,
               (SELECT COUNT(*) FROM follows WHERE seller_id = u.id) as seller_followers
        FROM products p
        LEFT JOIN categories c ON p.category_id = c.id
        LEFT JOIN users u ON p.seller_id = u.id
-       LEFT JOIN reviews r ON p.id = r.product_id
-       WHERE p.id = $1
-       GROUP BY p.id, c.name, u.id, u.name, u.bio, u.profile_img, u.location`,
+       WHERE p.id = $1`,
       [id]
     );
 
@@ -167,8 +206,9 @@ router.get('/:id', async (req, res) => {
   }
 });
 
+
 // Create product (artisan only)
-router.post('/', auth, isArtisan,
+router.post('/', auth, isArtisan, upload.array('images', 4),
   [
     body('name').trim().notEmpty(),
     body('description').trim().notEmpty(),
@@ -183,32 +223,28 @@ router.post('/', auth, isArtisan,
         return res.status(400).json({ errors: errors.array() });
       }
 
-      const {
-        name,
-        description,
-        price,
-        stock,
-        category_id,
-        material,
-        size,
-        color,
-        theme,
-        image_url
-      } = req.body;
+      const { name, description, price, mrp, stock, category_id, material, size, color, theme } = req.body;
+    
+      // Handle multiple images from upload.array('images', 4)
+      const image_urls = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+      const image_url = image_urls.length > 0 ? image_urls[0] : (req.body.image_url || '/uploads/artisan-placeholder.png');
 
       const result = await db.query(
-        `INSERT INTO products 
-         (seller_id, category_id, name, description, price, stock, material, size, color, theme, image_url, status)
-         VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, 'pending')
-         RETURNING *`,
-        [req.user.id, category_id, name, description, price, stock, material, size, color, theme, image_url]
+        `INSERT INTO products (
+          seller_id, category_id, name, description, price, mrp, stock, 
+          material, size, color, theme, image_url, images, status
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'approved') RETURNING *`,
+        [
+          req.user.id, category_id, name, description, price, mrp || price, stock || 0,
+          material, size, color, theme, image_url, JSON.stringify(image_urls)
+        ]
       );
 
       const product = result.rows[0];
 
       res.status(201).json({ 
         product,
-        message: 'Product created successfully and is pending approval'
+        message: 'Product created successfully'
       });
     } catch (error) {
       console.error('Create product error:', error);

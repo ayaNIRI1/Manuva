@@ -6,8 +6,10 @@ import Image from "next/image"
 import { useRouter } from "next/navigation"
 import { useEffect, useState } from "react"
 import { apiRequest } from "@/lib/api"
+import { useLanguage } from "@/lib/language-context"
 
 export default function Dashboard() {
+    const { language } = useLanguage()
 
     const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'
 
@@ -55,7 +57,9 @@ export default function Dashboard() {
 
     return (
         <div className=" text-slate-500 mb-28">
-            <h1 className="text-2xl">Seller <span className="text-slate-800 font-medium">Dashboard</span></h1>
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground mb-10">
+                {language === 'ar' ? 'لوحة تحكم' : 'Artisan'} <span className="text-brand-orange">{language === 'ar' ? 'الحرفي' : 'Dashboard'}</span>
+            </h1>
 
             <div className="flex flex-wrap gap-5 my-10 mt-4">
                 {

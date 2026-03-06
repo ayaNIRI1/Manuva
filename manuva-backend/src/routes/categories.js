@@ -8,7 +8,7 @@ router.get('/', async (req, res) => {
   try {
     const result = await db.query(
       `SELECT c.*, 
-              (SELECT COUNT(*) FROM products p WHERE p.category_id = c.id AND p.is_active = true) as product_count
+              (SELECT COUNT(*) FROM products p WHERE p.category_id = c.id AND p.status = 'approved') as product_count
        FROM categories c
        ORDER BY c.name ASC`
     );
@@ -27,7 +27,7 @@ router.get('/:id', async (req, res) => {
 
     const result = await db.query(
       `SELECT c.*, 
-              (SELECT COUNT(*) FROM products p WHERE p.category_id = c.id AND p.is_active = true) as product_count
+              (SELECT COUNT(*) FROM products p WHERE p.category_id = c.id AND p.status = 'approved') as product_count
        FROM categories c
        WHERE c.id = $1`,
       [id]

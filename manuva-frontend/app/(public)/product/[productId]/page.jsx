@@ -28,8 +28,8 @@ export default function Product() {
             <div className="max-w-7xl mx-auto">
 
                 {/* Breadcrums */}
-                <div className="  text-gray-600 text-sm mt-8 mb-5">
-                    Home / Products / {product?.category}
+                <div className="  text-gray-600 text-sm mt-8 mb-5 uppercase font-bold tracking-widest text-[10px]">
+                    Home / Products / {product?.category_name || product?.category}
                 </div>
 
                 {/* Product Details */}

@@ -22,6 +22,8 @@ const contactRoutes = require('./routes/contact');
 const webhookRoutes = require('./routes/webhooks');
 const paymentRoutes = require('./routes/payments');
 
+const path = require('path');
+
 const app = express();
 const server = http.createServer(app);
 
@@ -132,6 +134,9 @@ app.use('/api/webhooks', webhookRoutes);
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 app.use(morgan('dev'));
+
+// Static files (for uploads)
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.get('/health', (req, res) => {
   res.json({ 

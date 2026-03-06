@@ -3,15 +3,16 @@
 import { useState } from 'react';
 import Link from 'next/link';
 import { useRouter } from 'next/navigation';
-import { auth, googleProvider } from '@/lib/firebase';
+import { useAuth } from '@/lib/auth-context';
+import { auth } from '@/lib/firebase';
 import {
   FacebookAuthProvider,
   signInWithEmailAndPassword,
-  signInWithPopup,
 } from 'firebase/auth';
 
 export default function LoginPage() {
   const router = useRouter();
+  const { loginWithGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
@@ -58,13 +59,12 @@ export default function LoginPage() {
     setError('');
     setLoading(true);
 
-    try {
-      const credential = await signInWithPopup(auth, googleProvider);
-      await syncUserWithBackend(credential.user);
+    const result = await loginWithGoogle();
+    
+    if (result.success) {
       router.push('/');
-    } catch (err) {
-      setError(err?.message || 'Google sign in failed.');
-    } finally {
+    } else {
+      setError(result.error || 'Google sign in failed.');
       setLoading(false);
     }
   };

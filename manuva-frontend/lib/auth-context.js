@@ -1,7 +1,12 @@
 'use client'
 import { createContext, useContext, useState, useEffect } from 'react';
-import { onAuthStateChanged, signOut as firebaseSignOut } from 'firebase/auth';
-import { auth } from '@/lib/firebase';
+import { 
+  onAuthStateChanged, 
+  signOut as firebaseSignOut, 
+  signInWithPopup, 
+  GoogleAuthProvider 
+} from 'firebase/auth';
+import { auth, googleProvider } from '@/lib/firebase';
 
 const AuthContext = createContext({});
 
@@ -13,12 +18,17 @@ export const AuthProvider = ({ children }) => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
         setUser(null);
+        localStorage.removeItem('token');
+        localStorage.removeItem('role');
         setLoading(false);
         return;
       }
 
       try {
-        const token = await firebaseUser.getIdToken();
+        setLoading(true);
+        const token = await firebaseUser.getIdToken(true);
+        localStorage.setItem('token', token); // Legacy sync
+
         const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`
@@ -28,18 +38,21 @@ export const AuthProvider = ({ children }) => {
         if (response.ok) {
           const data = await response.json();
           setUser(data);
+          localStorage.setItem('role', data.role || 'customer');
         } else {
-          // Fallback when backend user profile is not linked to Firebase token yet
-          setUser({
+          console.warn('Backend profile sync failed, using Firebase profile as fallback');
+          const fallbackUser = {
             id: firebaseUser.uid,
             name: firebaseUser.displayName || 'User',
             email: firebaseUser.email || '',
             role: 'customer',
             profile_img: firebaseUser.photoURL || ''
-          });
+          };
+          setUser(fallbackUser);
+          localStorage.setItem('role', 'customer');
         }
       } catch (error) {
-        console.error('Error fetching local user:', error);
+        console.error('Error syncing user with backend:', error);
         setUser({
           id: firebaseUser.uid,
           name: firebaseUser.displayName || 'User',
@@ -47,6 +60,7 @@ export const AuthProvider = ({ children }) => {
           role: 'customer',
           profile_img: firebaseUser.photoURL || ''
         });
+        localStorage.setItem('role', 'customer');
       } finally {
         setLoading(false);
       }
@@ -56,11 +70,23 @@ export const AuthProvider = ({ children }) => {
 
   const logout = async () => {
     await firebaseSignOut(auth);
+    localStorage.removeItem('token');
+    localStorage.removeItem('role');
     setUser(null);
   };
 
+  const loginWithGoogle = async () => {
+    try {
+      const result = await signInWithPopup(auth, googleProvider);
+      return { success: true, user: result.user };
+    } catch (error) {
+      console.error('Google login error:', error);
+      return { success: false, error: error.message };
+    }
+  };
+
   const updateUser = (updatedData) => {
-    setUser({ ...user, ...updatedData });
+    setUser((prev) => prev ? { ...prev, ...updatedData } : null);
   };
 
   const getToken = async () => {
@@ -76,10 +102,10 @@ export const AuthProvider = ({ children }) => {
         logout,
         getToken,
         updateUser,
+        loginWithGoogle,
         isAuthenticated: !!user,
-        login: async () => ({ success: false, error: 'Use Firebase login page' }),
-        register: async () => ({ success: false, error: 'Use Firebase register page' }),
-        loginWithGoogle: async () => ({ success: false, error: 'Use Firebase Google login button' }),
+        login: async () => ({ success: false, error: 'Standard login not implemented in provider' }),
+        register: async () => ({ success: false, error: 'Standard register not implemented in provider' }),
       }}
     >
       {children}

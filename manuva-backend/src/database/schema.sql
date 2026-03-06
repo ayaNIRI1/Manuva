@@ -60,6 +60,7 @@ CREATE TABLE IF NOT EXISTS products (
     approved_by UUID REFERENCES users(id),
     approved_at TIMESTAMPTZ,
     image_url TEXT,
+    images JSONB DEFAULT '[]',
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );

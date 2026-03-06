@@ -3,68 +3,160 @@ import { useEffect, useState } from "react"
 import { toast } from "react-hot-toast"
 import Image from "next/image"
 import Loading from "@/components/Loading"
-import { productDummyData } from "@/assets/assets"
+import { Trash2 } from "lucide-react"
+import { apiRequest } from "@/lib/api"
+import { assets } from "@/assets/assets"
+import { useLanguage } from "@/lib/language-context"
 
 export default function StoreManageProducts() {
-
+    const { language } = useLanguage()
     const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:3001'
 
     const [loading, setLoading] = useState(true)
     const [products, setProducts] = useState([])
 
     const fetchProducts = async () => {
-        setProducts(productDummyData)
-        setLoading(false)
+        try {
+            const data = await apiRequest('/products/artisan-list')
+            setProducts(data)
+        } catch (error) {
+            console.error('Fetch artisan products error:', error)
+            toast.error('Failed to fetch products')
+        } finally {
+            setLoading(false)
+        }
     }
 
-    const toggleStock = async (productId) => {
-        // Logic to toggle the stock of a product
+    const deleteProduct = async (productId) => {
+        if (!window.confirm(language === 'ar' ? 'هل أنت متأكد من حذف هذا المنتج؟' : 'Are you sure you want to delete this product?')) {
+            return;
+        }
 
+        try {
+            await apiRequest(`/products/${productId}`, {
+                method: 'DELETE'
+            })
+            toast.success(language === 'ar' ? 'تم حذف المنتج بنجاح' : 'Product deleted successfully')
+            fetchProducts()
+        } catch (error) {
+            console.error('Delete product error:', error)
+            toast.error(language === 'ar' ? 'فشل حذف المنتج' : 'Failed to delete product')
+        }
+    }
 
+    const toggleStatus = async (productId, currentStatus) => {
+        try {
+            const newStatus = currentStatus === 'approved' ? 'pending' : 'approved'
+            await apiRequest(`/products/${productId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ status: newStatus })
+            })
+            toast.success('Status updated')
+            fetchProducts()
+        } catch (error) {
+            console.error('Update status error:', error)
+            toast.error('Failed to update status')
+        }
     }
 
     useEffect(() => {
-            fetchProducts()
+        fetchProducts()
     }, [])
 
     if (loading) return <Loading />
 
     return (
-        <>
-            <h1 className="text-2xl text-slate-500 mb-5">Manage <span className="text-slate-800 font-medium">Products</span></h1>
-            <table className="w-full max-w-4xl text-left  ring ring-slate-200  rounded overflow-hidden text-sm">
-                <thead className="bg-slate-50 text-gray-700 uppercase tracking-wider">
-                    <tr>
-                        <th className="px-4 py-3">Name</th>
-                        <th className="px-4 py-3 hidden md:table-cell">Description</th>
-                        <th className="px-4 py-3 hidden md:table-cell">MRP</th>
-                        <th className="px-4 py-3">Price</th>
-                        <th className="px-4 py-3">Actions</th>
-                    </tr>
-                </thead>
-                <tbody className="text-slate-700">
-                    {products.map((product) => (
-                        <tr key={product.id} className="border-t border-gray-200 hover:bg-gray-50">
-                            <td className="px-4 py-3">
-                                <div className="flex gap-2 items-center">
-                                    <Image width={40} height={40} className='p-1 shadow rounded cursor-pointer' src={product.images[0]} alt="" />
-                                    {product.name}
-                                </div>
-                            </td>
-                            <td className="px-4 py-3 max-w-md text-slate-600 hidden md:table-cell truncate">{product.description}</td>
-                            <td className="px-4 py-3 hidden md:table-cell">{currency} {product.mrp.toLocaleString()}</td>
-                            <td className="px-4 py-3">{currency} {product.price.toLocaleString()}</td>
-                            <td className="px-4 py-3 text-center">
-                                <label className="relative inline-flex items-center cursor-pointer text-gray-900 gap-3">
-                                    <input type="checkbox" className="sr-only peer" onChange={() => toast.promise(toggleStock(product.id), { loading: "Updating data..." })} checked={product.inStock} />
-                                    <div className="w-9 h-5 bg-slate-300 rounded-full peer peer-checked:bg-green-600 transition-colors duration-200"></div>
-                                    <span className="dot absolute left-1 top-1 w-3 h-3 bg-white rounded-full transition-transform duration-200 ease-in-out peer-checked:translate-x-4"></span>
-                                </label>
-                            </td>
-                        </tr>
-                    ))}
-                </tbody>
-            </table>
-        </>
+        <div className="max-w-6xl mx-auto">
+            <h1 className="text-3xl font-extrabold tracking-tight text-foreground mb-8">
+                {language === 'ar' ? 'إدارة' : 'Manage'} <span className="text-brand-orange">{language === 'ar' ? 'المنتجات' : 'Products'}</span>
+            </h1>
+            
+            <div className="bg-white rounded-3xl border border-slate-100 shadow-sm overflow-hidden">
+                <div className="overflow-x-auto">
+                    <table className="w-full text-left border-collapse">
+                        <thead>
+                            <tr className="bg-slate-50 border-b border-slate-100">
+                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{language === 'ar' ? 'المنتج' : 'Product'}</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider hidden md:table-cell">{language === 'ar' ? 'القسم' : 'Category'}</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{language === 'ar' ? 'السعر' : 'Price'}</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider">{language === 'ar' ? 'المخزون' : 'Stock'}</th>
+                                <th className="px-6 py-4 text-xs font-bold text-slate-500 uppercase tracking-wider text-center">{language === 'ar' ? 'الحالة' : 'Status'}</th>
+                            </tr>
+                        </thead>
+                        <tbody className="divide-y divide-slate-50">
+                            {products.length === 0 ? (
+                                <tr>
+                                    <td colSpan="5" className="px-6 py-20 text-center text-slate-400 font-medium">
+                                        {language === 'ar' ? 'لا توجد منتجات بعد' : 'No products found yet'}
+                                    </td>
+                                </tr>
+                            ) : (
+                                products.map((product) => {
+                                    const imageUrl = product.image_url 
+                                        ? (product.image_url.startsWith('http') 
+                                            ? product.image_url 
+                                            : `${backendUrl}${product.image_url.startsWith('/') ? '' : '/'}${product.image_url}`)
+                                        : assets.upload_placeholder;
+
+                                    return (
+                                        <tr key={product.id} className="hover:bg-slate-50/50 transition-colors">
+                                            <td className="px-6 py-4">
+                                                <div className="flex gap-4 items-center">
+                                                    <div className="w-12 h-12 rounded-xl border border-slate-100 overflow-hidden bg-slate-50 flex-shrink-0">
+                                                        <Image width={48} height={48} className='w-full h-full object-cover' src={imageUrl} alt={product.name} />
+                                                    </div>
+                                                    <div className="min-w-0">
+                                                        <p className="font-bold text-slate-800 truncate">{product.name}</p>
+                                                        <p className="text-[10px] text-slate-400 font-medium md:hidden">{product.category_name}</p>
+                                                    </div>
+                                                </div>
+                                            </td>
+                                            <td className="px-6 py-4 hidden md:table-cell">
+                                                <span className="px-3 py-1 bg-slate-100 text-slate-600 rounded-full text-[10px] font-bold">
+                                                    {product.category_name}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 font-extrabold text-brand-mauve">{currency}{product.price}</td>
+                                            <td className="px-6 py-4">
+                                                <span className={`font-bold ${product.stock > 0 ? 'text-slate-600' : 'text-red-500'}`}>
+                                                    {product.stock}
+                                                </span>
+                                            </td>
+                                            <td className="px-6 py-4 text-center">
+                                                <div className="flex items-center justify-center gap-4">
+                                                    <div className={`inline-flex items-center gap-1.5 px-3 py-1 rounded-full text-[10px] font-bold ${
+                                                        product.status === 'approved' ? 'bg-green-50 text-green-600' : 
+                                                        product.status === 'rejected' ? 'bg-red-50 text-red-600' : 
+                                                        'bg-amber-50 text-amber-600'
+                                                    }`}>
+                                                        <div className={`w-1.5 h-1.5 rounded-full ${
+                                                            product.status === 'approved' ? 'bg-green-500' : 
+                                                            product.status === 'rejected' ? 'bg-red-500' : 
+                                                            'bg-amber-500 animate-pulse'
+                                                        }`}></div>
+                                                        {product.status === 'approved' ? (language === 'ar' ? 'مقبول' : 'Approved') : 
+                                                         product.status === 'rejected' ? (language === 'ar' ? 'مرفوض' : 'Rejected') : 
+                                                         (language === 'ar' ? 'قيد الانتظار' : 'Pending')}
+                                                    </div>
+                                                    
+                                                    <button 
+                                                        onClick={() => deleteProduct(product.id)}
+                                                        className="p-2 text-slate-400 hover:text-red-500 hover:bg-red-50 rounded-lg transition-colors"
+                                                        title={language === 'ar' ? 'حذف' : 'Delete'}
+                                                    >
+                                                        <Trash2 size={18} />
+                                                    </button>
+                                                </div>
+                                            </td>
+                                        </tr>
+                                    )
+                                })
+                            )}
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
     )
 }

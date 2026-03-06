@@ -9,9 +9,6 @@ export default function Home() {
     return (
         <div>
             <Hero />
-            <div className="bg-secondary text-secondary-foreground px-6 py-4 rounded-xl my-6">
-                <p className="text-sm">هذا مربع بخلفية سوداء ونص أبيض</p>
-            </div>
             <LatestProducts />
             <BestSelling />
             <OurSpecs />

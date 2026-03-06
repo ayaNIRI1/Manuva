@@ -28,6 +28,11 @@ const translations = {
     shop: 'المتجر',
     about: 'من نحن',
     contact: 'تواصل معنا',
+    become_artisan: 'كن حرفياً',
+    store_setup: 'إعداد المتجر',
+    store_name: 'اسم المتجر',
+    store_description: 'وصف المتجر',
+    submit: 'إرسال',
   },
   en: {
     profile: 'Profile',
@@ -49,6 +54,11 @@ const translations = {
     shop: 'Shop',
     about: 'About',
     contact: 'Contact',
+    become_artisan: 'Become an Artisan',
+    store_setup: 'Store Setup',
+    store_name: 'Store Name',
+    store_description: 'Store Description',
+    submit: 'Submit',
   }
 };
 

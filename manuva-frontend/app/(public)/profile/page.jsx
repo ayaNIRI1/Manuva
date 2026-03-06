@@ -4,7 +4,7 @@ import { useAuth } from '@/lib/auth-context';
 import { useTheme } from '@/lib/theme-context';
 import { useLanguage } from '@/lib/language-context';
 import { useRouter } from 'next/navigation';
-import { User, Settings, Moon, Sun, Globe, LogOut, Save, Camera, MapPin, AlignLeft, ShoppingCart } from 'lucide-react';
+import { User, Settings, Moon, Sun, Globe, LogOut, Save, Camera, MapPin, AlignLeft, ShoppingCart, Sparkles } from 'lucide-react';
 import { apiRequest } from '@/lib/api';
 import toast from 'react-hot-toast';
 
@@ -101,6 +101,15 @@ export default function ProfilePage() {
                 <ShoppingCart size={20} />
                 {language === 'ar' ? 'طلباتي' : 'My Orders'}
               </button>
+              {user.role === 'customer' && (
+                <button 
+                  onClick={() => router.push('/create-store')}
+                  className="w-full flex items-center gap-4 px-6 py-4 text-brand-mauve hover:bg-brand-mauve/5 rounded-2xl font-semibold transition-all border border-dashed border-brand-mauve/30 mt-2"
+                >
+                  <Sparkles size={20} className="text-brand-orange" />
+                  {t('become_artisan')}
+                </button>
+              )}
               <div className="h-px bg-border/50 my-2 mx-4"></div>
               <button 
                 onClick={logout} 
