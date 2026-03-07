@@ -15,6 +15,7 @@ export default function StoreAddProduct() {
     const [productInfo, setProductInfo] = useState({
         name: "",
         description: "",
+        mrp: "",
         price: "",
         stock: "10",
         category_id: "",
@@ -46,6 +47,7 @@ export default function StoreAddProduct() {
             const formData = new FormData()
             formData.append('name', productInfo.name)
             formData.append('description', productInfo.description)
+            formData.append('mrp', productInfo.mrp)
             formData.append('price', productInfo.price)
             formData.append('stock', productInfo.stock)
             formData.append('category_id', productInfo.category_id)
@@ -123,9 +125,14 @@ export default function StoreAddProduct() {
                     <textarea name="description" onChange={onChangeHandler} value={productInfo.description} placeholder={language === 'ar' ? 'اشرح ميزات منتجك...' : "Tell buyers about your product..."} rows={4} className="w-full p-3.5 bg-slate-50 outline-none border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-mauve/30 transition-all resize-none" required />
                 </label>
 
-                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
+                <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <label className="flex flex-col gap-2">
-                        <span className="text-sm font-bold text-slate-800">{language === 'ar' ? 'السعر' : 'Price'} ({process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'})</span>
+                        <span className="text-sm font-bold text-slate-800">{language === 'ar' ? 'السعر الأصلي' : 'Original Price (MRP)'} ({process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'})</span>
+                        <input type="number" name="mrp" onChange={onChangeHandler} value={productInfo.mrp} placeholder="0.00" className="w-full p-3.5 bg-slate-50 outline-none border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-mauve/30 transition-all" />
+                    </label>
+
+                    <label className="flex flex-col gap-2">
+                        <span className="text-sm font-bold text-slate-800">{language === 'ar' ? 'سعر العرض' : 'Offer Price'} ({process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'})</span>
                         <input type="number" name="price" onChange={onChangeHandler} value={productInfo.price} placeholder="0.00" className="w-full p-3.5 bg-slate-50 outline-none border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-mauve/30 transition-all" required />
                     </label>
 

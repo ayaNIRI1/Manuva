@@ -2,6 +2,7 @@
 import { useState, useEffect } from 'react';
 import { MessageCircle, Send, ChevronLeft, Loader2, ArrowRight } from 'lucide-react';
 import { useChat } from '@/lib/chat-context';
+import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
 
 const getOtherUser = (conv, currentUserId) => {
@@ -26,19 +27,19 @@ const Avatar = ({ name = '?', avatar, size = 10 }) => (
 export default function ChatPage() {
   const router = useRouter();
   const { conversations, activeConversation, messages, sendMessage, openConversation, closeConversation, fetchConversations } = useChat();
+  const { user, loading: authLoading } = useAuth();
   const [currentUserId, setCurrentUserId] = useState(null);
   const [input, setInput] = useState('');
   const [loading, setLoading] = useState(true);
 
   useEffect(() => {
-    const user = localStorage.getItem('user');
-    if (!user) {
+    if (!authLoading && !user) {
       router.push('/login');
-      return;
+    } else if (user) {
+      setCurrentUserId(user.id);
+      fetchConversations().finally(() => setLoading(false));
     }
-    try { setCurrentUserId(JSON.parse(user).id); } catch {}
-    fetchConversations().finally(() => setLoading(false));
-  }, []);
+  }, [user, authLoading, router, fetchConversations]);
 
   const handleSend = (e) => {
     e.preventDefault();
@@ -47,7 +48,7 @@ export default function ChatPage() {
     setInput('');
   };
 
-  if (loading) {
+  if (loading || authLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
         <Loader2 className="animate-spin text-orange-500" size={32} />

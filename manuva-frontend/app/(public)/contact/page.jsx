@@ -106,16 +106,6 @@ const ContactPage = () => {
               </div>
             </div>
 
-            {/* Decorative elements */}
-            <div className="mt-12 pt-12 border-t border-border">
-              <div className="flex gap-4">
-                {[1, 2, 3, 4].map((i) => (
-                  <div key={i} className="w-10 h-10 rounded-full bg-muted border border-border flex items-center justify-center">
-                    <div className="w-2 h-2 rounded-full bg-primary" />
-                  </div>
-                ))}
-              </div>
-            </div>
           </div>
 
           {/* Contact Form Card */}

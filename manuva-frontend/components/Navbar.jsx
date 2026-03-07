@@ -37,10 +37,10 @@ const Navbar = () => {
         <div className="flex items-center justify-between max-w-7xl mx-auto py-4 transition-all">
           <Link href="/" className="relative flex items-center gap-2 group">
             <div className="relative">
-              <span className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-brand-black via-brand-dark to-brand-orange bg-clip-text text-transparent">
+              <span className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-slate-900 via-slate-700 to-orange-500 bg-clip-text text-transparent">
                 Manuva
               </span>
-              <Sparkles className="absolute -top-1 -right-6 text-brand-orange w-4 h-4 group-hover:rotate-12 transition-transform" />
+              <Sparkles className="absolute -top-1 -right-6 text-orange-500 w-4 h-4 group-hover:rotate-12 transition-transform" />
             </div>
           </Link>
 

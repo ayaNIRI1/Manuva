@@ -64,6 +64,45 @@ const getOrCreateFirebaseUser = async (decoded) => {
   }
 };
 
+const verifyUserToken = async (token) => {
+  try {
+    const decodedFirebase = await verifyFirebaseToken(token);
+    const user = await getOrCreateFirebaseUser(decodedFirebase);
+    return user;
+  } catch (firebaseError) {
+    console.warn('Firebase verification failed, trying JWT:', firebaseError.message);
+    try {
+      if (!process.env.JWT_SECRET) {
+        throw new Error('JWT_SECRET not configured');
+      }
+
+      const decodedJwt = jwt.verify(token, process.env.JWT_SECRET);
+      const result = await db.query(
+        'SELECT id, email, name, role, is_active, profile_img FROM users WHERE id = $1',
+        [decodedJwt.userId]
+      );
+
+      if (result.rows.length === 0) {
+        throw new Error('User not found in database');
+      }
+
+      const user = result.rows[0];
+      if (!user.is_active) {
+        throw new Error('Account is deactivated');
+      }
+
+      return user;
+    } catch (jwtError) {
+      const err = new Error('Session expired or invalid. Please sign in again.');
+      err.details = {
+        firebase: firebaseError.message,
+        jwt: jwtError.message
+      };
+      throw err;
+    }
+  }
+};
+
 const auth = async (req, res, next) => {
   try {
     const token = req.header('Authorization')?.replace('Bearer ', '');
@@ -73,51 +112,17 @@ const auth = async (req, res, next) => {
     }
 
     try {
-      const decodedFirebase = await verifyFirebaseToken(token);
-      const user = await getOrCreateFirebaseUser(decodedFirebase);
+      const user = await verifyUserToken(token);
       req.user = user;
       req.token = token;
       return next();
-    } catch (firebaseError) {
-      console.warn('Firebase verification failed, trying JWT:', firebaseError.message);
-      try {
-        if (!process.env.JWT_SECRET) {
-          throw new Error('JWT_SECRET not configured');
-        }
+    } catch (err) {
+      console.error('Total Auth Failure:', err.details || err.message);
 
-        const decodedJwt = jwt.verify(token, process.env.JWT_SECRET);
-        const result = await db.query(
-          'SELECT id, email, name, role, is_active, profile_img FROM users WHERE id = $1',
-          [decodedJwt.userId]
-        );
-
-        if (result.rows.length === 0) {
-          return res.status(401).json({ error: 'User not found in database' });
-        }
-
-        const user = result.rows[0];
-        if (!user.is_active) {
-          return res.status(401).json({ error: 'Account is deactivated' });
-        }
-
-        req.user = user;
-        req.token = token;
-        return next();
-      } catch (jwtError) {
-        console.error('Total Auth Failure:', {
-          tokenPreview: token.substring(0, 10) + '...',
-          errorDetails: firebaseError.message,
-          fallbackError: jwtError.message,
-        });
-
-        return res.status(401).json({
-          error: 'Session expired or invalid. Please sign in again.',
-          details: process.env.NODE_ENV === 'development' ? {
-            firebase: firebaseError.message,
-            jwt: jwtError.message
-          } : undefined,
-        });
-      }
+      return res.status(401).json({
+        error: err.message,
+        details: process.env.NODE_ENV === 'development' ? err.details : undefined,
+      });
     }
   } catch (error) {
     console.error('Auth Middleware Error:', error);
@@ -139,4 +144,4 @@ const isAdmin = async (req, res, next) => {
   next();
 };
 
-module.exports = { auth, isArtisan, isAdmin };
+module.exports = { auth, isArtisan, isAdmin, verifyUserToken };

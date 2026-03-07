@@ -45,6 +45,24 @@ export default function StoreManageProducts() {
         }
     }
 
+    const updateStock = async (productId, newStock) => {
+        try {
+            await apiRequest(`/products/${productId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ stock: parseInt(newStock) })
+            })
+            toast.success(language === 'ar' ? 'تم تحديث المخزون' : 'Stock updated successfully')
+        } catch (error) {
+            console.error('Update stock error:', error)
+            toast.error(language === 'ar' ? 'فشل تحديث المخزون' : 'Failed to update stock')
+            fetchProducts() // Revert changes on error
+        }
+    }
+
+    const handleStockChange = (productId, newStock) => {
+        setProducts(products.map(p => p.id === productId ? { ...p, stock: newStock } : p))
+    }
+
     const toggleStatus = async (productId, currentStatus) => {
         try {
             const newStatus = currentStatus === 'approved' ? 'pending' : 'approved'
@@ -119,9 +137,15 @@ export default function StoreManageProducts() {
                                             </td>
                                             <td className="px-6 py-4 font-extrabold text-brand-mauve">{currency}{product.price}</td>
                                             <td className="px-6 py-4">
-                                                <span className={`font-bold ${product.stock > 0 ? 'text-slate-600' : 'text-red-500'}`}>
-                                                    {product.stock}
-                                                </span>
+                                                <input 
+                                                    type="number"
+                                                    min="0"
+                                                    value={product.stock}
+                                                    onChange={(e) => handleStockChange(product.id, e.target.value)}
+                                                    onBlur={(e) => updateStock(product.id, e.target.value)}
+                                                    title={language === 'ar' ? 'تعديل المخزون' : 'Edit Stock'}
+                                                    className={`w-20 px-2 py-1.5 text-center rounded-lg border-2 transition-all font-bold ${product.stock > 0 ? 'border-slate-200 text-slate-700 focus:border-brand-mauve focus:ring-4 focus:ring-brand-mauve/10' : 'border-red-200 text-red-600 bg-red-50 focus:border-red-500 focus:ring-4 focus:ring-red-500/10'}`}
+                                                />
                                             </td>
                                             <td className="px-6 py-4 text-center">
                                                 <div className="flex items-center justify-center gap-4">

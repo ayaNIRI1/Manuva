@@ -8,6 +8,7 @@
     "dev": "nodemon src/server.js",
     "init-db": "node src/database/init.js",
     "check-db": "node src/database/init.js check",
+    "clear-db": "node src/database/clear_db.js",
     "migrate-firebase-auth": "node src/database/firebase-auth-migration.js"
   },
   "keywords": [

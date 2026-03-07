@@ -2,8 +2,9 @@
 import ProductCard from "@/components/ProductCard"
 import { useParams } from "next/navigation"
 import { useEffect, useState } from "react"
-import { MailIcon, MapPinIcon } from "lucide-react"
+import { MailIcon, MapPinIcon, MessageCircle } from "lucide-react"
 import Loading from "@/components/Loading"
+import { useChat } from "@/lib/chat-context"
 import Image from "next/image"
 import { dummyStoreData, productDummyData } from "@/assets/assets"
 import { apiRequest } from "@/lib/api"
@@ -14,6 +15,13 @@ export default function StoreShop() {
     const [products, setProducts] = useState([])
     const [storeInfo, setStoreInfo] = useState(null)
     const [loading, setLoading] = useState(true)
+    const { startConversation, setIsChatOpen } = useChat()
+
+    const handleStartChat = async () => {
+        if (!storeInfo?.id) return;
+        const conv = await startConversation(storeInfo.id);
+        if (conv) setIsChatOpen(true);
+    }
 
     const fetchStoreData = async () => {
         try {
@@ -25,6 +33,7 @@ export default function StoreShop() {
             const storeProducts = await apiRequest(`/artisans/${username}/products`);
             
             setStoreInfo({
+                id: store.id,
                 name: store.name,
                 description: store.bio,
                 logo: store.profile_img || '/images/default-store.jpg',
@@ -61,9 +70,21 @@ export default function StoreShop() {
                         width={200}
                         height={200}
                     />
-                    <div className="text-center md:text-left">
-                        <h1 className="text-3xl font-semibold text-slate-800">{storeInfo.name}</h1>
-                        <p className="text-sm text-slate-600 mt-2 max-w-lg">{storeInfo.description}</p>
+                    <div className="flex-1 text-center md:text-left">
+                        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+                            <div>
+                                <h1 className="text-3xl font-semibold text-slate-800">{storeInfo.name}</h1>
+                                <p className="text-sm text-slate-600 mt-2 max-w-lg">{storeInfo.description}</p>
+                            </div>
+                            
+                            <button 
+                                onClick={handleStartChat}
+                                className="flex items-center justify-center gap-2 bg-gradient-to-br from-orange-500 to-red-500 text-white px-5 py-2.5 rounded-full text-sm font-semibold shadow-md hover:shadow-lg transition-all active:scale-95"
+                            >
+                                <MessageCircle size={18} />
+                                محادثة
+                            </button>
+                        </div>
                         <div className="text-xs text-slate-500 mt-4 space-y-1"></div>
                         <div className="space-y-2 text-sm text-slate-500">
                             <div className="flex items-center">

@@ -8,6 +8,7 @@ require('dotenv').config();
 
 const errorHandler = require('./middleware/errorHandler');
 const db = require('./config/database');
+const { verifyUserToken } = require('./middleware/auth');
 
 // Import routes
 const authRoutes = require('./routes/auth');
@@ -39,14 +40,8 @@ io.use(async (socket, next) => {
     const token = socket.handshake.auth?.token;
     if (!token) return next(new Error('Authentication required'));
 
-    const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    const result = await db.query(
-      'SELECT id, name, role FROM users WHERE id = $1 AND is_active = TRUE',
-      [decoded.userId]
-    );
-    if (result.rows.length === 0) return next(new Error('User not found'));
-
-    socket.user = result.rows[0];
+    const user = await verifyUserToken(token);
+    socket.user = user;
     next();
   } catch (err) {
     next(new Error('Invalid token'));

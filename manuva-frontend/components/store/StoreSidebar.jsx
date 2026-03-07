@@ -1,6 +1,5 @@
-'use client'
 import { usePathname } from "next/navigation"
-import { HomeIcon, LayoutListIcon, SquarePenIcon, SquarePlusIcon } from "lucide-react"
+import { HomeIcon, LayoutListIcon, PackageIcon, SquarePenIcon, SquarePlusIcon } from "lucide-react"
 import Link from "next/link"
 import { useLanguage } from "@/lib/language-context"
 
@@ -10,10 +9,11 @@ const StoreSidebar = ({storeInfo}) => {
     const pathname = usePathname()
 
     const sidebarLinks = [
-        { name: 'Dashboard', href: '/store', icon: HomeIcon },
-        { name: 'Add Product', href: '/store/add-product', icon: SquarePlusIcon },
-        { name: 'Manage Product', href: '/store/manage-product', icon: SquarePenIcon },
-        { name: 'Orders', href: '/store/orders', icon: LayoutListIcon },
+        { name: language === 'ar' ? 'لوحة التحكم' : 'Dashboard', href: '/store', icon: HomeIcon },
+        { name: language === 'ar' ? 'أضف منتج' : 'Add Product', href: '/store/add-product', icon: SquarePlusIcon },
+        { name: language === 'ar' ? 'إدارة المنتجات' : 'Manage Product', href: '/store/manage-product', icon: SquarePenIcon },
+        { name: language === 'ar' ? 'إدارة المخزون' : 'Manage Stock', href: '/store/manage-stock', icon: PackageIcon },
+        { name: language === 'ar' ? 'الطلبات' : 'Orders', href: '/store/orders', icon: LayoutListIcon },
     ]
 
     return (

@@ -2,6 +2,7 @@
 import { useState, useRef, useEffect } from 'react';
 import { MessageCircle, X, ChevronLeft, Send, Loader2 } from 'lucide-react';
 import { useChat } from '@/lib/chat-context';
+import { useAuth } from '@/lib/auth-context';
 
 // ── Helpers ────────────────────────────────────────────────────────────────
 const getOtherUser = (conv, currentUserId) => {
@@ -145,15 +146,8 @@ const MessageThread = ({ currentUserId }) => {
 // ── Main Widget ─────────────────────────────────────────────────────────────
 const ChatWindow = () => {
   const { isChatOpen, setIsChatOpen, unreadCount, activeConversation, fetchConversations } = useChat();
-
-  const [currentUserId, setCurrentUserId] = useState(null);
-
-  useEffect(() => {
-    const user = typeof window !== 'undefined' ? localStorage.getItem('user') : null;
-    if (user) {
-      try { setCurrentUserId(JSON.parse(user).id); } catch {}
-    }
-  }, []);
+  const { user } = useAuth();
+  const currentUserId = user?.id || null;
 
   const handleOpen = () => {
     fetchConversations();

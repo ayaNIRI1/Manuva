@@ -2,13 +2,17 @@
 import { XIcon } from "lucide-react"
 import { useState } from "react"
 import { toast } from "react-hot-toast"
+import { useDispatch } from "react-redux"
+import { addAddress } from "@/lib/features/address/addressSlice"
 
 const AddressModal = ({ setShowAddressModal }) => {
+
+    const dispatch = useDispatch()
 
     const [address, setAddress] = useState({
         name: '',
         email: '',
-        street: '',
+        address: '',
         city: '',
         state: '',
         zip: '',
@@ -25,8 +29,9 @@ const AddressModal = ({ setShowAddressModal }) => {
 
     const handleSubmit = async (e) => {
         e.preventDefault()
-
+        dispatch(addAddress(address))
         setShowAddressModal(false)
+        toast.success('Address added successfully')
     }
 
     return (
@@ -35,7 +40,7 @@ const AddressModal = ({ setShowAddressModal }) => {
                 <h2 className="text-3xl ">Add New <span className="font-semibold">Address</span></h2>
                 <input name="name" onChange={handleAddressChange} value={address.name} className="p-2 px-4 outline-none border border-slate-200 rounded w-full" type="text" placeholder="Enter your name" required />
                 <input name="email" onChange={handleAddressChange} value={address.email} className="p-2 px-4 outline-none border border-slate-200 rounded w-full" type="email" placeholder="Email address" required />
-                <input name="street" onChange={handleAddressChange} value={address.street} className="p-2 px-4 outline-none border border-slate-200 rounded w-full" type="text" placeholder="Street" required />
+                <input name="address" onChange={handleAddressChange} value={address.address} className="p-2 px-4 outline-none border border-slate-200 rounded w-full" type="text" placeholder="Street Address" required />
                 <div className="flex gap-4">
                     <input name="city" onChange={handleAddressChange} value={address.city} className="p-2 px-4 outline-none border border-slate-200 rounded w-full" type="text" placeholder="City" required />
                     <input name="state" onChange={handleAddressChange} value={address.state} className="p-2 px-4 outline-none border border-slate-200 rounded w-full" type="text" placeholder="State" required />
