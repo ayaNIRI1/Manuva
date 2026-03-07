@@ -2,7 +2,7 @@
 import Counter from "@/components/Counter";
 import OrderSummary from "@/components/OrderSummary";
 import PageTitle from "@/components/PageTitle";
-import { deleteItemFromCart } from "@/lib/features/cart/cartSlice";
+import { fetchCart, removeFromCartAsync } from "@/lib/features/cart/cartSlice";
 import { Trash2Icon } from "lucide-react";
 import Image from "next/image";
 import { useEffect, useState } from "react";
@@ -12,7 +12,7 @@ export default function Cart() {
 
     const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$';
     
-    const { cartItems } = useSelector(state => state.cart);
+    const { items, cartItems } = useSelector(state => state.cart);
     const products = useSelector(state => state.product.list);
 
     const dispatch = useDispatch();
@@ -21,30 +21,54 @@ export default function Cart() {
     const [totalPrice, setTotalPrice] = useState(0);
 
     const createCartArray = () => {
-        setTotalPrice(0);
-        const cartArray = [];
-        for (const [key, value] of Object.entries(cartItems)) {
-            const product = products.find(product => product.id === key);
-            if (product) {
-                cartArray.push({
-                    ...product,
-                    quantity: value,
-                });
-                setTotalPrice(prev => prev + product.price * value);
+        // Prefer items from backend sync as they are self-contained
+        if (items && items.length > 0) {
+            let total = 0;
+            const formattedItems = items.map(item => {
+                total += item.price_at_purchase * item.quantity;
+                return {
+                    id: item.product_id,
+                    name: item.product_name,
+                    image_url: item.product_image,
+                    price: item.price_at_purchase,
+                    quantity: item.quantity,
+                    category: '' // Category might not be in cart response
+                };
+            });
+            setTotalPrice(total);
+            setCartArray(formattedItems);
+        } else {
+            // Fallback to finding in product list (legacy)
+            setTotalPrice(0);
+            const legacyArray = [];
+            for (const [key, value] of Object.entries(cartItems)) {
+                const product = products.find(p => p.id === key);
+                if (product) {
+                    legacyArray.push({ ...product, quantity: value });
+                    setTotalPrice(prev => prev + product.price * value);
+                }
             }
+            setCartArray(legacyArray);
         }
-        setCartArray(cartArray);
     }
 
     const handleDeleteItemFromCart = (productId) => {
-        dispatch(deleteItemFromCart({ productId }))
+        dispatch(removeFromCartAsync({ productId }))
+    }
+
+    const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:3001'
+
+    const getFullImageUrl = (img) => {
+        if (!img) return '/placeholder.png';
+        if (typeof img === 'string') {
+            return img.startsWith('http') ? img : `${backendUrl}${img.startsWith('/') ? '' : '/'}${img}`;
+        }
+        return img;
     }
 
     useEffect(() => {
-        if (products.length > 0) {
-            createCartArray();
-        }
-    }, [cartItems, products]);
+        createCartArray();
+    }, [items, cartItems, products]);
 
     return cartArray.length > 0 ? (
         <div className="min-h-screen mx-6 text-slate-800">
@@ -69,8 +93,8 @@ export default function Cart() {
                                 cartArray.map((item, index) => (
                                     <tr key={index} className="space-x-2">
                                         <td className="flex gap-3 my-4">
-                                            <div className="flex gap-3 items-center justify-center bg-slate-100 size-18 rounded-md">
-                                                <Image src={item.images[0]} className="h-14 w-auto" alt="" width={45} height={45} />
+                                            <div className="flex gap-3 items-center justify-center bg-slate-100 size-18 rounded-md overflow-hidden p-1">
+                                                <Image src={getFullImageUrl(item.image_url || item.images?.[0])} className="h-full w-full object-cover rounded-sm" alt="" width={60} height={60} />
                                             </div>
                                             <div>
                                                 <p className="max-sm:text-sm">{item.name}</p>

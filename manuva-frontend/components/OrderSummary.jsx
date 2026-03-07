@@ -30,6 +30,8 @@ const OrderSummary = ({ totalPrice, items }) => {
         
     }
 
+    const { orderId } = useSelector(state => state.cart);
+
     const handlePlaceOrder = async (e) => {
         e.preventDefault();
 
@@ -38,15 +40,16 @@ const OrderSummary = ({ totalPrice, items }) => {
             return;
         }
 
+        if (!orderId) {
+            toast.error('No active cart found');
+            return;
+        }
+
         try {
             const token = await getToken();
             
-            // 1. Create Order
-            const orderData = {
-                items: items.map(item => ({
-                    product_id: item.id,
-                    quantity: item.quantity
-                })),
+            // 1. Checkout existing order
+            const checkoutData = {
                 shipping_address: {
                     name: selectedAddress.name,
                     address: selectedAddress.address,
@@ -57,14 +60,13 @@ const OrderSummary = ({ totalPrice, items }) => {
                 payment_method: paymentMethod
             };
 
-            const order = await apiRequest('/orders', {
+            const order = await apiRequest(`/orders/checkout/${orderId}`, {
                 method: 'POST',
-                body: JSON.stringify(orderData),
+                body: JSON.stringify(checkoutData),
                 headers: { Authorization: `Bearer ${token}` }
             });
 
             if (paymentMethod === 'CHARGILY') {
-                // 2. Create Chargily Session
                 const paymentResponse = await apiRequest('/payments/checkout', {
                     method: 'POST',
                     body: JSON.stringify({

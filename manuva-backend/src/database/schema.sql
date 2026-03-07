@@ -75,11 +75,11 @@ CREATE TABLE IF NOT EXISTS orders (
     order_date TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
     total DECIMAL(10,2) NOT NULL CHECK (total >= 0),
     status VARCHAR(20) DEFAULT 'pending'
-        CHECK (status IN ('pending','confirmed','shipped','delivered','cancelled')),
+        CHECK (status IN ('1','pending','confirmed','shipped','delivered','cancelled')),
     payment_method VARCHAR(50),
     payment_status VARCHAR(20) DEFAULT 'pending'
         CHECK (payment_status IN ('pending','paid','failed')),
-    shipping_address JSONB NOT NULL,
+    shipping_address JSONB,
     platform_fee DECIMAL(10,2) DEFAULT 0,
     seller_payout DECIMAL(10,2) DEFAULT 0,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,

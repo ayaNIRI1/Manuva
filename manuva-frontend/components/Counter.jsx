@@ -1,5 +1,5 @@
 'use client'
-import { addToCart, removeFromCart } from "@/lib/features/cart/cartSlice";
+import { addToCartAsync } from "@/lib/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
 
 const Counter = ({ productId }) => {
@@ -9,11 +9,11 @@ const Counter = ({ productId }) => {
     const dispatch = useDispatch();
 
     const addToCartHandler = () => {
-        dispatch(addToCart({ productId }))
+        dispatch(addToCartAsync({ productId, quantity: 1 }))
     }
 
     const removeFromCartHandler = () => {
-        dispatch(removeFromCart({ productId }))
+        dispatch(addToCartAsync({ productId, quantity: -1 }))
     }
 
     return (

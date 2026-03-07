@@ -1,6 +1,6 @@
 'use client'
 
-import { addToCart } from "@/lib/features/cart/cartSlice";
+import { addToCartAsync } from "@/lib/features/cart/cartSlice";
 import { StarIcon, TagIcon, EarthIcon, CreditCardIcon, UserIcon, ArrowRight } from "lucide-react";
 import { assets } from "@/assets/assets";
 import { useRouter } from "next/navigation";
@@ -36,7 +36,7 @@ const ProductDetails = ({ product }) => {
     const [mainImage, setMainImage] = useState(images[0]);
 
     const addToCartHandler = () => {
-        dispatch(addToCart({ productId }))
+        dispatch(addToCartAsync({ productId, quantity: 1 }))
     }
 
     const averageRating = product.rating?.length > 0 

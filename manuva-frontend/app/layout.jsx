@@ -6,6 +6,7 @@ import { ChatProvider } from "@/lib/chat-context";
 import { ThemeProvider } from "@/lib/theme-context";
 import { LanguageProvider } from "@/lib/language-context";
 import ChatWindow from "@/components/ChatWindow";
+import CartInitializer from "@/components/CartInitializer";
 import "./globals.css";
 
 const outfit = Outfit({ subsets: ["latin"], weight: ["400", "500", "600"] });
@@ -25,6 +26,7 @@ export default function RootLayout({ children }) {
                             <LanguageProvider>
                                 <ChatProvider>
                                     <Toaster />
+                                    <CartInitializer />
                                     {children}
                                     <ChatWindow />
                                 </ChatProvider>
