@@ -71,10 +71,45 @@ router.get('/:id', async (req, res) => {
       return res.status(404).json({ error: 'Artisan not found' });
     }
 
+    // Optional: Check if current user is following this artisan
+    let is_following = false;
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        const token = authHeader.split(' ')[1];
+        try {
+            // We need to decode the token to get the user ID
+            // Since we don't have the jwt import here, we can't easily verify it without it.
+            // However, the `auth` middleware is usually used for this.
+            // Let's refactor the route to use auth middleware OPTIONALLY if possible, 
+            // or just rely on the frontend to check separately (which it does via /following/:id/check).
+            // Actually, Artisans.js doesn't have jwt imported. 
+            // Let's stick to the /following/:id/check for now to keep it clean.
+        } catch (e) {}
+    }
+
     res.json(result.rows[0]);
   } catch (error) {
     console.error('Get artisan error:', error);
     res.status(500).json({ error: 'Failed to fetch artisan' });
+  }
+});
+
+// Get artisan's followers (artisan only)
+router.get('/dashboard/followers', auth, isArtisan, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT u.id, u.name, u.profile_img, f.created_at as followed_at
+       FROM follows f
+       JOIN users u ON f.follower_id = u.id
+       WHERE f.seller_id = $1
+       ORDER BY f.created_at DESC`,
+      [req.user.id]
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Get followers error:', error);
+    res.status(500).json({ error: 'Failed to fetch followers' });
   }
 });
 

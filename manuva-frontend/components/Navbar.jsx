@@ -67,21 +67,30 @@ const Navbar = () => {
 
             <form
               onSubmit={handleSearch}
-              className="hidden xl:flex items-center w-xs text-sm gap-2 bg-surface border border-border px-4 py-2.5 rounded-full hover:shadow-sm transition-shadow"
+              className="hidden xl:flex items-center w-80 text-sm bg-surface border border-border pl-4 pr-1.5 py-1.5 rounded-full hover:shadow-md transition-all focus-within:ring-2 focus-within:ring-primary/20 focus-within:border-primary group"
             >
-              <Search size={18} className="text-primary" />
+              <Search
+                size={18}
+                className="text-muted-foreground group-focus-within:text-primary transition-colors"
+              />
               <input
-                className="w-full bg-transparent outline-none placeholder:text-muted-foreground"
+                className="flex-1 bg-transparent border-none outline-none px-2 placeholder:text-muted-foreground"
                 type="text"
                 placeholder={
                   language === "ar"
-                    ? "ابحث عن منتجات حرفية..."
-                    : "Search for handmade products..."
+                    ? "ابحث عن منتجات..."
+                    : "Search for products..."
                 }
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 required
               />
+              <button
+                type="submit"
+                className="bg-primary text-primary-foreground px-4 py-1.5 rounded-full font-medium hover:bg-neutral-800 transition-all active:scale-95 whitespace-nowrap"
+              >
+                {language === "ar" ? "بحث" : "Search"}
+              </button>
             </form>
 
             <div className="flex items-center gap-6">
@@ -180,14 +189,19 @@ const Navbar = () => {
           {/* Mobile User Button  */}
           <div className="md:hidden flex items-center gap-3">
             {isAuthenticated && (
-              <Link href="/chat" className="relative text-foreground">
-                <MessageCircle size={22} />
-                {unreadCount > 0 && (
-                  <span className="absolute -top-2 -right-2 text-[10px] text-white bg-red-500 px-1.5 py-0.5 rounded-full font-bold">
-                    {unreadCount}
-                  </span>
-                )}
-              </Link>
+              <div className="flex items-center gap-4">
+                <Link href="/shop" className="text-foreground hover:text-primary transition-colors p-2 bg-surface border border-border rounded-full shadow-sm active:scale-95">
+                  <Search size={18} />
+                </Link>
+                <Link href="/chat" className="relative text-foreground hover:text-primary transition-colors p-2 bg-surface border border-border rounded-full shadow-sm active:scale-95">
+                  <MessageCircle size={18} />
+                  {unreadCount > 0 && (
+                    <span className="absolute -top-1 -right-1 text-[8px] text-white bg-red-500 px-1.5 py-0.5 rounded-full font-bold">
+                      {unreadCount}
+                    </span>
+                  )}
+                </Link>
+              </div>
             )}
 
             <div className="relative">

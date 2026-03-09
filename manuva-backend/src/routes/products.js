@@ -49,7 +49,15 @@ router.get('/', async (req, res) => {
     }
 
     if (search) {
-      conditions.push(`(p.name ILIKE $${paramCount} OR p.description ILIKE $${paramCount})`);
+      conditions.push(`(
+        p.name ILIKE $${paramCount} OR 
+        p.description ILIKE $${paramCount} OR 
+        u.name ILIKE $${paramCount} OR
+        p.material ILIKE $${paramCount} OR
+        p.theme ILIKE $${paramCount} OR
+        p.color ILIKE $${paramCount} OR
+        p.image_url ILIKE $${paramCount}
+      )`);
       values.push(`%${search}%`);
       paramCount++;
     }
@@ -97,7 +105,9 @@ router.get('/', async (req, res) => {
 
     // Get total count
     const countResult = await db.query(
-      `SELECT COUNT(*) FROM products p ${whereClause}`,
+      `SELECT COUNT(*) FROM products p 
+       LEFT JOIN users u ON p.seller_id = u.id
+       ${whereClause}`,
       values
     );
     const totalProducts = parseInt(countResult.rows[0].count);

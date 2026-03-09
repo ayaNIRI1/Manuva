@@ -1,10 +1,10 @@
 'use client';
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
 import { useTheme } from '@/lib/theme-context';
 import { useLanguage } from '@/lib/language-context';
 import { useRouter } from 'next/navigation';
-import { User, Settings, Moon, Sun, Globe, LogOut, Save, Camera, MapPin, AlignLeft, ShoppingCart, Sparkles } from 'lucide-react';
+import { User, Settings, Moon, Sun, Globe, LogOut, Save, Camera, MapPin, AlignLeft, ShoppingCart, Sparkles, Users, UserMinus } from 'lucide-react';
 import { apiRequest } from '@/lib/api';
 import toast from 'react-hot-toast';
 
@@ -22,6 +22,23 @@ export default function ProfilePage() {
   });
 
   const [isSaving, setIsSaving] = useState(false);
+  const [activeTab, setActiveTab] = useState('profile'); // 'profile' or 'following'
+  const [followingStores, setFollowingStores] = useState([]);
+
+  const fetchFollowing = async () => {
+    try {
+      const data = await apiRequest('/user/following');
+      setFollowingStores(data);
+    } catch (err) {
+      console.error('Fetch following error:', err);
+    }
+  };
+
+  useEffect(() => {
+    if (user && activeTab === 'following') {
+      fetchFollowing();
+    }
+  }, [user, activeTab]);
 
   const handleUpdateProfile = async (e) => {
     e.preventDefault();
@@ -40,10 +57,25 @@ export default function ProfilePage() {
     }
   };
 
+  useEffect(() => {
+    if (!user) {
+      router.push('/login');
+    }
+  }, [user, router]);
+
   if (!user) {
-    if (typeof window !== 'undefined') router.push('/login');
     return null;
   }
+
+  const handleUnfollow = async (sellerId) => {
+    try {
+      await apiRequest(`/user/following/${sellerId}`, { method: 'DELETE' });
+      setFollowingStores(prev => prev.filter(s => s.id !== sellerId));
+      toast.success(language === 'ar' ? 'تم إلغاء المتابعة' : 'Unfollowed successfully');
+    } catch (err) {
+      toast.error(err.message);
+    }
+  };
 
   return (
     <div className="min-h-screen bg-background selection:bg-primary/30 selection:text-primary">
@@ -90,9 +122,19 @@ export default function ProfilePage() {
             </div>
 
             <nav className="bg-surface p-2 rounded-[2rem] border border-border shadow-sm space-y-1">
-              <button className="w-full flex items-center gap-4 px-6 py-4 bg-brand-mauve text-white rounded-2xl font-semibold shadow-md shadow-brand-mauve/20">
+              <button 
+                onClick={() => setActiveTab('profile')}
+                className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-semibold transition-all ${activeTab === 'profile' ? 'bg-brand-mauve text-white shadow-md' : 'text-foreground/70 hover:bg-muted'}`}
+              >
                 <User size={20} />
                 {t('profile')}
+              </button>
+              <button 
+                onClick={() => setActiveTab('following')}
+                className={`w-full flex items-center gap-4 px-6 py-4 rounded-2xl font-semibold transition-all ${activeTab === 'following' ? 'bg-brand-mauve text-white shadow-md' : 'text-foreground/70 hover:bg-muted'}`}
+              >
+                <Users size={20} />
+                {language === 'ar' ? 'المتاجر المتابعة' : 'Following'}
               </button>
               <button 
                 onClick={() => router.push('/orders')}
@@ -122,83 +164,157 @@ export default function ProfilePage() {
           </aside>
 
           {/* Main Content Area */}
-          <div className="lg:col-span-8 space-y-8">
+          <div className="lg:col-span-8 space-y-8 transition-all duration-300">
             
-            {/* Edit Profile Form */}
-            <section className="bg-surface p-8 sm:p-10 rounded-[2.5rem] border border-border shadow-sm">
-              <div className="flex items-center gap-4 mb-10">
-                <div className="w-12 h-12 flex items-center justify-center bg-brand-blush/50 dark:bg-brand-navy/30 text-brand-mauve rounded-2xl">
-                  <User size={24} />
+            {activeTab === 'profile' ? (
+              /* Edit Profile Form */
+              <section className="bg-surface p-8 sm:p-10 rounded-[2.5rem] border border-border shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="flex items-center gap-4 mb-10">
+                  <div className="w-12 h-12 flex items-center justify-center bg-brand-blush/50 dark:bg-brand-navy/30 text-brand-mauve rounded-2xl">
+                    <User size={24} />
+                  </div>
+                  <div>
+                    <h3 className="text-2xl font-extrabold tracking-tight">{t('profile')}</h3>
+                    <p className="text-sm text-muted-foreground mt-1">{language === 'ar' ? 'أكمل بياناتك الشخصية لتحسين تجربتك' : 'Complete your personal data to improve your experience'}</p>
+                  </div>
                 </div>
-                <div>
-                  <h3 className="text-2xl font-extrabold tracking-tight">{t('profile')}</h3>
-                  <p className="text-sm text-muted-foreground mt-1">{language === 'ar' ? 'أكمل بياناتك الشخصية لتحسين تجربتك' : 'Complete your personal data to improve your experience'}</p>
-                </div>
-              </div>
 
-              <form onSubmit={handleUpdateProfile} className="space-y-8">
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  {/* Name field */}
-                  <div className="space-y-2.5">
-                    <label className="text-sm font-bold ml-1 text-foreground/80">{t('name')}</label>
-                    <div className="relative group">
-                      <User className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-brand-mauve transition-colors" size={18} />
-                      <input 
-                        type="text" 
-                        value={formData.name}
-                        onChange={(e) => setFormData({...formData, name: e.target.value})}
-                        className="w-full pl-12 pr-5 py-3.5 bg-background border border-border rounded-2xl focus:ring-2 focus:ring-brand-mauve/20 focus:border-brand-mauve outline-none transition-all placeholder:text-muted-foreground/50 font-medium"
-                        placeholder={t('name')}
-                      />
+                <form onSubmit={handleUpdateProfile} className="space-y-8">
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                    {/* Name field */}
+                    <div className="space-y-2.5">
+                      <label className="text-sm font-bold ml-1 text-foreground/80">{t('name')}</label>
+                      <div className="relative group">
+                        <User className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-brand-mauve transition-colors" size={18} />
+                        <input 
+                          type="text" 
+                          value={formData.name}
+                          onChange={(e) => setFormData({...formData, name: e.target.value})}
+                          className="w-full pl-12 pr-5 py-3.5 bg-background border border-border rounded-2xl focus:ring-2 focus:ring-brand-mauve/20 focus:border-brand-mauve outline-none transition-all placeholder:text-muted-foreground/50 font-medium"
+                          placeholder={t('name')}
+                        />
+                      </div>
+                    </div>
+
+                    {/* Location field */}
+                    <div className="space-y-2.5">
+                      <label className="text-sm font-bold ml-1 text-foreground/80">{t('location')}</label>
+                      <div className="relative group">
+                        <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-brand-mauve transition-colors" size={18} />
+                        <input 
+                          type="text" 
+                          value={formData.location}
+                          onChange={(e) => setFormData({...formData, location: e.target.value})}
+                          className="w-full pl-12 pr-5 py-3.5 bg-background border border-border rounded-2xl focus:ring-2 focus:ring-brand-mauve/20 focus:border-brand-mauve outline-none transition-all placeholder:text-muted-foreground/50 font-medium"
+                          placeholder={t('location')}
+                        />
+                      </div>
                     </div>
                   </div>
 
-                  {/* Location field */}
+                  {/* Bio field */}
                   <div className="space-y-2.5">
-                    <label className="text-sm font-bold ml-1 text-foreground/80">{t('location')}</label>
+                    <label className="text-sm font-bold ml-1 text-foreground/80">{t('bio')}</label>
                     <div className="relative group">
-                      <MapPin className="absolute left-4 top-1/2 -translate-y-1/2 text-muted-foreground group-focus-within:text-brand-mauve transition-colors" size={18} />
-                      <input 
-                        type="text" 
-                        value={formData.location}
-                        onChange={(e) => setFormData({...formData, location: e.target.value})}
-                        className="w-full pl-12 pr-5 py-3.5 bg-background border border-border rounded-2xl focus:ring-2 focus:ring-brand-mauve/20 focus:border-brand-mauve outline-none transition-all placeholder:text-muted-foreground/50 font-medium"
-                        placeholder={t('location')}
-                      />
+                      <AlignLeft className="absolute left-4 top-4 text-muted-foreground group-focus-within:text-brand-mauve transition-colors" size={18} />
+                      <textarea 
+                        rows="4"
+                        value={formData.bio}
+                        onChange={(e) => setFormData({...formData, bio: e.target.value})}
+                        className="w-full pl-12 pr-5 py-4 bg-background border border-border rounded-2xl focus:ring-2 focus:ring-brand-mauve/20 focus:border-brand-mauve outline-none transition-all resize-none placeholder:text-muted-foreground/50 font-medium"
+                        placeholder={t('bio')}
+                      ></textarea>
                     </div>
                   </div>
-                </div>
 
-                {/* Bio field */}
-                <div className="space-y-2.5">
-                  <label className="text-sm font-bold ml-1 text-foreground/80">{t('bio')}</label>
-                  <div className="relative group">
-                    <AlignLeft className="absolute left-4 top-4 text-muted-foreground group-focus-within:text-brand-mauve transition-colors" size={18} />
-                    <textarea 
-                      rows="4"
-                      value={formData.bio}
-                      onChange={(e) => setFormData({...formData, bio: e.target.value})}
-                      className="w-full pl-12 pr-5 py-4 bg-background border border-border rounded-2xl focus:ring-2 focus:ring-brand-mauve/20 focus:border-brand-mauve outline-none transition-all resize-none placeholder:text-muted-foreground/50 font-medium"
-                      placeholder={t('bio')}
-                    ></textarea>
+                  <div className="flex justify-end pt-2">
+                    <button 
+                      disabled={isSaving}
+                      className="w-full sm:w-auto px-10 py-4 bg-brand-mauve text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:shadow-xl hover:shadow-brand-mauve/20 active:scale-95 disabled:opacity-50 transition-all border border-brand-mauve/20"
+                    >
+                      {isSaving ? (
+                        <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
+                      ) : (
+                        <Save size={18} />
+                      )}
+                      {isSaving ? (language === 'ar' ? 'جاري الحفظ...' : 'Saving...') : t('save')}
+                    </button>
+                  </div>
+                </form>
+              </section>
+            ) : (
+              /* Following Stores List */
+              <section className="bg-surface p-8 sm:p-10 rounded-[2.5rem] border border-border shadow-sm animate-in fade-in slide-in-from-bottom-4 duration-500">
+                <div className="flex items-center justify-between mb-10">
+                  <div className="flex items-center gap-4">
+                    <div className="w-12 h-12 flex items-center justify-center bg-brand-pink/20 text-brand-mauve rounded-2xl">
+                      <Users size={24} />
+                    </div>
+                    <div>
+                      <h3 className="text-2xl font-extrabold tracking-tight">{language === 'ar' ? 'المتاجر المتابعة' : 'Following Stores'}</h3>
+                      <p className="text-sm text-muted-foreground mt-1">{language === 'ar' ? 'المتاجر التي تتابعها للحصول على تحديثات' : 'Stores you follow for updates'}</p>
+                    </div>
+                  </div>
+                  <div className="px-4 py-1.5 bg-brand-mauve/10 text-brand-mauve rounded-xl text-sm font-bold">
+                    {followingStores.length} {language === 'ar' ? 'متجر' : 'Stores'}
                   </div>
                 </div>
 
-                <div className="flex justify-end pt-2">
-                  <button 
-                    disabled={isSaving}
-                    className="w-full sm:w-auto px-10 py-4 bg-brand-mauve text-white rounded-2xl font-bold flex items-center justify-center gap-3 hover:shadow-xl hover:shadow-brand-mauve/20 active:scale-95 disabled:opacity-50 transition-all border border-brand-mauve/20"
-                  >
-                    {isSaving ? (
-                      <div className="w-5 h-5 border-2 border-white/30 border-t-white rounded-full animate-spin"></div>
-                    ) : (
-                      <Save size={18} />
-                    )}
-                    {isSaving ? (language === 'ar' ? 'جاري الحفظ...' : 'Saving...') : t('save')}
-                  </button>
-                </div>
-              </form>
-            </section>
+                {followingStores.length > 0 ? (
+                  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+                    {followingStores.map((store) => (
+                      <div key={store.id} className="p-5 bg-background border border-border rounded-[2rem] flex items-center gap-4 group hover:border-brand-mauve/30 hover:shadow-md transition-all">
+                        <div 
+                          className="cursor-pointer overflow-hidden rounded-2xl w-16 h-16 flex-shrink-0"
+                          onClick={() => router.push(`/shop/${store.id}`)}
+                        >
+                          <img 
+                            src={store.profile_img || '/images/default-store.jpg'} 
+                            alt={store.name} 
+                            className="w-full h-full object-cover group-hover:scale-110 transition-transform duration-500" 
+                          />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <h4 
+                            className="font-bold text-foreground hover:text-brand-mauve cursor-pointer truncate transition-colors"
+                            onClick={() => router.push(`/shop/${store.id}`)}
+                          >
+                            {store.name}
+                          </h4>
+                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-1">
+                            <MapPin size={12} />
+                            {store.location || 'Unknown'}
+                          </p>
+                        </div>
+                        <button 
+                          onClick={() => handleUnfollow(store.id)}
+                          className="p-2.5 text-muted-foreground hover:text-red-500 hover:bg-red-50 dark:hover:bg-red-950/20 rounded-xl transition-all"
+                          title={language === 'ar' ? 'إلغاء المتابعة' : 'Unfollow'}
+                        >
+                          <UserMinus size={18} />
+                        </button>
+                      </div>
+                    ))}
+                  </div>
+                ) : (
+                  <div className="text-center py-20 px-6">
+                    <div className="w-20 h-20 bg-muted rounded-full flex items-center justify-center mx-auto mb-6 opacity-40">
+                      <Users size={40} />
+                    </div>
+                    <h4 className="text-xl font-bold text-foreground/70">{language === 'ar' ? 'لا تتابع أي متجر بعد' : 'No followed stores yet'}</h4>
+                    <p className="text-muted-foreground mt-2 max-w-xs mx-auto">
+                      {language === 'ar' ? 'ابدأ في اكتشاف الحرفيين المفضلين لديك ومتابعتهم' : 'Start discovering and following your favorite artisans'}
+                    </p>
+                    <button 
+                      onClick={() => router.push('/shop')}
+                      className="mt-8 px-8 py-3 bg-brand-mauve text-white rounded-2xl font-bold hover:shadow-lg transition-all"
+                    >
+                      {language === 'ar' ? 'استكشف المتجر' : 'Explore Shop'}
+                    </button>
+                  </div>
+                )}
+              </section>
+            )}
 
             {/* Application Settings Section */}
             <section className="bg-surface p-8 sm:p-10 rounded-[2.5rem] border border-border shadow-sm">
