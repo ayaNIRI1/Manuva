@@ -2,27 +2,62 @@
 import { useEffect, useState } from "react"
 import Loading from "../Loading"
 import Link from "next/link"
-import { ArrowRightIcon } from "lucide-react"
+import { useRouter, usePathname } from "next/navigation"
+import { ArrowLeftIcon } from "lucide-react"
 import AdminNavbar from "./AdminNavbar"
 import AdminSidebar from "./AdminSidebar"
 
 const AdminLayout = ({ children }) => {
-
     const [isAdmin, setIsAdmin] = useState(false)
     const [loading, setLoading] = useState(true)
-
-    const fetchIsAdmin = async () => {
-        setIsAdmin(true)
-        setLoading(false)
-    }
+    const router = useRouter()
+    const pathname = usePathname()
 
     useEffect(() => {
-        fetchIsAdmin()
-    }, [])
+        const checkAuth = async () => {
+            const token = localStorage.getItem('token')
+            const userStr = localStorage.getItem('user')
+            
+            if (pathname === '/login') {
+                if (token && userStr) {
+                    const user = JSON.parse(userStr)
+                    if (user.role === 'admin') {
+                        router.push('/')
+                        return
+                    }
+                }
+                setLoading(false)
+                return
+            }
 
-    return loading ? (
-        <Loading />
-    ) : isAdmin ? (
+            if (!token || !userStr) {
+                router.push('/login')
+                setLoading(false)
+                return
+            }
+
+            try {
+                const user = JSON.parse(userStr)
+                if (user.role !== 'admin') {
+                    setIsAdmin(false)
+                } else {
+                    setIsAdmin(true)
+                }
+            } catch (e) {
+                router.push('/login')
+            } finally {
+                setLoading(false)
+            }
+        }
+
+        checkAuth()
+    }, [pathname, router])
+
+    if (loading) return <Loading />
+
+    if (pathname === '/login') return <>{children}</>
+
+    return isAdmin ? (
         <div className="flex flex-col h-screen">
             <AdminNavbar />
             <div className="flex flex-1 items-start h-full overflow-y-scroll no-scrollbar">
@@ -35,8 +70,8 @@ const AdminLayout = ({ children }) => {
     ) : (
         <div className="min-h-screen flex flex-col items-center justify-center text-center px-6">
             <h1 className="text-2xl sm:text-4xl font-semibold text-slate-400">You are not authorized to access this page</h1>
-            <Link href="/" className="bg-slate-700 text-white flex items-center gap-2 mt-8 p-2 px-6 max-sm:text-sm rounded-full">
-                Go to home <ArrowRightIcon size={18} />
+            <Link href="/login" className="bg-slate-700 text-white flex items-center gap-2 mt-8 p-2 px-6 max-sm:text-sm rounded-full">
+                Go to Login <ArrowLeftIcon size={18} />
             </Link>
         </div>
     )

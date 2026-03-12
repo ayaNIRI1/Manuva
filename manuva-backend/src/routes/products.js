@@ -38,6 +38,9 @@ router.get('/', async (req, res) => {
       values.push(status);
     }
 
+    // Always require verified seller for public listing
+    conditions.push(`u.is_verified = true`);
+
     if (category_id) {
       conditions.push(`p.category_id = $${paramCount++}`);
       values.push(category_id);
@@ -201,7 +204,7 @@ router.get('/:id', async (req, res) => {
        FROM products p
        LEFT JOIN categories c ON p.category_id = c.id
        LEFT JOIN users u ON p.seller_id = u.id
-       WHERE p.id = $1`,
+       WHERE p.id = $1 AND u.is_verified = true`,
       [id]
     );
 
@@ -243,7 +246,7 @@ router.post('/', auth, isArtisan, upload.array('images', 4),
         `INSERT INTO products (
           seller_id, category_id, name, description, price, mrp, stock, 
           material, size, color, theme, image_url, images, status
-        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'approved') RETURNING *`,
+        ) VALUES ($1, $2, $3, $4, $5, $6, $7, $8, $9, $10, $11, $12, $13, 'pending') RETURNING *`,
         [
           req.user.id, category_id, name, description, price, mrp || price, stock || 0,
           material, size, color, theme, image_url, JSON.stringify(image_urls)
@@ -345,7 +348,8 @@ router.get('/featured/list', async (req, res) => {
        LEFT JOIN categories c ON p.category_id = c.id
        LEFT JOIN users u ON p.seller_id = u.id
        LEFT JOIN reviews r ON p.id = r.product_id
-       WHERE p.is_featured = true AND p.status = 'approved'
+       LEFT JOIN reviews r ON p.id = r.product_id
+       WHERE p.is_featured = true AND p.status = 'approved' AND u.is_verified = true
        GROUP BY p.id, c.name, u.name, u.profile_img
        ORDER BY p.created_at DESC
        LIMIT 20`

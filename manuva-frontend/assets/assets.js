@@ -55,7 +55,6 @@ export const ourSpecsData = [
 export const addressDummyData = {}
 
 
-export const couponDummyData = []
 
 
 export const dummyUserData = {}

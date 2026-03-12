@@ -22,6 +22,7 @@ const chatRoutes = require('./routes/chat');
 const contactRoutes = require('./routes/contact');
 const webhookRoutes = require('./routes/webhooks');
 const paymentRoutes = require('./routes/payments');
+const adminRoutes = require('./routes/admin');
 
 const path = require('path');
 
@@ -151,6 +152,7 @@ app.use('/api/artisans', artisanRoutes);
 app.use('/api/chat', chatRoutes);
 app.use('/api/contact', contactRoutes);
 app.use('/api/payments', paymentRoutes);
+app.use('/api/admin', adminRoutes);
 
 app.use((req, res) => {
   res.status(404).json({ error: 'Route not found' });

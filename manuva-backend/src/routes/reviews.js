@@ -13,11 +13,11 @@ router.get('/product/:productId', async (req, res) => {
     const offset = (page - 1) * limit;
 
     const result = await db.query(
-      `SELECT r.*, 
+      `SELECT r.id, r.rating, r.comment, r.created_at, r.is_approved,
               u.name, u.profile_img
        FROM reviews r
        JOIN users u ON r.buyer_id = u.id
-       WHERE r.product_id = $1
+       WHERE r.product_id = $1 AND r.is_approved = true
        ORDER BY r.created_at DESC
        LIMIT $2 OFFSET $3`,
       [productId, limit, offset]
@@ -71,8 +71,8 @@ router.post('/', auth,
 
       // Create review
       const result = await db.query(
-        `INSERT INTO reviews (product_id, buyer_id, rating, comment)
-         VALUES ($1, $2, $3, $4)
+        `INSERT INTO reviews (product_id, buyer_id, rating, comment, is_approved)
+         VALUES ($1, $2, $3, $4, false)
          RETURNING *`,
         [product_id, req.user.id, rating, comment]
       );
@@ -167,6 +167,39 @@ router.get('/user', auth, async (req, res) => {
   } catch (error) {
     console.error('Get user reviews error:', error);
     res.status(500).json({ error: 'Failed to fetch your reviews' });
+  }
+});
+
+
+// Admin: Get all reviews
+router.get('/admin/all', require('../middleware/auth').auth, require('../middleware/auth').isAdmin, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT r.id, r.rating, r.comment, r.created_at,
+              u.name as buyer_name, u.profile_img as buyer_image,
+              p.name as product_name, p.image_url as product_image, p.id as product_id
+       FROM reviews r
+       JOIN users u ON r.buyer_id = u.id
+       JOIN products p ON r.product_id = p.id
+       ORDER BY r.created_at DESC`
+    );
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Admin get reviews error:', error);
+    res.status(500).json({ error: 'Failed to fetch reviews' });
+  }
+});
+
+// Admin: Delete a review
+router.delete('/admin/:id', require('../middleware/auth').auth, require('../middleware/auth').isAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    const result = await db.query('DELETE FROM reviews WHERE id = $1 RETURNING id', [id]);
+    if (result.rows.length === 0) return res.status(404).json({ error: 'Review not found' });
+    res.json({ message: 'Review deleted successfully' });
+  } catch (error) {
+    console.error('Admin delete review error:', error);
+    res.status(500).json({ error: 'Failed to delete review' });
   }
 });
 

@@ -6,7 +6,7 @@ Backend API for Manuva - A handmade marketplace platform connecting artisans wit
 
 ### Prerequisites
 - Node.js (v14+)
-- PostgreSQL (v12+) with database `manuva-v`
+- PostgreSQL (v12+) with database `manuva_v`
 - Your database should already have the schema installed
 
 ### Installation

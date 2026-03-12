@@ -27,7 +27,7 @@ export default function Dashboard() {
 
     const dashboardCardsData = [
         { title: language === 'ar' ? 'إجمالي المنتجات' : 'Total Products', value: dashboardData.stats?.approved_products || 0, icon: ShoppingBasketIcon },
-        { title: language === 'ar' ? 'إجمالي الأرباح' : 'Total Earnings', value: (dashboardData.stats?.total_revenue || 0) + ' ' + currency, icon: CircleDollarSignIcon },
+        { title: language === 'ar' ? 'صافي الأرباح (بعد 5%)' : 'Net Earnings (after 5%)', value: (Number(dashboardData.stats?.seller_earnings || 0).toFixed(2)) + ' ' + currency, icon: CircleDollarSignIcon },
         { title: language === 'ar' ? 'إجمالي الطلبات' : 'Total Orders', value: dashboardData.recent_orders?.length || 0, icon: TagsIcon },
         { title: language === 'ar' ? 'المتابعون' : 'Followers', value: dashboardData.stats?.total_followers || 0, icon: Users, onClick: () => setActiveTab('followers') },
     ]
@@ -78,6 +78,25 @@ export default function Dashboard() {
             <h1 className="text-3xl font-extrabold tracking-tight text-foreground mb-10">
                 {language === 'ar' ? 'لوحة تحكم' : 'Artisan'} <span className="text-brand-orange">{language === 'ar' ? 'الحرفي' : 'Dashboard'}</span>
             </h1>
+
+            {/* Verification Banner */}
+            {dashboardData.stats?.is_verified === false && (
+                <div className="bg-amber-50 border-l-4 border-l-amber-500 p-4 rounded-xl mb-8 flex items-center gap-4">
+                    <div className="bg-amber-500 p-2 rounded-lg text-white">
+                        <StarIcon size={20} fill="currentColor" />
+                    </div>
+                    <div>
+                        <h4 className="font-bold text-amber-900">
+                            {language === 'ar' ? 'حسابك قيد المراجعة' : 'Account Pending Verification'}
+                        </h4>
+                        <p className="text-amber-700 text-sm">
+                            {language === 'ar' 
+                                ? 'متجرك ليس مرئياً للجمهور بعد. سيتم تفعيله بمجرد مراجعة فريقنا لبياناتك.' 
+                                : 'Your store is not yet visible to the public. It will be activated once our team reviews your information.'}
+                        </p>
+                    </div>
+                </div>
+            )}
 
             <div className="flex flex-wrap gap-5 my-10 mt-4">
                 {

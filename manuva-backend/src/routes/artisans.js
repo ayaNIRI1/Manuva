@@ -1,6 +1,6 @@
 const express = require('express');
 const db = require('../config/database');
-const { auth, isArtisan } = require('../middleware/auth');
+const { auth, isArtisan, isAdmin } = require('../middleware/auth');
 
 const router = express.Router();
 
@@ -62,7 +62,7 @@ router.get('/:id', async (req, res) => {
        FROM users u
        LEFT JOIN products p ON u.id = p.seller_id
        LEFT JOIN reviews r ON p.id = r.product_id
-       WHERE ${whereClause} AND u.role = 'artisan'
+       WHERE ${whereClause} AND u.role = 'artisan' AND u.is_verified = true
        GROUP BY u.id`,
       [id]
     );
@@ -138,7 +138,9 @@ router.get('/:id/products', async (req, res) => {
        FROM products p
        LEFT JOIN categories c ON p.category_id = c.id
        LEFT JOIN reviews r ON p.id = r.product_id
-       WHERE p.seller_id = $1 AND p.status = 'approved'
+       LEFT JOIN reviews r ON p.id = r.product_id
+       JOIN users u ON p.seller_id = u.id
+       WHERE p.seller_id = $1 AND p.status = 'approved' AND u.is_verified = true
        GROUP BY p.id, c.name
        ORDER BY p.created_at DESC
        LIMIT $2 OFFSET $3`,
@@ -158,6 +160,7 @@ router.get('/dashboard/analytics', auth, isArtisan, async (req, res) => {
     // Get overall stats
     const stats = await db.query(
       `SELECT 
+         u.is_verified,
          (SELECT COUNT(*) FROM products WHERE seller_id = $1) as total_products,
          (SELECT COUNT(*) FROM products WHERE seller_id = $1 AND status = 'approved') as approved_products,
          (SELECT COUNT(*) FROM products WHERE seller_id = $1 AND status = 'pending') as pending_products,
@@ -165,10 +168,16 @@ router.get('/dashboard/analytics', auth, isArtisan, async (req, res) => {
          (SELECT COUNT(*) FROM follows WHERE seller_id = $1) as total_followers,
          (SELECT COALESCE(SUM(oi.subtotal), 0) FROM order_items oi 
           JOIN products p ON oi.product_id = p.id 
-          WHERE p.seller_id = $1) as total_revenue,
+          JOIN orders o ON oi.order_id = o.id
+          WHERE p.seller_id = $1 AND o.status IN ('confirmed', 'shipped', 'delivered')) as total_revenue,
+         (SELECT COALESCE(SUM(oi.subtotal) * 0.95, 0) FROM order_items oi 
+          JOIN products p ON oi.product_id = p.id 
+          JOIN orders o ON oi.order_id = o.id
+          WHERE p.seller_id = $1 AND o.status IN ('confirmed', 'shipped', 'delivered')) as seller_earnings,
          (SELECT COALESCE(AVG(r.rating), 0) FROM reviews r 
           JOIN products p ON r.product_id = p.id 
-          WHERE p.seller_id = $1) as avg_rating`,
+          WHERE p.seller_id = $1) as avg_rating
+       FROM users u WHERE u.id = $1`,
       [req.user.id]
     );
 
@@ -262,6 +271,58 @@ router.get('/dashboard/pending-products', auth, isArtisan, async (req, res) => {
   } catch (error) {
     console.error('Get pending products error:', error);
     res.status(500).json({ error: 'Failed to fetch pending products' });
+  }
+});
+
+// Get all artisans for admin (including unverified/inactive)
+router.get('/admin/all', auth, isAdmin, async (req, res) => {
+  try {
+    const result = await db.query(
+      `SELECT u.id, u.name, u.email, u.bio, u.profile_img, u.location, u.is_active, u.is_verified, u.created_at,
+              (SELECT COUNT(*) FROM products WHERE seller_id = u.id AND status = 'approved') as product_count,
+              (SELECT COUNT(*) FROM follows WHERE seller_id = u.id) as follower_count,
+              COALESCE(AVG(r.rating), 0) as avg_rating,
+              COUNT(DISTINCT r.id) as review_count
+       FROM users u
+       LEFT JOIN products p ON u.id = p.seller_id
+       LEFT JOIN reviews r ON p.id = r.product_id
+       WHERE u.role = 'artisan'
+       GROUP BY u.id
+       ORDER BY u.created_at DESC`
+    );
+
+    res.json(result.rows);
+  } catch (error) {
+    console.error('Admin get all artisans error:', error);
+    res.status(500).json({ error: 'Failed to fetch all artisans' });
+  }
+});
+
+// Verify/Unverify artisan (admin only)
+router.post('/:id/verify', auth, isAdmin, async (req, res) => {
+  try {
+    const { id } = req.params;
+    
+    // Toggle is_verified
+    const result = await db.query(
+      `UPDATE users 
+       SET is_verified = NOT is_verified 
+       WHERE id = $1 AND role = 'artisan'
+       RETURNING id, is_verified`,
+      [id]
+    );
+
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: 'Artisan not found' });
+    }
+
+    res.json({ 
+      message: `Artisan ${result.rows[0].is_verified ? 'verified' : 'unverified'} successfully`,
+      is_verified: result.rows[0].is_verified 
+    });
+  } catch (error) {
+    console.error('Verify artisan error:', error);
+    res.status(500).json({ error: 'Failed to update verification status' });
   }
 });
 
