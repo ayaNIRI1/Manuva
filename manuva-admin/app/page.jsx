@@ -46,8 +46,8 @@ export default function AdminDashboard() {
     if (loading) return <Loading />
 
     return (
-        <div className="text-slate-500">
-            <h1 className="text-2xl">Admin <span className="text-slate-800 font-medium">Dashboard</span></h1>
+        <div className="text-slate-700">
+            <h1 className="text-2xl">Admin <span className="text-foreground font-medium">Dashboard</span></h1>
 
             {error && (
                 <div className="mt-4 p-4 bg-red-50 border border-red-200 rounded-lg flex items-center gap-3 text-red-700">
@@ -69,7 +69,7 @@ export default function AdminDashboard() {
                                 <p>{card.title}</p>
                                 <b className="text-2xl font-medium text-slate-700">{card.value}</b>
                             </div>
-                            <card.icon size={50} className=" w-11 h-11 p-2.5 text-slate-400 bg-slate-100 rounded-full" />
+                            <card.icon size={50} className=" w-11 h-11 p-2.5 text-slate-600 bg-slate-100 rounded-full" />
                         </div>
                     ))
                 }

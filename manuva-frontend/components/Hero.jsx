@@ -25,7 +25,7 @@ const Hero = () => {
                         <p className='text-slate-700 text-sm sm:text-base mt-4 max-w-md leading-relaxed'>
                             اكتشف روائع الحرف اليدوية الجزائرية - من الفخار إلى المنسوجات، كل منتج يحكي قصة تراثنا العريق
                         </p>
-                        <div className='text-slate-800 text-sm font-medium mt-4 sm:mt-8'>
+                        <div className='text-foreground text-sm font-medium mt-4 sm:mt-8'>
                             <p className='text-brand-dark'>تبدأ الأسعار من</p>
                             <p className='text-3xl font-bold text-brand-black'>{currency} 500</p>
                         </div>

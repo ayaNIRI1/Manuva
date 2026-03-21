@@ -35,7 +35,7 @@ const ConversationList = ({ currentUserId }) => {
 
       <div className="flex-1 overflow-y-auto">
         {conversations.length === 0 && (
-          <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-2 p-6 text-center">
+          <div className="flex flex-col items-center justify-center h-full text-slate-600 gap-2 p-6 text-center">
             <MessageCircle size={32} className="opacity-40" />
             <p className="text-sm">لا توجد محادثات بعد</p>
             <p className="text-xs opacity-70">يمكنك بدء محادثة من صفحة البائع</p>
@@ -52,14 +52,14 @@ const ConversationList = ({ currentUserId }) => {
               <Avatar name={other?.name || '?'} avatar={other?.avatar} />
               <div className="flex-1 min-w-0">
                 <div className="flex items-center justify-between">
-                  <span className="font-medium text-sm text-slate-800 truncate">{other?.name}</span>
+                  <span className="font-medium text-sm text-foreground truncate">{other?.name}</span>
                   {conv.unread_count > 0 && (
                     <span className="text-[10px] bg-red-500 text-white rounded-full px-1.5 py-0.5 font-bold flex-shrink-0 ml-1">
                       {conv.unread_count}
                     </span>
                   )}
                 </div>
-                <p className="text-xs text-slate-400 truncate mt-0.5">{conv.last_message || 'ابدأ المحادثة'}</p>
+                <p className="text-xs text-slate-600 truncate mt-0.5">{conv.last_message || 'ابدأ المحادثة'}</p>
               </div>
             </button>
           );
@@ -110,7 +110,7 @@ const MessageThread = ({ currentUserId }) => {
                 className={`max-w-[75%] px-3 py-2 rounded-2xl text-sm leading-relaxed shadow-sm ${
                   isMe
                     ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white rounded-br-sm'
-                    : 'bg-white text-slate-800 rounded-bl-sm border border-slate-100'
+                    : 'bg-white text-foreground rounded-bl-sm border border-slate-100'
                 }`}
               >
                 {m.content}

@@ -45,9 +45,9 @@ const AddressModal = ({ setShowAddressModal }) => {
                     <input name="country" onChange={handleAddressChange} value={address.country} className="p-2 px-4 outline-none border border-slate-200 rounded w-full" type="text" placeholder="Country" required />
                 </div>
                 <input name="phone" onChange={handleAddressChange} value={address.phone} className="p-2 px-4 outline-none border border-slate-200 rounded w-full" type="text" placeholder="Phone" required />
-                <button className="bg-slate-800 text-white text-sm font-medium py-2.5 rounded-md hover:bg-slate-900 active:scale-95 transition-all">SAVE ADDRESS</button>
+                <button className="bg-primary text-primary-foreground text-sm font-medium py-2.5 rounded-md hover:bg-accent hover:text-accent-foreground active:scale-95 transition-all">SAVE ADDRESS</button>
             </div>
-            <XIcon size={30} className="absolute top-5 right-5 text-slate-500 hover:text-slate-700 cursor-pointer" onClick={() => setShowAddressModal(false)} />
+            <XIcon size={30} className="absolute top-5 right-5 text-slate-700 hover:text-slate-700 cursor-pointer" onClick={() => setShowAddressModal(false)} />
         </form>
     )
 }

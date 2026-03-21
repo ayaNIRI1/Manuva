@@ -49,27 +49,27 @@ const Footer = () => {
     ]
 
     return (
-        <footer className="mx-6 bg-gradient-to-b from-surface to-muted/30 border-t border-border">
-            <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row items-start justify-between gap-10 py-10 border-b border-border text-muted-foreground transition-colors">
+        <footer className="footer-wrapper">
+            <div className="footer-container">
+                <div className="footer-main-content">
                     <div>
-                        <Link href="/" className="relative flex items-center gap-2 group">
-                            <span className="text-4xl font-bold bg-gradient-to-r from-brand-black via-brand-dark to-brand-orange bg-clip-text text-transparent">
+                        <Link href="/" className="footer-logo relative flex items-center gap-2 group">
+                            <span className="footer-logo-text">
                                 Manuva
                             </span>
-                            <Sparkles className="text-brand-orange w-5 h-5 group-hover:rotate-12 transition-transform" />
+                            <Sparkles className="footer-logo-icon" />
                         </Link>
-                        <p className="max-w-[410px] mt-6 text-sm leading-relaxed">
+                        <p className="footer-description">
                             Manuva - منصتك الأولى لاكتشاف المنتجات الحرفية الجزائرية الأصيلة. 
                             من الفخار إلى المنسوجات، كل قطعة تحكي قصة تراثنا العريق وتدعم حرفيينا المحليين.
                         </p>
 
-                        <div className="flex items-center gap-3 mt-5">
+                        <div className="footer-social-group">
                             {socialIcons.map((item, i) => (
                                 <Link 
                                     href={item.link} 
                                     key={i} 
-                                    className="flex items-center justify-center w-10 h-10 bg-muted hover:bg-black hover:text-white hover:scale-110 hover:shadow-lg transition-all duration-300 rounded-full group text-primary"
+                                    className="footer-social-link"
                                 >
                                     <div className="transition-colors duration-300">
                                         <item.icon />
@@ -80,15 +80,15 @@ const Footer = () => {
 
 
                     </div>
-                    <div className="flex flex-wrap justify-between w-full md:w-[50%] gap-5 text-sm">
+                    <div className="footer-links-container">
                         {linkSections.map((section, index) => (
                             <div key={index}>
-                                <h3 className="font-bold text-primary md:mb-5 mb-3 text-base">{section.title}</h3>
-                                <ul className="space-y-2.5">
+                                <h3 className="footer-section-title">{section.title}</h3>
+                                <ul className="footer-link-list">
                                     {section.links.map((link, i) => (
-                                        <li key={i} className="flex items-center gap-2">
-                                            {link.icon && <span className="text-primary"><link.icon /></span>}
-                                            <Link href={link.path} className="hover:text-primary hover:underline transition">{link.text}</Link>
+                                        <li key={i} className="footer-link-item">
+                                            {link.icon && <span className="footer-link-icon"><link.icon /></span>}
+                                            <Link href={link.path} className="footer-link">{link.text}</Link>
                                         </li>
                                     ))}
                                 </ul>
@@ -97,13 +97,15 @@ const Footer = () => {
                     </div>
 
                 </div>
-                <div className="py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-muted-foreground">
-                    <p>
-                        حقوق النشر 2026 © Manuva. جميع الحقوق محفوظة.
-                    </p>
-                    <p className="text-primary font-medium">
-                        صنع بحب في الجزائر 🇩🇿
-                    </p>
+                <div className="footer-bottom-wrapper">
+                    <div className="footer-bottom-container">
+                        <p className="footer-copyright">
+                            حقوق النشر 2026 © Manuva. جميع الحقوق محفوظة.
+                        </p>
+                        <p className="footer-made-in">
+                            صنع بحب في الجزائر 🇩🇿
+                        </p>
+                    </div>
                 </div>
 
             </div>

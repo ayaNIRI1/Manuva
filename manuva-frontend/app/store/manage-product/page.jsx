@@ -125,7 +125,7 @@ export default function StoreManageProducts() {
                                                         <Image width={48} height={48} className='w-full h-full object-cover' src={imageUrl} alt={product.name} />
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <p className="font-bold text-slate-800 truncate">{product.name}</p>
+                                                        <p className="font-bold text-foreground truncate">{product.name}</p>
                                                         <p className="text-[10px] text-slate-400 font-medium md:hidden">{product.category_name}</p>
                                                     </div>
                                                 </div>

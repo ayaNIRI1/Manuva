@@ -49,15 +49,15 @@ const Footer = () => {
     ]
 
     return (
-        <footer className="mx-6 bg-gradient-to-b from-surface to-muted/30 border-t border-border">
-            <div className="max-w-7xl mx-auto">
-                <div className="flex flex-col md:flex-row items-start justify-between gap-10 py-10 border-b border-border text-muted-foreground transition-colors">
+        <footer className="bg-secondary text-secondary-foreground/80 border-t border-secondary">
+            <div className="max-w-7xl mx-auto px-6">
+                <div className="flex flex-col md:flex-row items-start justify-between gap-10 py-10 border-b border-white/10 transition-colors">
                     <div>
                         <Link href="/" className="relative flex items-center gap-2 group">
-                            <span className="text-4xl font-bold bg-gradient-to-r from-brand-black via-brand-dark to-brand-orange bg-clip-text text-transparent">
+                            <span className="text-4xl font-bold bg-gradient-to-r from-secondary-foreground via-accent to-primary bg-clip-text text-transparent">
                                 Manuva
                             </span>
-                            <Sparkles className="text-brand-orange w-5 h-5 group-hover:rotate-12 transition-transform" />
+                            <Sparkles className="text-accent w-5 h-5 group-hover:rotate-12 transition-transform" />
                         </Link>
                         <p className="max-w-[410px] mt-6 text-sm leading-relaxed">
                             Manuva - منصتك الأولى لاكتشاف المنتجات الحرفية الجزائرية الأصيلة. 
@@ -69,7 +69,7 @@ const Footer = () => {
                                 <Link 
                                     href={item.link} 
                                     key={i} 
-                                    className="flex items-center justify-center w-10 h-10 bg-muted hover:bg-black hover:text-white hover:scale-110 hover:shadow-lg transition-all duration-300 rounded-full group text-primary"
+                                    className="flex items-center justify-center w-10 h-10 bg-white/10 hover:bg-accent hover:text-accent-foreground hover:scale-110 hover:shadow-lg transition-all duration-300 rounded-full group text-secondary-foreground"
                                 >
                                     <div className="transition-colors duration-300">
                                         <item.icon />
@@ -83,12 +83,12 @@ const Footer = () => {
                     <div className="flex flex-wrap justify-between w-full md:w-[50%] gap-5 text-sm">
                         {linkSections.map((section, index) => (
                             <div key={index}>
-                                <h3 className="font-bold text-primary md:mb-5 mb-3 text-base">{section.title}</h3>
+                                <h3 className="font-bold text-secondary-foreground md:mb-5 mb-3 text-base">{section.title}</h3>
                                 <ul className="space-y-2.5">
                                     {section.links.map((link, i) => (
                                         <li key={i} className="flex items-center gap-2">
-                                            {link.icon && <span className="text-primary"><link.icon /></span>}
-                                            <Link href={link.path} className="hover:text-primary hover:underline transition">{link.text}</Link>
+                                            {link.icon && <span className="text-secondary-foreground/70"><link.icon /></span>}
+                                            <Link href={link.path} className="hover:text-accent hover:underline transition text-secondary-foreground/80">{link.text}</Link>
                                         </li>
                                     ))}
                                 </ul>
@@ -97,11 +97,11 @@ const Footer = () => {
                     </div>
 
                 </div>
-                <div className="py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-muted-foreground">
+                <div className="py-4 flex flex-col sm:flex-row items-center justify-between gap-2 text-sm text-secondary-foreground/60 px-6">
                     <p>
                         حقوق النشر 2026 © Manuva. جميع الحقوق محفوظة.
                     </p>
-                    <p className="text-primary font-medium">
+                    <p className="text-accent font-medium">
                         صنع بحب في الجزائر 🇩🇿
                     </p>
                 </div>

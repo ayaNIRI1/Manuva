@@ -71,7 +71,7 @@ export default function Cart() {
     }, [items, cartItems, products]);
 
     return cartArray.length > 0 ? (
-        <div className="min-h-screen mx-6 text-slate-800">
+        <div className="min-h-screen mx-6 text-foreground">
 
             <div className="max-w-7xl mx-auto ">
                 {/* Title */}

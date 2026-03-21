@@ -52,7 +52,7 @@ const RatingModal = ({ ratingModal, setRatingModal }) => {
                 <button onClick={() => setRatingModal(null)} className='absolute top-4 right-4 text-slate-400 hover:text-red-500 transition-colors'>
                     <XIcon size={20} />
                 </button>
-                <h2 className='text-2xl font-black text-slate-800 mb-6 flex items-center gap-2'>
+                <h2 className='text-2xl font-black text-foreground mb-6 flex items-center gap-2'>
                     <span className="w-1.5 h-6 bg-green-500 rounded-full"></span>
                     Rate Product
                 </h2>

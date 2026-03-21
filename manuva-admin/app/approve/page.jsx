@@ -27,8 +27,8 @@ export default function AdminApprove() {
     }, [])
 
     return !loading ? (
-        <div className="text-slate-500 mb-28">
-            <h1 className="text-2xl">Approve <span className="text-slate-800 font-medium">Stores</span></h1>
+        <div className="text-slate-700 mb-28">
+            <h1 className="text-2xl">Approve <span className="text-foreground font-medium">Stores</span></h1>
 
             {stores.length ? (
                 <div className="flex flex-col gap-4 mt-4">
@@ -51,7 +51,7 @@ export default function AdminApprove() {
 
                 </div>) : (
                 <div className="flex items-center justify-center h-80">
-                    <h1 className="text-3xl text-slate-400 font-medium">No Application Pending</h1>
+                    <h1 className="text-3xl text-slate-600 font-medium">No Application Pending</h1>
                 </div>
             )}
         </div>

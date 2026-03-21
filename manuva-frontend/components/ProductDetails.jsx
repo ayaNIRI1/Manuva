@@ -64,7 +64,7 @@ const ProductDetails = ({ product }) => {
                 </div>
             </div>
             <div className="flex-1">
-                <h1 className="text-4xl font-black text-slate-900 tracking-tight">{product.name}</h1>
+                <h1 className="text-4xl font-black text-foreground tracking-tight">{product.name}</h1>
                 <div className='flex items-center mt-3 gap-2'>
                     <div className="flex bg-slate-50 px-3 py-1 rounded-full border border-slate-100 items-center gap-1.5">
                         {Array(5).fill('').map((_, index) => (

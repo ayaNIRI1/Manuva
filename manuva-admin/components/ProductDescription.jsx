@@ -14,7 +14,7 @@ const ProductDescription = ({ product }) => {
             {/* Tabs */}
             <div className="flex border-b border-slate-200 mb-6 max-w-2xl">
                 {['Description', 'Reviews'].map((tab, index) => (
-                    <button className={`${tab === selectedTab ? 'border-b-[1.5px] font-semibold' : 'text-slate-400'} px-3 py-2 font-medium`} key={index} onClick={() => setSelectedTab(tab)}>
+                    <button className={`${tab === selectedTab ? 'border-b-[1.5px] font-semibold' : 'text-slate-600'} px-3 py-2 font-medium`} key={index} onClick={() => setSelectedTab(tab)}>
                         {tab}
                     </button>
                 ))}
@@ -38,7 +38,7 @@ const ProductDescription = ({ product }) => {
                                     ))}
                                 </div>
                                 <p className="text-sm max-w-lg my-4">{item.review}</p>
-                                <p className="font-medium text-slate-800">{item.user.name}</p>
+                                <p className="font-medium text-foreground">{item.user.name}</p>
                                 <p className="mt-3 font-light">{new Date(item.createdAt).toDateString()}</p>
                             </div>
                         </div>

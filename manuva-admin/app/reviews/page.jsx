@@ -54,13 +54,13 @@ export default function AdminReviews() {
     }, [filter])
 
     return (
-        <div className="text-slate-500 mb-28">
+        <div className="text-slate-700 mb-28">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h1 className="text-2xl">Manage <span className="text-slate-800 font-medium">Comments</span></h1>
+                <h1 className="text-2xl">Manage <span className="text-foreground font-medium">Comments</span></h1>
                 <div className="flex bg-slate-100 p-1 rounded-lg self-start">
                     {['pending', 'approved'].map((f) => (
                         <button key={f} onClick={() => setFilter(f)}
-                            className={`px-4 py-1.5 rounded-md text-sm transition-all capitalize flex items-center gap-1.5 ${filter === f ? 'bg-white text-slate-900 shadow-sm font-medium' : 'text-slate-500 hover:text-slate-700'}`}>
+                            className={`px-4 py-1.5 rounded-md text-sm transition-all capitalize flex items-center gap-1.5 ${filter === f ? 'bg-white text-foreground shadow-sm font-medium' : 'text-slate-700 hover:text-slate-700'}`}>
                             {f === 'pending' ? <Clock size={13} /> : <CheckCircle size={13} />}
                             {f}
                         </button>
@@ -78,7 +78,7 @@ export default function AdminReviews() {
             {loading ? <Loading /> : reviews.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-60 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
                     <MessageSquare size={40} className="text-slate-300 mb-3" />
-                    <p className="text-slate-400 font-medium">No {filter} comments</p>
+                    <p className="text-slate-600 font-medium">No {filter} comments</p>
                 </div>
             ) : (
                 <div className="flex flex-col gap-4">
@@ -90,12 +90,12 @@ export default function AdminReviews() {
                                     {review.buyer_image ? (
                                         <Image fill src={review.buyer_image.startsWith('http') ? review.buyer_image : `http://127.0.0.1:3001${review.buyer_image}`} alt={review.buyer_name} className="object-cover" />
                                     ) : (
-                                        <div className="w-full h-full bg-slate-200 flex items-center justify-center text-slate-500 text-sm font-bold">{review.buyer_name?.[0]}</div>
+                                        <div className="w-full h-full bg-slate-200 flex items-center justify-center text-slate-700 text-sm font-bold">{review.buyer_name?.[0]}</div>
                                     )}
                                 </div>
                                 <div>
-                                    <p className="font-semibold text-slate-800 text-sm">{review.buyer_name}</p>
-                                    <p className="text-xs text-slate-400">{new Date(review.created_at).toLocaleDateString()}</p>
+                                    <p className="font-semibold text-foreground text-sm">{review.buyer_name}</p>
+                                    <p className="text-xs text-slate-600">{new Date(review.created_at).toLocaleDateString()}</p>
                                 </div>
                             </div>
 
@@ -107,7 +107,7 @@ export default function AdminReviews() {
                                             <StarIcon key={i} size={14} fill={review.rating > i ? "#F59E0B" : "#E5E7EB"} stroke="none" />
                                         ))}
                                     </div>
-                                    <span className="text-xs font-semibold text-slate-500 bg-slate-100 px-2 py-0.5 rounded-full">
+                                    <span className="text-xs font-semibold text-slate-700 bg-slate-100 px-2 py-0.5 rounded-full">
                                         {review.product_name}
                                     </span>
                                     {!review.is_approved && (
@@ -117,7 +117,7 @@ export default function AdminReviews() {
                                     )}
                                 </div>
                                 <p className="text-sm text-slate-600 leading-relaxed">
-                                    {review.comment || <span className="italic text-slate-400">No comment text</span>}
+                                    {review.comment || <span className="italic text-slate-600">No comment text</span>}
                                 </p>
                             </div>
 

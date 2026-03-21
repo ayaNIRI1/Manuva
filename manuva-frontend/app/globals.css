@@ -1,5 +1,7 @@
 @import "tailwindcss";
 
+
+
 @layer components {
   @keyframes marqueeScroll {
     0% {
@@ -17,34 +19,34 @@
   }
 
   :root {
-    /* Brand Colors - Strict High Contrast */
-    --color-brand-black: #000000;
-    --color-brand-orange: #ff6600;
-    --color-brand-dark: #111111;
+    /* Brand Colors - Custom Premium Palette */
+    --color-brand-black: #1a1a1a;
+    --color-brand-orange: #7B5F5F;
+    --color-brand-dark: #243447;
     --color-brand-light: #ffffff;
     --color-brand-white: #ffffff;
 
-    /* Manuva Brand Palette - Strict High Contrast Orange/White/Black */
-    --primary: 24 100% 50%; /* Pure Orange */
-    --primary-foreground: 0 0% 100%; /* White */
+    /* Semantic Mappings */
+    --primary: 15 55% 54%; /* Terracotta */
+    --primary-foreground: 45 100% 98%; /* Cream */
 
-    --secondary: 0 0% 0%; /* Pure Black */
-    --secondary-foreground: 0 0% 100%; /* White */
+    --secondary: 213 33% 21%; /* Navy */
+    --secondary-foreground: 45 100% 98%; /* Cream */
 
-    --accent: 0 0% 95%; /* Light Gray */
-    --accent-foreground: 0 0% 0%; /* Black text on accent */
+    --accent: 46 68% 47%; /* Gold */
+    --accent-foreground: 213 33% 21%; /* Navy */
 
-    --background: 0 0% 100%; /* Pure White */
-    --foreground: 0 0% 0%; /* Pure Black */
+    --background: 45 100% 98%; /* Cream */
+    --foreground: 0 0% 10%; /* Charcoal */
 
-    --surface: 0 0% 100%;
-    --surface-foreground: 0 0% 0%; /* Pure Black */
+    --surface: 34 45% 90%; /* Beige */
+    --surface-foreground: 0 0% 10%; /* Charcoal */
 
-    --muted: 0 0% 92%; /* Light Gray */
-    --muted-foreground: 0 0% 30%; /* Dark grey */
+    --muted: 34 45% 85%; /* Darker Beige */
+    --muted-foreground: 213 33% 40%; /* Lighter Navy */
 
-    --border: 0 0% 88%; /* Light grey */
-    --ring: 24 100% 50%; /* Pure Orange */
+    --border: 34 30% 80%; /* Beige Border */
+    --ring: 15 55% 54%; /* Terracotta */
 
     --radius: 1rem;
   }

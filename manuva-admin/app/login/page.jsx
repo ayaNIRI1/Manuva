@@ -50,8 +50,8 @@ export default function LoginPage() {
           <div className="w-16 h-16 bg-orange-50 rounded-full flex items-center justify-center mb-4">
             <Image src={assets.manuva_logo} alt="Manuva Logo" width={40} height={40} />
           </div>
-          <h1 className="text-2xl font-bold text-slate-800">Manuva Admin</h1>
-          <p className="text-slate-500 mt-1">Please sign in to your account</p>
+          <h1 className="text-2xl font-bold text-foreground">Manuva Admin</h1>
+          <p className="text-slate-700 mt-1">Please sign in to your account</p>
         </div>
 
         <form onSubmit={handleLogin} className="space-y-6">
@@ -60,7 +60,7 @@ export default function LoginPage() {
               Email Address
             </label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-600">
                 <MailIcon size={18} />
               </span>
               <input
@@ -80,7 +80,7 @@ export default function LoginPage() {
               Password
             </label>
             <div className="relative">
-              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+              <span className="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-600">
                 <LockIcon size={18} />
               </span>
               <input
@@ -105,7 +105,7 @@ export default function LoginPage() {
         </form>
 
         <div className="mt-8 pt-6 border-t border-slate-100 text-center">
-          <p className="text-xs text-slate-400 uppercase tracking-widest">
+          <p className="text-xs text-slate-600 uppercase tracking-widest">
             Secured by Manuva Auth
           </p>
         </div>

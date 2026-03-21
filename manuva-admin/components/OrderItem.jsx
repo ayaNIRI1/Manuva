@@ -59,7 +59,7 @@ const OrderItem = ({ order }) => {
                             ? 'text-yellow-500 bg-yellow-100'
                             : order.status === 'delivered'
                                 ? 'text-green-500 bg-green-100'
-                                : 'text-slate-500 bg-slate-100'
+                                : 'text-slate-700 bg-slate-100'
                             }`}
                     >
                         <DotIcon size={10} className="scale-250" />

@@ -83,7 +83,7 @@ export default function StoreAddProduct() {
 
             <div className="space-y-8 bg-white p-8 rounded-3xl border border-slate-100 shadow-sm">
                 <section>
-                    <p className="text-sm font-bold text-slate-800 mb-4 uppercase tracking-wider">{language === 'ar' ? 'صور المنتج' : 'Product Images'}</p>
+                    <p className="text-sm font-bold text-foreground mb-4 uppercase tracking-wider">{language === 'ar' ? 'صور المنتج' : 'Product Images'}</p>
                     <div className="flex gap-4 overflow-x-auto pb-2 no-scrollbar">
                         {Object.keys(images).map((key) => (
                             <label key={key} htmlFor={`images${key}`} className="relative group flex-shrink-0">
@@ -105,12 +105,12 @@ export default function StoreAddProduct() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                     <label className="flex flex-col gap-2">
-                        <span className="text-sm font-bold text-slate-800">{language === 'ar' ? 'اسم المنتج' : 'Product Name'}</span>
+                        <span className="text-sm font-bold text-foreground">{language === 'ar' ? 'اسم المنتج' : 'Product Name'}</span>
                         <input type="text" name="name" onChange={onChangeHandler} value={productInfo.name} placeholder={language === 'ar' ? 'أدخل اسم المنتج' : "Enter product name"} className="w-full p-3.5 bg-slate-50 outline-none border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-mauve/30 transition-all" required />
                     </label>
 
                     <label className="flex flex-col gap-2">
-                        <span className="text-sm font-bold text-slate-800">{language === 'ar' ? 'القسم' : 'Category'}</span>
+                        <span className="text-sm font-bold text-foreground">{language === 'ar' ? 'القسم' : 'Category'}</span>
                         <select onChange={e => setProductInfo({ ...productInfo, category_id: e.target.value })} value={productInfo.category_id} className="w-full p-3.5 bg-slate-50 outline-none border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-mauve/30 transition-all" required>
                             <option value="">{language === 'ar' ? 'اختر قسماً' : 'Select a category'}</option>
                             {categories.map((cat) => (
@@ -121,23 +121,23 @@ export default function StoreAddProduct() {
                 </div>
 
                 <label className="flex flex-col gap-2">
-                    <span className="text-sm font-bold text-slate-800">{language === 'ar' ? 'الوصف' : 'Description'}</span>
+                    <span className="text-sm font-bold text-foreground">{language === 'ar' ? 'الوصف' : 'Description'}</span>
                     <textarea name="description" onChange={onChangeHandler} value={productInfo.description} placeholder={language === 'ar' ? 'اشرح ميزات منتجك...' : "Tell buyers about your product..."} rows={4} className="w-full p-3.5 bg-slate-50 outline-none border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-mauve/30 transition-all resize-none" required />
                 </label>
 
                 <div className="grid grid-cols-1 sm:grid-cols-3 gap-6">
                     <label className="flex flex-col gap-2">
-                        <span className="text-sm font-bold text-slate-800">{language === 'ar' ? 'السعر الأصلي' : 'Original Price (MRP)'} ({process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'})</span>
+                        <span className="text-sm font-bold text-foreground">{language === 'ar' ? 'السعر الأصلي' : 'Original Price (MRP)'} ({process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'})</span>
                         <input type="number" name="mrp" onChange={onChangeHandler} value={productInfo.mrp} placeholder="0.00" className="w-full p-3.5 bg-slate-50 outline-none border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-mauve/30 transition-all" />
                     </label>
 
                     <label className="flex flex-col gap-2">
-                        <span className="text-sm font-bold text-slate-800">{language === 'ar' ? 'سعر العرض' : 'Offer Price'} ({process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'})</span>
+                        <span className="text-sm font-bold text-foreground">{language === 'ar' ? 'سعر العرض' : 'Offer Price'} ({process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$'})</span>
                         <input type="number" name="price" onChange={onChangeHandler} value={productInfo.price} placeholder="0.00" className="w-full p-3.5 bg-slate-50 outline-none border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-mauve/30 transition-all" required />
                     </label>
 
                     <label className="flex flex-col gap-2">
-                        <span className="text-sm font-bold text-slate-800">{language === 'ar' ? 'الكمية المتوفرة' : 'Stock Quantity'}</span>
+                        <span className="text-sm font-bold text-foreground">{language === 'ar' ? 'الكمية المتوفرة' : 'Stock Quantity'}</span>
                         <input type="number" name="stock" onChange={onChangeHandler} value={productInfo.stock} placeholder="0" className="w-full p-3.5 bg-slate-50 outline-none border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-mauve/30 transition-all" required />
                     </label>
                 </div>

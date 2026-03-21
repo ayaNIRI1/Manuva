@@ -39,7 +39,7 @@ export default function StoreOrders() {
 
     return (
         <>
-            <h1 className="text-2xl text-slate-500 mb-5">Store <span className="text-slate-800 font-medium">Orders</span></h1>
+            <h1 className="text-2xl text-slate-700 mb-5">Store <span className="text-foreground font-medium">Orders</span></h1>
             {orders.length === 0 ? (
                 <p>No orders found</p>
             ) : (
@@ -63,7 +63,7 @@ export default function StoreOrders() {
                                         {index + 1}
                                     </td>
                                     <td className="px-4 py-3">{order.user?.name}</td>
-                                    <td className="px-4 py-3 font-medium text-slate-800">${order.total}</td>
+                                    <td className="px-4 py-3 font-medium text-foreground">${order.total}</td>
                                     <td className="px-4 py-3">{order.paymentMethod}</td>
                                     <td className="px-4 py-3" onClick={(e) => { e.stopPropagation() }}>
                                         <select
@@ -91,7 +91,7 @@ export default function StoreOrders() {
             {isModalOpen && selectedOrder && (
                 <div onClick={closeModal} className="fixed inset-0 flex items-center justify-center bg-black/50 text-slate-700 text-sm backdrop-blur-xs z-50" >
                     <div onClick={e => e.stopPropagation()} className="bg-white rounded-lg shadow-lg max-w-2xl w-full p-6 relative">
-                        <h2 className="text-xl font-semibold text-slate-900 mb-4 text-center">
+                        <h2 className="text-xl font-semibold text-foreground mb-4 text-center">
                             Order Details
                         </h2>
 
@@ -116,7 +116,7 @@ export default function StoreOrders() {
                                             className="w-16 h-16 object-cover rounded"
                                         />
                                         <div className="flex-1">
-                                            <p className="text-slate-800">{item.product?.name}</p>
+                                            <p className="text-foreground">{item.product?.name}</p>
                                             <p>Qty: {item.quantity}</p>
                                             <p>Price: ${item.price}</p>
                                         </div>

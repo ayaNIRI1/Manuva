@@ -25,9 +25,9 @@ const OrderSummary = ({ totalPrice, items }) => {
     }
 
     return (
-        <div className='w-full max-w-lg lg:max-w-[340px] bg-slate-50/30 border border-slate-200 text-slate-500 text-sm rounded-xl p-7'>
+        <div className='w-full max-w-lg lg:max-w-[340px] bg-slate-50/30 border border-slate-200 text-slate-700 text-sm rounded-xl p-7'>
             <h2 className='text-xl font-medium text-slate-600'>Payment Summary</h2>
-            <p className='text-slate-400 text-xs my-4'>Payment Method</p>
+            <p className='text-slate-600 text-xs my-4'>Payment Method</p>
             <div className='flex gap-2 items-center'>
                 <input type="radio" id="COD" onChange={() => setPaymentMethod('COD')} checked={paymentMethod === 'COD'} className='accent-gray-500' />
                 <label htmlFor="COD" className='cursor-pointer'>COD</label>
@@ -36,7 +36,7 @@ const OrderSummary = ({ totalPrice, items }) => {
                 <input type="radio" id="STRIPE" name='payment' onChange={() => setPaymentMethod('STRIPE')} checked={paymentMethod === 'STRIPE'} className='accent-gray-500' />
                 <label htmlFor="STRIPE" className='cursor-pointer'>Stripe Payment</label>
             </div>
-            <div className='my-4 py-4 border-y border-slate-200 text-slate-400'>
+            <div className='my-4 py-4 border-y border-slate-200 text-slate-600'>
                 <p>Address</p>
                 {
                     selectedAddress ? (
@@ -65,7 +65,7 @@ const OrderSummary = ({ totalPrice, items }) => {
             </div>
             <div className='pb-4 border-b border-slate-200'>
                 <div className='flex justify-between'>
-                    <div className='flex flex-col gap-1 text-slate-400'>
+                    <div className='flex flex-col gap-1 text-slate-600'>
                         <p>Subtotal:</p>
                         <p>Shipping:</p>
                     </div>
@@ -79,7 +79,7 @@ const OrderSummary = ({ totalPrice, items }) => {
                 <p>Total:</p>
                 <p className='font-medium text-right'>{currency}{totalPrice.toLocaleString()}</p>
             </div>
-            <button onClick={e => toast.promise(handlePlaceOrder(e), { loading: 'placing Order...' })} className='w-full bg-slate-700 text-white py-2.5 rounded hover:bg-slate-900 active:scale-95 transition-all'>Place Order</button>
+            <button onClick={e => toast.promise(handlePlaceOrder(e), { loading: 'placing Order...' })} className='w-full bg-primary text-primary-foreground py-2.5 rounded hover:bg-accent hover:text-accent-foreground active:scale-95 transition-all'>Place Order</button>
 
             {showAddressModal && <AddressModal setShowAddressModal={setShowAddressModal} />}
 

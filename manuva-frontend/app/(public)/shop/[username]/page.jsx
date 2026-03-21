@@ -108,7 +108,7 @@ export default function StoreShop() {
                     <div className="flex-1 text-center md:text-left">
                         <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
                             <div>
-                                <h1 className="text-3xl font-semibold text-slate-800">{storeInfo.name}</h1>
+                                <h1 className="text-3xl font-semibold text-foreground">{storeInfo.name}</h1>
                                 <p className="text-sm text-slate-600 mt-2 max-w-lg">{storeInfo.description}</p>
                             </div>
                             
@@ -137,7 +137,7 @@ export default function StoreShop() {
                         <div className="flex flex-wrap items-center gap-6 mt-6 text-sm text-slate-500 font-medium">
                             <div className="flex items-center gap-2 bg-white/50 px-3 py-1.5 rounded-lg border border-slate-100">
                                 <Users size={16} className="text-primary" />
-                                <span className="text-slate-800 font-bold">{followerCount}</span>
+                                <span className="text-foreground font-bold">{followerCount}</span>
                                 <span>متابع</span>
                             </div>
                             <div className="flex items-center gap-2">
@@ -155,7 +155,7 @@ export default function StoreShop() {
 
             {/* Products */}
             <div className=" max-w-7xl mx-auto mb-40">
-                <h1 className="text-2xl mt-12">Shop <span className="text-slate-800 font-medium">Products</span></h1>
+                <h1 className="text-2xl mt-12">Shop <span className="text-foreground font-medium">Products</span></h1>
                 <div className="mt-5 grid grid-cols-2 sm:flex flex-wrap gap-6 xl:gap-12 mx-auto">
                     {products.map((product) => <ProductCard key={product.id} product={product} />)}
                 </div>

@@ -120,7 +120,7 @@ export default function StoreOrders() {
                                             {index + 1}
                                         </td>
                                         <td className="px-6 py-4">
-                                            <p className="text-slate-800 font-bold">{order.buyer_name}</p>
+                                            <p className="text-foreground font-bold">{order.buyer_name}</p>
                                             <p className="text-[10px] text-slate-400">{order.buyer_email}</p>
                                         </td>
                                         <td className="px-6 py-4 font-extrabold text-brand-mauve">{currency}{order.total}</td>
@@ -159,7 +159,7 @@ export default function StoreOrders() {
                             ✕
                         </button>
                         
-                        <h2 className="text-2xl font-black text-slate-900 mb-8 flex items-center gap-3">
+                        <h2 className="text-2xl font-black text-foreground mb-8 flex items-center gap-3">
                             <span className="w-2 h-8 bg-brand-orange rounded-full"></span>
                             {language === 'ar' ? 'تفاصيل الطلب' : 'Order Details'}
                         </h2>
@@ -168,7 +168,7 @@ export default function StoreOrders() {
                             <div className="bg-slate-50 p-6 rounded-3xl">
                                 <h3 className="font-black text-xs uppercase tracking-widest text-slate-400 mb-4">{language === 'ar' ? 'بيانات الزبون' : 'Customer Info'}</h3>
                                 <div className="space-y-2">
-                                    <p className="font-bold text-slate-800">{selectedOrder.buyer_name}</p>
+                                    <p className="font-bold text-foreground">{selectedOrder.buyer_name}</p>
                                     <p className="text-sm text-slate-500">{selectedOrder.buyer_email}</p>
                                     <p className="text-sm text-slate-500">{selectedOrder.shipping_address?.phone || '-'}</p>
                                 </div>
@@ -202,7 +202,7 @@ export default function StoreOrders() {
                                                 )}
                                             </div>
                                             <div className="flex-1 min-w-0">
-                                                <p className="font-bold text-slate-800 truncate">{item.product_name}</p>
+                                                <p className="font-bold text-foreground truncate">{item.product_name}</p>
                                                 <div className="flex items-center gap-3 mt-1">
                                                     <span className="text-[10px] font-black bg-slate-100 text-slate-500 px-2 py-0.5 rounded-full">
                                                         QTY: {item.quantity}

@@ -59,7 +59,7 @@ export default function ChatPage() {
   return (
     <div className="min-h-screen bg-slate-50" dir="rtl">
       <div className="max-w-5xl mx-auto px-4 py-8">
-        <h1 className="text-2xl font-bold text-slate-800 mb-6 flex items-center gap-2">
+        <h1 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
           <MessageCircle className="text-orange-500" size={26} />
           المحادثات
         </h1>
@@ -92,7 +92,7 @@ export default function ChatPage() {
                     <Avatar name={other?.name || '?'} avatar={other?.avatar} />
                     <div className="flex-1 min-w-0">
                       <div className="flex items-center justify-between">
-                        <span className={`font-medium text-sm truncate ${isActive ? 'text-orange-600' : 'text-slate-800'}`}>
+                        <span className={`font-medium text-sm truncate ${isActive ? 'text-orange-600' : 'text-foreground'}`}>
                           {other?.name}
                         </span>
                         {conv.unread_count > 0 && (
@@ -134,7 +134,7 @@ export default function ChatPage() {
                     size={9}
                   />
                   <div>
-                    <p className="font-semibold text-slate-800">
+                    <p className="font-semibold text-foreground">
                       {getOtherUser(activeConversation, currentUserId)?.name}
                     </p>
                     <p className="text-xs text-green-500">متصل</p>
@@ -151,7 +151,7 @@ export default function ChatPage() {
                           className={`max-w-[70%] px-4 py-2.5 rounded-2xl text-sm leading-relaxed shadow-sm ${
                             isMe
                               ? 'bg-gradient-to-br from-orange-500 to-red-500 text-white rounded-br-sm'
-                              : 'bg-white text-slate-800 border border-slate-100 rounded-bl-sm'
+                              : 'bg-white text-foreground border border-slate-100 rounded-bl-sm'
                           }`}
                         >
                           {m.content}

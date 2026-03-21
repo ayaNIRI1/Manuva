@@ -108,7 +108,7 @@ export default function Dashboard() {
                         >
                             <div className="flex flex-col gap-3 text-xs">
                                 <p className="font-medium text-slate-400 uppercase tracking-wider">{card.title}</p>
-                                <b className="text-2xl font-bold text-slate-800">{card.value}</b>
+                                <b className="text-2xl font-bold text-foreground">{card.value}</b>
                             </div>
                             <card.icon size={50} className="w-12 h-12 p-2.5 text-slate-500 bg-slate-50 rounded-2xl" />
                         </div>
@@ -134,7 +134,7 @@ export default function Dashboard() {
 
             {activeTab === 'analytics' ? (
                 <>
-                <h2 className="text-xl font-bold text-slate-800 mb-6">{language === 'ar' ? 'إجمالي المراجعات' : 'Total Reviews'}</h2>
+                <h2 className="text-xl font-bold text-foreground mb-6">{language === 'ar' ? 'إجمالي المراجعات' : 'Total Reviews'}</h2>
                 <div className="grid grid-cols-1 gap-6">
                     {
                         dashboardData.ratings.length > 0 ? (
@@ -147,7 +147,7 @@ export default function Dashboard() {
                                             </div>
                                             <div>
                                                 <div className="flex items-center gap-2">
-                                                    <p className="font-bold text-slate-800">{review.user.name}</p>
+                                                    <p className="font-bold text-foreground">{review.user.name}</p>
                                                     <div className='flex items-center'>
                                                         {Array(5).fill('').map((_, index) => (
                                                             <StarIcon key={index} size={14} className='mt-0.5' fill={review.rating >= index + 1 ? "#F59E0B" : "#E5E7EB"} stroke="none" />
@@ -162,7 +162,7 @@ export default function Dashboard() {
                                     <div className="flex flex-col justify-between gap-4 sm:items-end">
                                         <div className="flex flex-col sm:items-end">
                                             <span className="px-3 py-1 bg-slate-50 text-slate-400 rounded-lg text-[10px] font-bold uppercase tracking-widest mb-1">{review.product?.category}</span>
-                                            <p className="font-bold text-slate-800 text-right">{review.product?.name}</p>
+                                            <p className="font-bold text-foreground text-right">{review.product?.name}</p>
                                         </div>
                                         <button onClick={() => router.push(`/product/${review.product.id}`)} className="bg-brand-orange/10 text-brand-orange px-6 py-2 hover:bg-brand-orange hover:text-white rounded-xl font-bold text-sm transition-all active:scale-95 border border-brand-orange/20">
                                             {language === 'ar' ? 'عرض المنتج' : 'View Product'}
@@ -180,7 +180,7 @@ export default function Dashboard() {
                 </>
             ) : (
                 <div className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                    <h2 className="text-xl font-bold text-slate-800 mb-6">{language === 'ar' ? 'قائمة المتابعين' : 'Followers List'}</h2>
+                    <h2 className="text-xl font-bold text-foreground mb-6">{language === 'ar' ? 'قائمة المتابعين' : 'Followers List'}</h2>
                     {followers.length > 0 ? (
                         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
                             {followers.map((follower) => (
@@ -193,7 +193,7 @@ export default function Dashboard() {
                                         )}
                                     </div>
                                     <div className="flex-1 min-w-0">
-                                        <h4 className="font-bold text-slate-800 truncate">{follower.name}</h4>
+                                        <h4 className="font-bold text-foreground truncate">{follower.name}</h4>
                                         <p className="text-xs text-slate-400 font-medium mt-1 flex items-center gap-1">
                                             <Users size={12} />
                                             {language === 'ar' ? 'يتابع منذ ' : 'Followed '}

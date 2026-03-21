@@ -45,9 +45,9 @@ export default function AdminStores() {
     })
 
     return !loading ? (
-        <div className="text-slate-500 mb-28">
+        <div className="text-slate-700 mb-28">
             <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-6">
-                <h1 className="text-2xl">Manage <span className="text-slate-800 font-medium">Stores</span></h1>
+                <h1 className="text-2xl">Manage <span className="text-foreground font-medium">Stores</span></h1>
                 
                 <div className="flex bg-slate-100 p-1 rounded-lg self-start">
                     {['all', 'pending', 'approved'].map((f) => (
@@ -56,8 +56,8 @@ export default function AdminStores() {
                             onClick={() => setFilter(f)}
                             className={`px-4 py-1.5 rounded-md text-sm transition-all ${
                                 filter === f 
-                                ? 'bg-white text-slate-900 shadow-sm font-medium' 
-                                : 'text-slate-500 hover:text-slate-700'
+                                ? 'bg-white text-foreground shadow-sm font-medium' 
+                                : 'text-slate-700 hover:text-slate-700'
                             }`}
                         >
                             {f.charAt(0).toUpperCase() + f.slice(1)}
@@ -97,8 +97,8 @@ export default function AdminStores() {
                 </div>
             ) : (
                 <div className="flex flex-col items-center justify-center h-80 bg-slate-50 rounded-xl border-2 border-dashed border-slate-200">
-                    <h1 className="text-2xl text-slate-400 font-medium text-center">No {filter !== 'all' ? filter : ''} stores found</h1>
-                    <p className="text-slate-400 mt-2">Try adjusting your filters</p>
+                    <h1 className="text-2xl text-slate-600 font-medium text-center">No {filter !== 'all' ? filter : ''} stores found</h1>
+                    <p className="text-slate-600 mt-2">Try adjusting your filters</p>
                 </div>
             )
             }

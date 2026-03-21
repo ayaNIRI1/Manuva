@@ -26,7 +26,7 @@ const StoreInfo = ({ store }) => {
                 </div>
                 <div className="flex-1">
                     <div className="flex flex-wrap items-center gap-2 mb-1">
-                        <h3 className="text-xl font-bold text-slate-800">{store.name}</h3>
+                        <h3 className="text-xl font-bold text-foreground">{store.name}</h3>
                         <span
                             className={`text-[10px] uppercase tracking-wider font-bold px-3 py-0.5 rounded-full ${
                                 store.is_verified
@@ -37,8 +37,8 @@ const StoreInfo = ({ store }) => {
                             {store.is_verified ? 'Verified' : 'Pending Approval'}
                         </span>
                     </div>
-                    <p className="text-slate-500 flex items-center gap-1.5 font-medium">
-                        <Mail size={14} className="text-slate-400" /> {store.email}
+                    <p className="text-slate-700 flex items-center gap-1.5 font-medium">
+                        <Mail size={14} className="text-slate-600" /> {store.email}
                     </p>
                 </div>
             </div>
@@ -55,7 +55,7 @@ const StoreInfo = ({ store }) => {
                     </p>
                 )}
                 <p className="flex items-center gap-2 text-slate-600">
-                    <CalendarIcon size={16} className="text-slate-400" />
+                    <CalendarIcon size={16} className="text-slate-600" />
                     Joined on {formatDate(store.created_at)}
                 </p>
             </div>
@@ -68,10 +68,10 @@ const StoreInfo = ({ store }) => {
                 </div>
             )}
             
-            <div className="flex gap-4 mt-2 text-xs font-medium text-slate-500">
-                <p><span className="text-slate-800">{store.product_count}</span> Products</p>
-                <p><span className="text-slate-800">{store.follower_count}</span> Followers</p>
-                <p><span className="text-slate-800">{Number(store.avg_rating).toFixed(1)}</span> Rating</p>
+            <div className="flex gap-4 mt-2 text-xs font-medium text-slate-700">
+                <p><span className="text-foreground">{store.product_count}</span> Products</p>
+                <p><span className="text-foreground">{store.follower_count}</span> Followers</p>
+                <p><span className="text-foreground">{Number(store.avg_rating).toFixed(1)}</span> Rating</p>
             </div>
         </div>
     )

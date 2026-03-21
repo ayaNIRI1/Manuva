@@ -26,7 +26,7 @@ const StoreSidebar = ({storeInfo}) => {
                         <div className="text-3xl font-bold">{storeInfo?.name?.charAt(0)}</div>
                     )}
                 </div>
-                <p className="text-slate-800 font-extrabold text-lg tracking-tight leading-tight">{storeInfo?.name}</p>
+                <p className="text-foreground font-extrabold text-lg tracking-tight leading-tight">{storeInfo?.name}</p>
                 <div className="px-3 py-1 bg-green-500/10 text-green-600 text-[10px] font-bold uppercase rounded-full border border-green-500/20">
                     Artisan Account
                 </div>

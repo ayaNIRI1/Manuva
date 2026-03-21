@@ -35,14 +35,14 @@ const ProductCard = ({ product }) => {
                     src={imageUrl} 
                     alt={product.name} 
                 />
-                <div className="absolute top-3 left-3 px-2.5 py-1 bg-white/90 backdrop-blur-sm rounded-full text-[10px] font-bold text-slate-800 shadow-sm border border-slate-100 flex items-center gap-1.5 ">
+                <div className="absolute top-3 left-3 px-2.5 py-1 bg-white/90 backdrop-blur-sm rounded-full text-[10px] font-bold text-foreground shadow-sm border border-slate-100 flex items-center gap-1.5 ">
                     <div className="w-1.5 h-1.5 rounded-full bg-green-500 scale-in animate-pulse"></div>
                     {product.seller_name || 'Artisan'}
                 </div>
             </div>
-            <div className='flex justify-between items-start gap-3 text-sm text-slate-800 pt-3 px-1'>
+            <div className='flex justify-between items-start gap-3 text-sm text-foreground pt-3 px-1'>
                 <div className="flex-1 min-w-0">
-                    <p className="font-bold truncate text-slate-900">{product.name}</p>
+                    <p className="font-bold truncate text-foreground">{product.name}</p>
                     <div className='flex items-center gap-1 mt-1'>
                         <div className='flex'>
                             {Array(5).fill('').map((_, index) => (

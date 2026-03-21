@@ -99,7 +99,7 @@ export default function StoreManageStock() {
                                                         <Image width={56} height={56} className='w-full h-full object-cover' src={imageUrl} alt={product.name} />
                                                     </div>
                                                     <div className="min-w-0">
-                                                        <p className="font-bold text-slate-800 text-base">{product.name}</p>
+                                                        <p className="font-bold text-foreground text-base">{product.name}</p>
                                                         <p className="text-xs text-slate-400 font-medium">{product.category_name}</p>
                                                     </div>
                                                 </div>
