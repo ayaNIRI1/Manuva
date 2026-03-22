@@ -1,7 +1,6 @@
 'use client';
 import { useState, useEffect } from 'react';
 import { useAuth } from '@/lib/auth-context';
-import { useTheme } from '@/lib/theme-context';
 import { useLanguage } from '@/lib/language-context';
 import { useRouter } from 'next/navigation';
 import { User, Settings, Moon, Sun, Globe, LogOut, Save, Camera, MapPin, AlignLeft, ShoppingCart, Sparkles, Users, UserMinus } from 'lucide-react';
@@ -10,7 +9,6 @@ import toast from 'react-hot-toast';
 
 export default function ProfilePage() {
   const { user, updateUser, logout } = useAuth();
-  const { theme, toggleTheme } = useTheme();
   const { language, setLanguage, t } = useLanguage();
   const router = useRouter();
 
@@ -326,25 +324,6 @@ export default function ProfilePage() {
               </div>
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                {/* Theme Toggle Card */}
-                <div className="flex items-center justify-between p-6 bg-background border border-border rounded-3xl hover:border-brand-mauve/30 transition-colors group">
-                  <div className="flex items-center gap-4">
-                    <div className={`p-3 rounded-2xl transition-colors ${theme === 'dark' ? 'bg-brand-mauve/10 text-brand-mauve' : 'bg-brand-mauve/10 text-brand-mauve'}`}>
-                      {theme === 'dark' ? <Moon size={22} /> : <Sun size={22} />}
-                    </div>
-                    <div>
-                      <p className="font-bold text-base">{t('theme')}</p>
-                      <p className="text-xs font-medium text-muted-foreground/80 mt-0.5">{theme === 'dark' ? t('dark') : t('light')}</p>
-                    </div>
-                  </div>
-                  <button 
-                    onClick={toggleTheme}
-                    className={`w-14 h-7 rounded-full transition-all relative outline-none focus:ring-4 focus:ring-brand-mauve/10 ${theme === 'dark' ? 'bg-brand-mauve' : 'bg-brand-pink'}`}
-                  >
-                    <div className={`absolute top-1 w-5 h-5 bg-white rounded-full shadow-sm transition-all duration-300 transform ${theme === 'dark' ? 'right-1 translate-x-0' : 'left-1 translate-x-0'}`}></div>
-                  </button>
-                </div>
-
                 {/* Language Switch Card */}
                 <div className="flex items-center justify-between p-6 bg-background border border-border rounded-3xl hover:border-primary/30 transition-colors group">
                   <div className="flex items-center gap-4">

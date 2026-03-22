@@ -10,12 +10,18 @@ export const apiRequest = async (endpoint, options = {}) => {
     defaultHeaders['Authorization'] = `Bearer ${token}`;
   }
 
+  const headers = {
+    ...defaultHeaders,
+    ...options.headers,
+  };
+
+  if (options.isFormData) {
+    delete headers['Content-Type'];
+  }
+
   const response = await fetch(`${baseUrl}${endpoint}`, {
     ...options,
-    headers: {
-      ...defaultHeaders,
-      ...options.headers,
-    },
+    headers,
   });
 
   const data = await response.json();

@@ -136,28 +136,27 @@ CREATE TABLE IF NOT EXISTS follows (
 );
 
 -- ============================================
--- SUBSCRIPTION PLANS TABLE
+-- CONVERSATIONS TABLE
 -- ============================================
-CREATE TABLE IF NOT EXISTS subscription_plans (
+CREATE TABLE IF NOT EXISTS conversations (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    name VARCHAR(100) NOT NULL,
-    price DECIMAL(10,2) NOT NULL,
-    duration_months INTEGER NOT NULL,
-    benefits JSONB,
-    is_active BOOLEAN DEFAULT TRUE,
-    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
+    buyer_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    seller_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    updated_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP,
+    UNIQUE (buyer_id, seller_id),
+    CHECK (buyer_id <> seller_id)
 );
 
 -- ============================================
--- SELLER SUBSCRIPTIONS TABLE
+-- MESSAGES TABLE
 -- ============================================
-CREATE TABLE IF NOT EXISTS seller_subscriptions (
+CREATE TABLE IF NOT EXISTS messages (
     id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
-    seller_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
-    plan_id UUID NOT NULL REFERENCES subscription_plans(id),
-    start_date TIMESTAMPTZ NOT NULL DEFAULT CURRENT_TIMESTAMP,
-    end_date TIMESTAMPTZ NOT NULL,
-    status VARCHAR(20) DEFAULT 'active' CHECK (status IN ('active', 'expired', 'cancelled')),
+    conversation_id UUID NOT NULL REFERENCES conversations(id) ON DELETE CASCADE,
+    sender_id UUID NOT NULL REFERENCES users(id) ON DELETE CASCADE,
+    content TEXT NOT NULL,
+    is_read BOOLEAN DEFAULT FALSE,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 
@@ -190,6 +189,12 @@ FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 DROP TRIGGER IF EXISTS trg_orders_updated ON orders;
 CREATE TRIGGER trg_orders_updated
 BEFORE UPDATE ON orders
+FOR EACH ROW EXECUTE FUNCTION set_updated_at();
+
+-- Trigger: Update conversations timestamp
+DROP TRIGGER IF EXISTS trg_conversations_updated ON conversations;
+CREATE TRIGGER trg_conversations_updated
+BEFORE UPDATE ON conversations
 FOR EACH ROW EXECUTE FUNCTION set_updated_at();
 
 -- Function: Update stock after order
@@ -231,23 +236,16 @@ FOR EACH ROW EXECUTE FUNCTION notify_new_product();
 -- ============================================
 
 -- Insert default categories
-INSERT INTO categories (name, description, img) VALUES
-    ('الفخار والسيراميك', 'منتجات فخارية وسيراميك يدوية تقليدية', '/images/categories/pottery.jpg'),
-    ('المنسوجات', 'أقمشة ومنسوجات تقليدية مصنوعة يدوياً', '/images/categories/textiles.jpg'),
-    ('المجوهرات والإكسسوارات', 'حلي وإكسسوارات حرفية فريدة', '/images/categories/jewelry.jpg'),
-    ('الديكور المنزلي', 'قطع ديكور منزلية يدوية', '/images/categories/home-decor.jpg'),
-    ('الفنون واللوحات', 'لوحات فنية ورسومات أصلية', '/images/categories/art.jpg'),
-    ('المنتجات الجلدية', 'منتجات جلدية مصنوعة يدوياً', '/images/categories/leather.jpg'),
-    ('الأعمال الخشبية', 'منتجات خشبية منحوتة وأثاث', '/images/categories/wood.jpg'),
-    ('الأعمال المعدنية', 'فنون معدنية وديكورات', '/images/categories/metal.jpg')
+INSERT INTO categories (name, description, is_approved) VALUES
+    ('🏺 Home Decor (ديكور المنزل)', 'أدوات وديكورات منزلية فريدة', TRUE),
+    ('💍 Jewelry & Accessories (إكسسوارات)', 'مجوهرات وحلي وإكسسوارات', TRUE),
+    ('👜 Bags & Fashion (حقائب وموضة)', 'أزياء وحقائب مصنوعة يدوياً', TRUE),
+    ('🎁 Gifts & Custom Orders (هدايا مخصصة)', 'هدايا وتوزيعات وطلبات خاصة', TRUE),
+    ('🧸 Kids & Toys (أطفال)', 'ألعاب وملابس وملحقات أطفال', TRUE),
+    ('🎨 Art & Crafts (فن وأعمال فنية)', 'لوحات وفنون وأعمال يدوية متنوعة', TRUE)
 ON CONFLICT (name) DO NOTHING;
 
--- Insert default subscription plans
-INSERT INTO subscription_plans (name, price, duration_months, benefits, is_active) VALUES
-    ('المجانية', 0, 1, '{"featured_listings": 0, "analytics": false, "priority_support": false, "description": "خطة مجانية للبدء"}', true),
-    ('المميزة الشهرية', 2999.00, 1, '{"featured_listings": 5, "analytics": true, "priority_support": true, "description": "خطة شهرية مميزة"}', true),
-    ('المميزة السنوية', 29990.00, 12, '{"featured_listings": 10, "analytics": true, "priority_support": true, "discount": "20%", "description": "خطة سنوية مع خصم 20%"}', true)
-ON CONFLICT DO NOTHING;
+-- Removed default subscription plans
 
 -- ============================================
 -- INDEXES (للأداء الأفضل)
@@ -270,8 +268,9 @@ CREATE INDEX IF NOT EXISTS idx_follows_seller ON follows(seller_id);
 DO $$
 BEGIN
     RAISE NOTICE '✅ Database schema created successfully!';
-    RAISE NOTICE '📊 Tables created: users, categories, products, orders, order_items, reviews, favorites, follows, subscription_plans, seller_subscriptions';
-    RAISE NOTICE '🔧 Triggers configured for: timestamps, stock updates, notifications';
-    RAISE NOTICE '📝 Default data inserted: 8 categories, 3 subscription plans';
+    RAISE NOTICE '📊 Tables created: users, categories, products, orders, order_items, reviews, favorites, follows, conversations, messages';
+    RAISE NOTICE '🔧 Triggers configured for: timestamps, stock updates, notifications, chat timestamps';
+    RAISE NOTICE '📝 Default data inserted: 8 categories';
     RAISE NOTICE '🚀 Database is ready to use!';
 END $$;
+

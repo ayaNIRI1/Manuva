@@ -274,6 +274,59 @@ router.get('/dashboard/pending-products', auth, isArtisan, async (req, res) => {
   }
 });
 
+// Export Artisan Data (CSV)
+router.get('/dashboard/export', auth, isArtisan, async (req, res) => {
+  try {
+    // 1. Get Products
+    const productsResult = await db.query(
+      `SELECT p.name, p.price, p.stock, p.sold, p.status, p.created_at, c.name as category
+       FROM products p
+       LEFT JOIN categories c ON p.category_id = c.id
+       WHERE p.seller_id = $1
+       ORDER BY p.created_at DESC`,
+      [req.user.id]
+    );
+
+    // 2. Get Orders
+    const ordersResult = await db.query(
+      `SELECT o.id as order_id, o.order_date, u.name as buyer_name, o.status as order_status,
+              p.name as product_name, oi.quantity, oi.subtotal
+       FROM orders o
+       JOIN order_items oi ON o.id = oi.order_id
+       JOIN products p ON oi.product_id = p.id
+       JOIN users u ON o.buyer_id = u.id
+       WHERE p.seller_id = $1
+       ORDER BY o.order_date DESC`,
+      [req.user.id]
+    );
+
+    // Generate CSV
+    let csv = "--- MANUVA STORE DATA EXPORT ---\n";
+    csv += `Generated at: ${new Date().toISOString()}\n\n`;
+
+    // Products Section
+    csv += "PRODUCTS\n";
+    csv += "Name,Category,Price,Stock,Sold,Status,Created At\n";
+    productsResult.rows.forEach(p => {
+      csv += `"${p.name}","${p.category}",${p.price},${p.stock},${p.sold},"${p.status}","${p.created_at}"\n`;
+    });
+
+    csv += "\nORDERS\n";
+    csv += "Order ID,Date,Buyer,Status,Product,Quantity,Subtotal\n";
+    ordersResult.rows.forEach(o => {
+      csv += `"${o.order_id}","${o.order_date}","${o.buyer_name}","${o.order_status}","${o.product_name}",${o.quantity},${o.subtotal}\n`;
+    });
+
+    res.setHeader('Content-Type', 'text/csv');
+    res.setHeader('Content-Disposition', `attachment; filename=manuva_store_export_${new Date().toISOString().split('T')[0]}.csv`);
+    res.status(200).send(csv);
+
+  } catch (error) {
+    console.error('Export artisan data error:', error);
+    res.status(500).json({ error: 'Failed to export store data' });
+  }
+});
+
 // Get all artisans for admin (including unverified/inactive)
 router.get('/admin/all', auth, isAdmin, async (req, res) => {
   try {

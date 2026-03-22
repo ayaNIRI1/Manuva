@@ -1,5 +1,5 @@
 'use client'
-import { CircleDollarSignIcon, ShoppingBasketIcon, StarIcon, TagsIcon, Users, User, MapPin } from "lucide-react"
+import { CircleDollarSignIcon, ShoppingBasketIcon, StarIcon, TagsIcon, Users, User, MapPin, Download, Home } from "lucide-react"
 import Loading from "@/components/Loading"
 import Image from "next/image"
 import { useRouter } from "next/navigation"
@@ -67,6 +67,29 @@ export default function Dashboard() {
         }
     }
 
+    const handleExportData = async () => {
+        try {
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/artisans/dashboard/export`, {
+                headers: {
+                    'Authorization': `Bearer ${localStorage.getItem('token')}`
+                }
+            });
+            if (!response.ok) throw new Error('Export failed');
+            const blob = await response.blob();
+            const url = window.URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = url;
+            a.download = `store_data_${new Date().toISOString().split('T')[0]}.csv`;
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+        } catch (error) {
+            console.error('Export error:', error);
+            // In a real app we'd use a toast notification here
+            alert(language === 'ar' ? 'فشل تصدير البيانات' : 'Failed to export data');
+        }
+    }
+
     useEffect(() => {
         fetchDashboardData()
     }, [])
@@ -75,9 +98,27 @@ export default function Dashboard() {
 
     return (
         <div className=" text-slate-500 mb-28">
-            <h1 className="text-3xl font-extrabold tracking-tight text-foreground mb-10">
-                {language === 'ar' ? 'لوحة تحكم' : 'Artisan'} <span className="text-brand-orange">{language === 'ar' ? 'الحرفي' : 'Dashboard'}</span>
-            </h1>
+            <div className="flex justify-between items-center mb-10">
+                <h1 className="text-3xl font-extrabold tracking-tight text-foreground">
+                    {language === 'ar' ? 'لوحة تحكم' : 'Artisan'} <span className="text-brand-orange">{language === 'ar' ? 'الحرفي' : 'Dashboard'}</span>
+                </h1>
+                <div className="flex items-center gap-3">
+                    <button 
+                        onClick={() => router.push('/')}
+                        className="flex items-center gap-2 bg-white border border-slate-200 hover:bg-slate-50 text-slate-700 px-5 py-2.5 rounded-xl font-bold transition-all active:scale-95 shadow-sm"
+                    >
+                        <Home size={18} />
+                        <span className="max-sm:hidden">{language === 'ar' ? 'الرئيسية' : 'Home'}</span>
+                    </button>
+                    <button 
+                        onClick={handleExportData}
+                        className="flex items-center gap-2 bg-slate-100 hover:bg-slate-200 text-slate-700 px-5 py-2.5 rounded-xl font-bold transition-all active:scale-95 shadow-sm"
+                    >
+                        <Download size={18} />
+                        <span className="max-sm:hidden">{language === 'ar' ? 'تصدير البيانات' : 'Export Data'}</span>
+                    </button>
+                </div>
+            </div>
 
             {/* Verification Banner */}
             {dashboardData.stats?.is_verified === false && (

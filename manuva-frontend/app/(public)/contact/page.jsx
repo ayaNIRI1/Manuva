@@ -79,7 +79,7 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h3 className="text-primary font-semibold">{isAr ? 'البريد الإلكتروني' : 'Email'}</h3>
-                  <p className="text-muted-foreground">support@manuva.com</p>
+                  <p className="text-muted-foreground">smanuva85@gmail.com</p>
                 </div>
               </div>
 
@@ -89,7 +89,7 @@ const ContactPage = () => {
                 </div>
                 <div>
                   <h3 className="text-primary font-semibold">{isAr ? 'الهاتف' : 'Phone'}</h3>
-                  <p className="text-muted-foreground">+21666378037</p>
+                  <p className="text-muted-foreground">0666378037</p>
                 </div>
               </div>
 

@@ -1,5 +1,29 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-black: #4B3237;
+  --color-brand-orange: #681D2C;
+  --color-brand-dark: #7B5F5F;
+  --color-brand-light: #D5CECB;
+  --color-brand-white: #f3f4f6;
+  --color-brand-mauve: #BEAAAC;
+  --color-brand-blue: #B2C9DA;
+
+  /* Semantic Mappings for Tailwind Utilities */
+  --color-background: hsl(var(--background));
+  --color-foreground: hsl(var(--foreground));
+  --color-surface: hsl(var(--surface));
+  --color-surface-foreground: hsl(var(--surface-foreground));
+  --color-primary: hsl(var(--primary));
+  --color-primary-foreground: hsl(var(--primary-foreground));
+  --color-secondary: hsl(var(--secondary));
+  --color-secondary-foreground: hsl(var(--secondary-foreground));
+  --color-accent: hsl(var(--accent));
+  --color-accent-foreground: hsl(var(--accent-foreground));
+  --color-muted: hsl(var(--muted));
+  --color-muted-foreground: hsl(var(--muted-foreground));
+  --color-border: hsl(var(--border));
+}
 
 
 @layer components {
@@ -19,48 +43,33 @@
   }
 
   :root {
-    /* Brand Colors - Custom Premium Palette */
-    --color-brand-black: #1a1a1a;
-    --color-brand-orange: #7B5F5F;
-    --color-brand-dark: #243447;
-    --color-brand-light: #ffffff;
-    --color-brand-white: #ffffff;
+    /* Brand Colors are defined in @theme block above for Tailwind v4 utility generation */
 
     /* Semantic Mappings */
-    --primary: 15 55% 54%; /* Terracotta */
-    --primary-foreground: 45 100% 98%; /* Cream */
+    --primary: 348 56% 26%; /* Deep Burgundy */
+    --primary-foreground: 18 10% 98%; /* Lightest Cream for contrast */
 
-    --secondary: 213 33% 21%; /* Navy */
-    --secondary-foreground: 45 100% 98%; /* Cream */
+    --secondary: 206 33% 78%; /* Sugar Blue */
+    --secondary-foreground: 348 20% 25%; /* Soft Truffle */
 
-    --accent: 46 68% 47%; /* Gold */
-    --accent-foreground: 213 33% 21%; /* Navy */
+    --accent: 0 13% 43%; /* Mocha Fudge */
+    --accent-foreground: 18 10% 98%; /* Lightest Cream */
 
-    --background: 45 100% 98%; /* Cream */
-    --foreground: 0 0% 10%; /* Charcoal */
+    --background: 0 0% 94%; /* Neutral Light Grey */
+    --foreground: 348 20% 25%; /* Soft Truffle */
 
-    --surface: 34 45% 90%; /* Beige */
-    --surface-foreground: 0 0% 10%; /* Charcoal */
+    --surface: 0 0% 97%; /* Lighter Grey for cards */
+    --surface-foreground: 348 20% 25%;
 
-    --muted: 34 45% 85%; /* Darker Beige */
-    --muted-foreground: 213 33% 40%; /* Lighter Navy */
+    --muted: 354 13% 71%; /* Ruby Chocolate */
+    --muted-foreground: 0 13% 43%; /* Mocha Fudge */
 
-    --border: 34 30% 80%; /* Beige Border */
-    --ring: 15 55% 54%; /* Terracotta */
+    --border: 354 13% 71%; /* Ruby Chocolate */
+    --ring: 348 56% 26%;
 
     --radius: 1rem;
   }
 
-  .dark {
-    --background: 0 0% 7%;
-    --foreground: 0 0% 100%;
-    --surface: 0 0% 12%;
-    --surface-foreground: 0 0% 100%;
-    --primary: 24 78% 58%;
-    --muted: 0 0% 15%;
-    --muted-foreground: 0 0% 90%;
-    --border: 0 0% 18%;
-  }
 }
 
 body {

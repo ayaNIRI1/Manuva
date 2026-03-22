@@ -1,5 +1,14 @@
 @import "tailwindcss";
 
+@theme {
+  --color-brand-black: #4B3237;
+  --color-brand-orange: #681D2C;
+  --color-brand-dark: #7B5F5F;
+  --color-brand-light: #D5CECB;
+  --color-brand-white: #f3f4f6;
+  --color-brand-mauve: #BEAAAC;
+  --color-brand-blue: #B2C9DA;
+}
 
 
 @layer components {
@@ -19,34 +28,29 @@
   }
 
   :root {
-    /* Brand Colors - Custom Premium Palette */
-    --color-brand-black: #1a1a1a;
-    --color-brand-orange: #c96a4a;
-    --color-brand-dark: #243447;
-    --color-brand-light: #fffdf7;
-    --color-brand-white: #c5c3bc;
+    /* Brand Colors are defined in @theme block above for Tailwind v4 utility generation */
 
     /* Semantic Mappings */
-    --primary: 15 55% 54%; /* Terracotta */
-    --primary-foreground: 45 100% 98%; /* Cream */
+    --primary: 348 56% 26%; /* Deep Burgundy */
+    --primary-foreground: 18 10% 98%; /* Lightest Cream for contrast */
 
-    --secondary: 213 33% 21%; /* Navy */
-    --secondary-foreground: 45 100% 98%; /* Cream */
+    --secondary: 206 33% 78%; /* Sugar Blue */
+    --secondary-foreground: 348 20% 25%; /* Soft Truffle */
 
-    --accent: 46 68% 47%; /* Gold */
-    --accent-foreground: 213 33% 21%; /* Navy */
+    --accent: 0 13% 43%; /* Mocha Fudge */
+    --accent-foreground: 18 10% 98%; /* Lightest Cream */
 
-    --background: 45 100% 98%; /* Cream */
-    --foreground: 0 0% 10%; /* Charcoal */
+    --background: 0 0% 94%; /* Neutral Light Grey */
+    --foreground: 348 20% 25%; /* Soft Truffle */
 
-    --surface: 34 45% 90%; /* Beige */
-    --surface-foreground: 0 0% 10%; /* Charcoal */
+    --surface: 0 0% 97%; /* Lighter Grey for cards */
+    --surface-foreground: 348 20% 25%;
 
-    --muted: 34 45% 85%; /* Darker Beige */
-    --muted-foreground: 213 33% 40%; /* Lighter Navy */
+    --muted: 354 13% 71%; /* Ruby Chocolate */
+    --muted-foreground: 0 13% 43%; /* Mocha Fudge */
 
-    --border: 34 30% 80%; /* Beige Border */
-    --ring: 15 55% 54%; /* Terracotta */
+    --border: 354 13% 71%; /* Ruby Chocolate */
+    --ring: 348 56% 26%;
 
     --radius: 1rem;
   }

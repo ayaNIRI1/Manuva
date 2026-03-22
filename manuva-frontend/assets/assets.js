@@ -26,16 +26,12 @@ export const assets = {
 
 // Manuva Handmade Categories - Algerian Crafts
 export const categories = [
-    "الفخار",           // Pottery
-    "المنسوجات",        // Textiles
-    "النحاس",          // Copper
-    "الخزف",           // Ceramics
-    "الجلود",          // Leather
-    "الحلي",           // Jewelry
-    "السلال",          // Baskets
-    "الزرابي",         // Carpets
-    "الخشب",           // Wood
-    "الزجاج"           // Glass
+    "🏺 Home Decor (ديكور المنزل)",
+    "💍 Jewelry & Accessories (إكسسوارات)",
+    "👜 Bags & Fashion (حقائب وموضة)",
+    "🎁 Gifts & Custom Orders (هدايا مخصصة)",
+    "🧸 Kids & Toys (أطفال)",
+    "🎨 Art & Crafts (فن وأعمال فنية)"
 ];
 
 export const dummyRatingsData = []
@@ -47,9 +43,9 @@ export const dummyStoreData = {}
 export const productDummyData = [];
 
 export const ourSpecsData = [
-    { title: "توصيل مجاني", description: "توصيل سريع ومجاني لجميع الطلبات داخل الوطن", icon: SendIcon, accent: '#BD8E89' }, // Mauve
-    { title: "إرجاع سهل خلال 7 أيام", description: "غيرت رأيك؟ لا مشكلة. يمكنك إرجاع المنتج خلال 7 أيام", icon: ClockFadingIcon, accent: '#E5C5C1' }, // Pink
-    { title: "دعم 24/7", description: "نحن هنا لمساعدتك في أي وقت مع خدمة عملاء احترافية", icon: HeadsetIcon, accent: '#0E1627' } // Navy
+    { title: "spec_shipping_title", description: "spec_shipping_desc", icon: SendIcon, accent: '#BD8E89' }, // Mauve
+    { title: "spec_returns_title", description: "spec_returns_desc", icon: ClockFadingIcon, accent: '#E5C5C1' }, // Pink
+    { title: "spec_support_title", description: "spec_support_desc", icon: HeadsetIcon, accent: '#0E1627' } // Navy
 ]
 
 export const addressDummyData = {}

@@ -9,10 +9,14 @@ import Image from "next/image";
 import Counter from "./Counter";
 import { useDispatch, useSelector } from "react-redux";
 
+import { useLanguage } from "@/lib/language-context";
+
 const ProductDetails = ({ product }) => {
 
+    const { t, language } = useLanguage()
+    const isAr = language === 'ar'
     const productId = product.id;
-    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$';
+    const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || (isAr ? 'دج' : 'DZD');
     const backendUrl = process.env.NEXT_PUBLIC_API_URL?.replace('/api', '') || 'http://localhost:3001'
 
     const cart = useSelector(state => state.cart.cartItems);
@@ -71,18 +75,18 @@ const ProductDetails = ({ product }) => {
                             <StarIcon key={index} size={12} className='text-transparent' fill={averageRating >= index + 1 ? "#FF9500" : "#D1D5DB"} />
                         ))}
                     </div>
-                    <p className="text-xs font-bold text-slate-400">{reviewCount} Reviews</p>
+                    <p className="text-xs font-bold text-slate-400">{t('reviews_count', { count: reviewCount })}</p>
                 </div>
                 
                 <div className="flex items-center my-8 gap-4">
                     <div className="flex flex-col">
-                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">Price</p>
-                        <p className="text-4xl font-black text-brand-mauve"> {currency}{product.price} </p>
+                        <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1">{t('price')}</p>
+                        <p className="text-4xl font-black text-brand-orange"> {isAr ? `${currency} ${product.price}` : `${product.price} ${currency}`} </p>
                     </div>
                     {product.mrp && product.mrp > product.price && (
                         <div className="flex flex-col">
-                             <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1 line-through">MRP</p>
-                             <p className="text-xl text-slate-400 line-through font-bold">{currency}{product.mrp}</p>
+                             <p className="text-xs font-black text-slate-400 uppercase tracking-widest mb-1 line-through">{t('mrp')}</p>
+                             <p className="text-xl text-slate-400 line-through font-bold">{isAr ? `${currency} ${product.mrp}` : `${product.mrp} ${currency}`}</p>
                         </div>
                     )}
                 </div>
@@ -90,7 +94,7 @@ const ProductDetails = ({ product }) => {
                 {discountPercentage && (
                     <div className="inline-flex items-center gap-2 bg-green-50 text-green-600 px-4 py-2 rounded-2xl border border-green-100 font-black text-xs mb-8">
                         <TagIcon size={14} />
-                        <p>Save {discountPercentage}% right now</p>
+                        <p>{t('save_percentage', { percentage: discountPercentage })}</p>
                     </div>
                 )}
 
@@ -98,17 +102,17 @@ const ProductDetails = ({ product }) => {
                     {
                         cart[productId] && (
                             <div className="flex flex-col gap-2">
-                                <p className="text-xs font-black text-slate-400 uppercase tracking-widest">Quantity</p>
+                                <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('quantity')}</p>
                                 <Counter productId={productId} />
                             </div>
                         )
                     }
-                    <button 
-                        onClick={() => !cart[productId] ? addToCartHandler() : router.push('/cart')} 
-                        className="flex-1 bg-slate-900 text-white px-12 py-5 text-sm font-black rounded-3xl shadow-xl shadow-slate-200 hover:bg-black hover:shadow-2xl active:scale-95 transition-all flex items-center justify-center gap-3 group"
-                    >
-                        {!cart[productId] ? 'Add to Cart' : 'View Cart'}
-                        <ArrowRight size={18} className="group-hover:translate-x-1 transition-transform" />
+                        <button 
+                            onClick={() => !cart[productId] ? addToCartHandler() : router.push('/cart')} 
+                            className="flex-1 bg-brand-orange text-white px-12 py-5 text-sm font-black rounded-3xl shadow-xl shadow-brand-orange/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 group"
+                        >
+                        {!cart[productId] ? t('add_to_cart') : t('view_cart')}
+                        <ArrowRight size={18} className={`${isAr ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'} transition-transform`} />
                     </button>
                 </div>
 
@@ -119,19 +123,19 @@ const ProductDetails = ({ product }) => {
                         <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-brand-orange">
                             <EarthIcon size={18} />
                         </div>
-                        <p>Free shipping worldwide</p>
+                        <p>{t('free_shipping')}</p>
                     </div>
                     <div className="flex items-center gap-4 bg-slate-50/50 p-4 rounded-3xl border border-slate-50">
                         <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-brand-orange">
                             <CreditCardIcon size={18} />
                         </div>
-                        <p>100% Secured Payment</p>
+                        <p>{t('secured_payment')}</p>
                     </div>
                     <div className="flex items-center gap-4 bg-slate-50/50 p-4 rounded-3xl border border-slate-50">
                         <div className="w-10 h-10 rounded-full bg-white shadow-sm flex items-center justify-center text-brand-orange">
                             <UserIcon size={18} />
                         </div>
-                        <p>Trusted by top brands</p>
+                        <p>{t('trusted_brands')}</p>
                     </div>
                 </div>
 

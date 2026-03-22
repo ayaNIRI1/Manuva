@@ -64,11 +64,9 @@ const initDatabase = async () => {
 
     // Show summary
     const categoryCount = await client.query('SELECT COUNT(*) FROM categories');
-    const planCount = await client.query('SELECT COUNT(*) FROM subscription_plans');
     
     console.log('\n Default data:');
     console.log(`    ${categoryCount.rows[0].count} categories`);
-    console.log(`    ${planCount.rows[0].count} subscription plans`);
     
     console.log(' Database is ready to use!');
     console.log('\n🎯 Next steps:');
@@ -119,8 +117,7 @@ const checkDatabase = async () => {
       client.query('SELECT COUNT(*) FROM users'),
       client.query('SELECT COUNT(*) FROM categories'),
       client.query('SELECT COUNT(*) FROM products'),
-      client.query('SELECT COUNT(*) FROM orders'),
-      client.query('SELECT COUNT(*) FROM subscription_plans')
+      client.query('SELECT COUNT(*) FROM orders')
     ]);
 
     console.log('\n Data summary:');
@@ -128,7 +125,6 @@ const checkDatabase = async () => {
     console.log(`   Categories: ${counts[1].rows[0].count}`);
     console.log(`   Products: ${counts[2].rows[0].count}`);
     console.log(`   Orders: ${counts[3].rows[0].count}`);
-    console.log(`   Subscription Plans: ${counts[4].rows[0].count}`);
 
     console.log('\n Database is healthy!\n');
     

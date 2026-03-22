@@ -11,6 +11,9 @@ export default function StoreAddProduct() {
     const { language } = useLanguage()
     const router = useRouter()
     const [categories, setCategories] = useState([])
+    const [showSuggestCategory, setShowSuggestCategory] = useState(false)
+    const [suggestedCategory, setSuggestedCategory] = useState("")
+    const [suggesting, setSuggesting] = useState(false)
     const [images, setImages] = useState({ 1: null, 2: null, 3: null, 4: null })
     const [productInfo, setProductInfo] = useState({
         name: "",
@@ -37,6 +40,30 @@ export default function StoreAddProduct() {
 
     const onChangeHandler = (e) => {
         setProductInfo({ ...productInfo, [e.target.name]: e.target.value })
+    }
+
+    const handleSuggestCategory = async () => {
+        if (!suggestedCategory.trim()) return;
+        setSuggesting(true);
+        try {
+            const formData = new FormData()
+            formData.append('name', suggestedCategory)
+
+
+            await apiRequest('/categories', {
+                method: 'POST',
+                body: formData,
+                isFormData: true
+            });
+            toast.success(language === 'ar' ? 'تم تقديم الاقتراح! سيكون متاحاً بعد موافقة الإدارة.' : 'Suggestion submitted! It will be available after admin approval.');
+            setShowSuggestCategory(false);
+            setSuggestedCategory('');
+
+        } catch (error) {
+            toast.error(error.message || 'Failed to suggest category');
+        } finally {
+            setSuggesting(false);
+        }
     }
 
     const onSubmitHandler = async (e) => {
@@ -109,15 +136,39 @@ export default function StoreAddProduct() {
                         <input type="text" name="name" onChange={onChangeHandler} value={productInfo.name} placeholder={language === 'ar' ? 'أدخل اسم المنتج' : "Enter product name"} className="w-full p-3.5 bg-slate-50 outline-none border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-mauve/30 transition-all" required />
                     </label>
 
-                    <label className="flex flex-col gap-2">
-                        <span className="text-sm font-bold text-foreground">{language === 'ar' ? 'القسم' : 'Category'}</span>
-                        <select onChange={e => setProductInfo({ ...productInfo, category_id: e.target.value })} value={productInfo.category_id} className="w-full p-3.5 bg-slate-50 outline-none border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-mauve/30 transition-all" required>
-                            <option value="">{language === 'ar' ? 'اختر قسماً' : 'Select a category'}</option>
-                            {categories.map((cat) => (
-                                <option key={cat.id} value={cat.id}>{cat.name}</option>
-                            ))}
-                        </select>
-                    </label>
+                    <div className="flex flex-col gap-2">
+                        <label className="flex flex-col gap-2">
+                            <span className="text-sm font-bold text-foreground">{language === 'ar' ? 'القسم' : 'Category'}</span>
+                            <select onChange={e => setProductInfo({ ...productInfo, category_id: e.target.value })} value={productInfo.category_id} className="w-full p-3.5 bg-slate-50 outline-none border border-slate-100 rounded-2xl focus:bg-white focus:border-brand-mauve/30 transition-all" required>
+                                <option value="">{language === 'ar' ? 'اختر قسماً' : 'Select a category'}</option>
+                                {categories.map((cat) => (
+                                    <option key={cat.id} value={cat.id}>{cat.name}</option>
+                                ))}
+                            </select>
+                        </label>
+                        {!showSuggestCategory ? (
+                            <button type="button" onClick={() => setShowSuggestCategory(true)} className="text-xs text-brand-orange text-left sm:text-right hover:underline mt-1 font-medium px-2">
+                                {language === 'ar' ? 'لم تجد القسم المناسب؟ اقترح قسماً جديداً' : 'Category not listed? Suggest a new one'}
+                            </button>
+                        ) : (
+                            <div className="flex gap-2 mt-2 animate-in fade-in slide-in-from-top-2 duration-300">
+                                <input 
+                                    type="text" 
+                                    placeholder={language === 'ar' ? 'اسم القسم...' : 'New category name...'} 
+                                    value={suggestedCategory}
+                                    onChange={(e) => setSuggestedCategory(e.target.value)}
+                                    className="flex-1 p-2 bg-brand-light/10 outline-none border border-brand-light rounded-xl text-sm min-w-[150px]"
+                                />
+
+                                <button type="button" onClick={handleSuggestCategory} disabled={suggesting} className="bg-brand-mauve text-white px-4 py-2 rounded-xl text-xs font-bold hover:bg-brand-orange transition-colors">
+                                    {suggesting ? '...' : (language === 'ar' ? 'اقترح' : 'Suggest')}
+                                </button>
+                                <button type="button" onClick={() => setShowSuggestCategory(false)} className="bg-slate-100 text-slate-500 px-3 py-2 rounded-xl text-xs font-bold hover:bg-slate-200">
+                                    X
+                                </button>
+                            </div>
+                        )}
+                    </div>
                 </div>
 
                 <label className="flex flex-col gap-2">

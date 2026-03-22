@@ -1,5 +1,7 @@
 const express = require('express');
 const db = require('../config/database');
+const { auth } = require('../middleware/auth');
+const upload = require('../middleware/upload');
 
 const router = express.Router();
 
@@ -41,6 +43,28 @@ router.get('/:id', async (req, res) => {
   } catch (error) {
     console.error('Get category error:', error);
     res.status(500).json({ error: 'Failed to fetch category' });
+  }
+});
+
+// Propose a new category
+router.post('/', auth, upload.single('img'), async (req, res) => {
+  try {
+    const { name, description } = req.body;
+    if (!name) return res.status(400).json({ error: 'Category name is required' });
+
+    const img_url = req.file ? `/uploads/${req.file.filename}` : (req.body.img || null);
+
+    const result = await db.query(
+      'INSERT INTO categories (name, description, img) VALUES ($1, $2, $3) RETURNING *',
+      [name, description || '', img_url]
+    );
+    res.status(201).json({ message: 'Category requested successfully', category: result.rows[0] });
+  } catch (error) {
+    if (error.code === '23505') { // Unique constraint violation
+      return res.status(409).json({ error: 'A category with this name already exists or is pending approval.' });
+    }
+    console.error('Create category error:', error);
+    res.status(500).json({ error: 'Failed to request category' });
   }
 });
 

@@ -10,6 +10,9 @@ import {
   X,
   ChevronRight,
   Store,
+  Heart,
+  Globe,
+  ChevronDown,
 } from "lucide-react";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
@@ -26,22 +29,26 @@ const Navbar = () => {
   const [showDropdown, setShowDropdown] = useState(false);
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
   const cartCount = useSelector((state) => state.cart.total);
+  const wishlistCount = useSelector((state) => state.wishlist.itemIds.length);
   const { unreadCount } = useChat();
   const { user, isAuthenticated, logout } = useAuth();
-  const { t, language } = useLanguage();
-  const { theme } = useTheme();
+  const { t, language, setLanguage } = useLanguage();
 
   const handleSearch = (e) => {
     e.preventDefault();
     router.push(`/shop?search=${search}`);
   };
 
+  const toggleLanguage = () => {
+    setLanguage(language === 'ar' ? 'en' : 'ar');
+  };
+
   return (
-    <nav className="relative border-b sticky top-0 z-50 bg-secondary/95 border-secondary/80 backdrop-blur-xl">
+    <nav className="relative border-b sticky top-0 z-50 bg-brand-light/95 border-brand-mauve/30 backdrop-blur-xl">
       <div className="max-w-7xl mx-auto px-6">
         <div className="flex items-center justify-between py-4 transition-all">
           <Link href="/" className="relative flex items-center gap-2 group">
-            <span className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-secondary-foreground via-accent to-primary bg-clip-text text-transparent">
+            <span className="text-3xl sm:text-4xl font-bold bg-gradient-to-r from-brand-orange via-brand-dark to-brand-orange bg-clip-text text-transparent">
               Manuva
             </span>
             <Sparkles className="text-accent w-4 h-4 group-hover:rotate-12 transition-transform" />
@@ -75,11 +82,7 @@ const Navbar = () => {
               <input
                 className="flex-1 bg-transparent border-none outline-none px-2 text-secondary-foreground placeholder:text-secondary-foreground/50"
                 type="text"
-                placeholder={
-                  language === "ar"
-                    ? "ابحث عن منتجات..."
-                    : "Search for products..."
-                }
+                placeholder={t('search_placeholder')}
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
                 required
@@ -88,13 +91,22 @@ const Navbar = () => {
                 type="submit"
                 className="bg-primary text-primary-foreground px-4 py-1.5 rounded-full font-medium hover:bg-accent hover:text-accent-foreground transition-all active:scale-95 whitespace-nowrap"
               >
-                {language === "ar" ? "بحث" : "Search"}
+                {t('search_btn')}
               </button>
             </form>
           </div>
 
           <div className="flex items-center gap-3 lg:gap-6">
             <div className="hidden md:flex items-center gap-4 lg:gap-6">
+              {/* Language Switcher */}
+              <button 
+                onClick={toggleLanguage}
+                className="flex items-center gap-2 px-3 py-1.5 rounded-full bg-white/10 hover:bg-white/20 border border-white/10 text-sm font-bold text-secondary-foreground transition-all"
+              >
+                <Globe size={16} className="text-accent" />
+                <span>{language === 'ar' ? 'EN' : 'عربي'}</span>
+              </button>
+
               {isAuthenticated && (
                 <Link
                   href="/chat"
@@ -111,6 +123,19 @@ const Navbar = () => {
                   </div>
                 </Link>
               )}
+
+              <Link
+                href="/wishlist"
+                className="relative flex items-center gap-2 text-secondary-foreground/90 hover:text-red-500 transition-colors"
+                title={t('wishlist')}
+              >
+                <Heart size={20} className={wishlistCount > 0 ? "text-red-500" : ""} fill={wishlistCount > 0 ? "currentColor" : "none"} />
+                {wishlistCount > 0 && (
+                  <span className="absolute -top-1 -right-2 text-[8px] text-white bg-red-500 px-1.5 py-0.5 rounded-full font-bold">
+                    {wishlistCount}
+                  </span>
+                )}
+              </Link>
 
               <Link
                 href="/cart"
@@ -157,7 +182,7 @@ const Navbar = () => {
                       onClick={() => setShowDropdown(false)}
                     >
                       <ShoppingCart size={16} />
-                      {language === "ar" ? "طلباتي" : "My Orders"}
+                      {t('my_orders')}
                     </Link>
                     <div className="h-px bg-border my-1 mx-2"></div>
                     <button
@@ -178,7 +203,7 @@ const Navbar = () => {
                 href="/login"
                 className="bg-primary text-primary-foreground px-6 py-2 shadow-md hover:bg-accent hover:text-accent-foreground hover:shadow-lg hover:scale-105 transition-all rounded-full font-medium"
               >
-                {t("login") || "دخول"}
+                {t('login')}
               </Link>
             )}
 
@@ -213,6 +238,22 @@ const Navbar = () => {
               {t("contact")}
               <ChevronRight size={18} className="text-muted-foreground" />
             </Link>
+
+            {/* Mobile Language Switcher */}
+            <button 
+              onClick={() => { 
+                toggleLanguage();
+                setMobileMenuOpen(false);
+              }}
+              className="flex items-center justify-between text-foreground"
+            >
+              <span className="flex items-center gap-2">
+                <Globe size={18} className="text-accent" />
+                {language === 'ar' ? 'اللغة (English)' : 'Language (العربية)'}
+              </span>
+              <ChevronRight size={18} className="text-muted-foreground" />
+            </button>
+
             <div className="my-2 border-t border-border" />
             {isAuthenticated ? (
                <button

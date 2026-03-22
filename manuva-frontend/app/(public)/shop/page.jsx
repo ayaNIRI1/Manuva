@@ -50,14 +50,14 @@ function ShopContent() {
                     <span className="text-slate-400 font-light">{t('shop') || 'Store'}</span>
                     <span className="text-slate-300">/</span>
                     <span className="text-slate-700 font-medium">
-                        {search ? (language === 'ar' ? `نتائج البحث عن "${search}"` : `Search results for "${search}"`) : (t('all_products') || 'All Products')}
+                        {search ? t('search_results', { search }) : (t('all_products'))}
                     </span>
                 </div>
 
                 {loading ? (
                     <div className="flex flex-col items-center justify-center py-32 gap-4 text-slate-400">
                         <Loader2 className="w-10 h-10 animate-spin text-primary" />
-                        <p>{language === 'ar' ? 'جاري البحث...' : 'Searching products...'}</p>
+                        <p>{t('searching')}</p>
                     </div>
                 ) : products.length > 0 ? (
                     <div className="grid grid-cols-2 sm:flex flex-wrap gap-6 xl:gap-12 mx-auto mb-32">
@@ -66,7 +66,7 @@ function ShopContent() {
                 ) : (
                     <div className="text-center py-32">
                         <p className="text-slate-500 text-lg">
-                            {language === 'ar' ? 'لم يتم العثور على منتجات تطابق بحثك.' : 'No products found matching your search.'}
+                            {t('no_products_found')}
                         </p>
                     </div>
                 )}
