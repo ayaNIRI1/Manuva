@@ -4,6 +4,7 @@ import { addToCartAsync } from "@/lib/features/cart/cartSlice";
 import { StarIcon, TagIcon, EarthIcon, CreditCardIcon, UserIcon, ArrowRight } from "lucide-react";
 import { assets } from "@/assets/assets";
 import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 import { useState } from "react";
 import Image from "next/image";
 import Counter from "./Counter";
@@ -22,7 +23,8 @@ const ProductDetails = ({ product }) => {
     const cart = useSelector(state => state.cart.cartItems);
     const dispatch = useDispatch();
 
-    const router = useRouter()
+    const router = useRouter();
+    const { isAuthenticated } = useAuth();
 
     // Better image resolution handling for both real and dummy data
     const getFullImageUrl = (img) => {
@@ -40,6 +42,10 @@ const ProductDetails = ({ product }) => {
     const [mainImage, setMainImage] = useState(images[0]);
 
     const addToCartHandler = () => {
+        if (!isAuthenticated) {
+            router.push('/login');
+            return;
+        }
         dispatch(addToCartAsync({ productId, quantity: 1 }))
     }
 

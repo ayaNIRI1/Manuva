@@ -35,6 +35,7 @@ CREATE TABLE IF NOT EXISTS categories (
     name VARCHAR(255) UNIQUE NOT NULL,
     description TEXT,
     img TEXT,
+    is_approved BOOLEAN DEFAULT TRUE,
     created_at TIMESTAMPTZ DEFAULT CURRENT_TIMESTAMP
 );
 

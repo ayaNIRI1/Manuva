@@ -1,5 +1,6 @@
 'use client'
 import Counter from "@/components/Counter";
+import ProtectedRoute from "@/components/ProtectedRoute";
 import OrderSummary from "@/components/OrderSummary";
 import PageTitle from "@/components/PageTitle";
 import { fetchCart, removeFromCartAsync } from "@/lib/features/cart/cartSlice";
@@ -70,8 +71,10 @@ export default function Cart() {
         createCartArray();
     }, [items, cartItems, products]);
 
-    return cartArray.length > 0 ? (
-        <div className="min-h-screen mx-6 text-foreground">
+    return (
+        <ProtectedRoute>
+            {cartArray.length > 0 ? (
+                <div className="min-h-screen mx-6 text-foreground">
 
             <div className="max-w-7xl mx-auto ">
                 {/* Title */}
@@ -124,5 +127,7 @@ export default function Cart() {
         <div className="min-h-[80vh] mx-6 flex items-center justify-center text-slate-400">
             <h1 className="text-2xl sm:text-4xl font-semibold">Your cart is empty</h1>
         </div>
-    )
+            )}
+        </ProtectedRoute>
+    );
 }

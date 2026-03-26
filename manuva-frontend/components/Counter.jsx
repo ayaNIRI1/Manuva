@@ -1,18 +1,24 @@
 'use client'
 import { addToCartAsync } from "@/lib/features/cart/cartSlice";
 import { useDispatch, useSelector } from "react-redux";
+import { useRouter } from "next/navigation";
+import { useAuth } from "@/lib/auth-context";
 
 const Counter = ({ productId }) => {
 
     const { cartItems } = useSelector(state => state.cart);
 
     const dispatch = useDispatch();
+    const router = useRouter();
+    const { isAuthenticated } = useAuth();
 
     const addToCartHandler = () => {
+        if (!isAuthenticated) return router.push('/login');
         dispatch(addToCartAsync({ productId, quantity: 1 }))
     }
 
     const removeFromCartHandler = () => {
+        if (!isAuthenticated) return router.push('/login');
         dispatch(addToCartAsync({ productId, quantity: -1 }))
     }
 

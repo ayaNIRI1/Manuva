@@ -1,5 +1,6 @@
 'use client'
-import PageTitle from "@/components/PageTitle"
+import ProtectedRoute from "@/components/ProtectedRoute";
+import PageTitle from "@/components/PageTitle";
 import { useEffect, useState } from "react";
 import OrderItem from "@/components/OrderItem";
 import { apiRequest } from "@/lib/api";
@@ -46,7 +47,8 @@ export default function Orders() {
     if (loading) return <Loading />;
 
     return (
-        <div className="min-h-[70vh] mx-6">
+        <ProtectedRoute>
+            <div className="min-h-[70vh] mx-6">
             {orders.length > 0 ? (
                 (
                     <div className="my-20 max-w-7xl mx-auto">
@@ -75,5 +77,6 @@ export default function Orders() {
                 </div>
             )}
         </div>
-    )
+        </ProtectedRoute>
+    );
 }

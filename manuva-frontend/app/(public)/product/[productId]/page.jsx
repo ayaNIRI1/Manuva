@@ -5,8 +5,10 @@ import { apiRequest } from "@/lib/api";
 import Loading from "@/components/Loading";
 import ProductDescription from "@/components/ProductDescription";
 import ProductDetails from "@/components/ProductDetails";
+import { useLanguage } from "@/lib/language-context";
 
 export default function Product() {
+    const { t } = useLanguage();
     const { productId } = useParams();
     const [product, setProduct] = useState(null);
     const [loading, setLoading] = useState(true);

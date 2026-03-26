@@ -12,6 +12,7 @@ router.get('/', async (req, res) => {
       `SELECT c.*, 
               (SELECT COUNT(*) FROM products p WHERE p.category_id = c.id AND p.status = 'approved') as product_count
        FROM categories c
+       WHERE c.is_approved = true
        ORDER BY c.name ASC`
     );
 
@@ -31,7 +32,7 @@ router.get('/:id', async (req, res) => {
       `SELECT c.*, 
               (SELECT COUNT(*) FROM products p WHERE p.category_id = c.id AND p.status = 'approved') as product_count
        FROM categories c
-       WHERE c.id = $1`,
+       WHERE c.id = $1 AND c.is_approved = true`,
       [id]
     );
 
@@ -55,7 +56,7 @@ router.post('/', auth, upload.single('img'), async (req, res) => {
     const img_url = req.file ? `/uploads/${req.file.filename}` : (req.body.img || null);
 
     const result = await db.query(
-      'INSERT INTO categories (name, description, img) VALUES ($1, $2, $3) RETURNING *',
+      'INSERT INTO categories (name, description, img, is_approved) VALUES ($1, $2, $3, false) RETURNING *',
       [name, description || '', img_url]
     );
     res.status(201).json({ message: 'Category requested successfully', category: result.rows[0] });

@@ -5,33 +5,18 @@ import ProductCard from '@/components/ProductCard'
 import Title from '@/components/Title'
 import { Heart, shopping_cart_icon } from 'lucide-react'
 import Link from 'next/link'
-import { useAuth } from '@/lib/auth-context'
+import ProtectedRoute from "@/components/ProtectedRoute";
 import Loading from '@/components/Loading'
 
 const WishlistPage = () => {
     const { items, loading } = useSelector(state => state.wishlist)
-    const { isAuthenticated, loading: authLoading } = useAuth()
 
-    if (authLoading || loading) return <Loading />
-
-    if (!isAuthenticated) {
-        return (
-            <div className='flex flex-col items-center justify-center py-20 px-6 text-center h-[70vh]'>
-                <div className='p-6 bg-red-50 rounded-full mb-6'>
-                    <Heart size={48} className='text-red-300' />
-                </div>
-                <h2 className='text-2xl font-bold text-slate-800 mb-2'>Log in to view your wishlist</h2>
-                <p className='text-slate-500 mb-8 max-w-md'>Save your favorite handmade products and find them easily whenever you are ready to shop.</p>
-                <Link href='/login' className='bg-primary text-primary-foreground px-8 py-3 rounded-full font-bold hover:shadow-lg transition-all'>
-                    Go to Login
-                </Link>
-            </div>
-        )
-    }
+    if (loading) return <Loading />
 
     return (
-        <div className='max-w-7xl mx-auto px-6 py-10 min-h-[70vh]'>
-            <div className='flex items-center justify-between mb-10'>
+        <ProtectedRoute>
+            <div className='max-w-7xl mx-auto px-6 py-10 min-h-[70vh]'>
+                <div className='flex items-center justify-between mb-10'>
                 <div className='flex flex-col gap-2'>
                     <Title text1={'MY'} text2={'WISHLIST'} />
                     <p className='text-sm text-slate-500 font-medium'>
@@ -61,8 +46,9 @@ const WishlistPage = () => {
                     ))}
                 </div>
             )}
-        </div>
-    )
+            </div>
+        </ProtectedRoute>
+    );
 }
 
 export default WishlistPage

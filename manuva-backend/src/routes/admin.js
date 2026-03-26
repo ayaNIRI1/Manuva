@@ -57,21 +57,32 @@ router.get('/dashboard', auth, isAdmin, async (req, res) => {
 });
 
 
-// Admin: Get all categories
-router.get('/categories', auth, isAdmin, async (req, res) => {
+// Admin: Get approved categories
+router.get('/categories/approved', auth, isAdmin, async (req, res) => {
     try {
-        const result = await db.query('SELECT * FROM categories ORDER BY created_at DESC');
+        const result = await db.query('SELECT * FROM categories WHERE is_approved = true ORDER BY created_at DESC');
         res.json(result.rows);
     } catch (error) {
-        console.error('Admin get categories error:', error);
-        res.status(500).json({ error: 'Failed to fetch categories' });
+        console.error('Admin get approved categories error:', error);
+        res.status(500).json({ error: 'Failed to fetch approved categories' });
+    }
+});
+
+// Admin: Get pending category requests
+router.get('/categories/pending', auth, isAdmin, async (req, res) => {
+    try {
+        const result = await db.query('SELECT * FROM categories WHERE is_approved = false ORDER BY created_at DESC');
+        res.json(result.rows);
+    } catch (error) {
+        console.error('Admin get pending categories error:', error);
+        res.status(500).json({ error: 'Failed to fetch pending categories' });
     }
 });
 
 
 
 
-// Admin: Create a new category directly
+// Admin: Create a new category directly (approved)
 router.post('/categories', auth, isAdmin, upload.single('img'), async (req, res) => {
     try {
         const { name, description } = req.body;
@@ -80,9 +91,8 @@ router.post('/categories', auth, isAdmin, upload.single('img'), async (req, res)
         const img_url = req.file ? `/uploads/${req.file.filename}` : (req.body.img || null);
 
         const result = await db.query(
-            'INSERT INTO categories (name, description, img) VALUES ($1, $2, $3) RETURNING *',
+            'INSERT INTO categories (name, description, img, is_approved) VALUES ($1, $2, $3, true) RETURNING *',
             [name, description || '', img_url]
-
         );
         res.status(201).json({ message: 'Category created successfully', category: result.rows[0] });
     } catch (error) {
@@ -95,6 +105,19 @@ router.post('/categories', auth, isAdmin, upload.single('img'), async (req, res)
 });
 
 
+
+// Admin: Approve a category
+router.patch('/categories/:id/approve', auth, isAdmin, async (req, res) => {
+    try {
+        const { id } = req.params;
+        const result = await db.query('UPDATE categories SET is_approved = true WHERE id = $1 RETURNING *', [id]);
+        if (result.rows.length === 0) return res.status(404).json({ error: 'Category not found' });
+        res.json({ message: 'Category approved successfully', category: result.rows[0] });
+    } catch (error) {
+        console.error('Admin approve category error:', error);
+        res.status(500).json({ error: 'Failed to approve category' });
+    }
+});
 
 // Admin: Reject a category
 router.delete('/categories/:id', auth, isAdmin, async (req, res) => {
