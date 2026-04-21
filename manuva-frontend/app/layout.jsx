@@ -18,8 +18,8 @@ export const metadata = {
 
 export default function RootLayout({ children }) {
     return (
-        <html lang="ar" dir="rtl">
-            <body className={`${outfit.className} antialiased transition-colors duration-300`}>
+        <html lang="ar" dir="rtl" suppressHydrationWarning>
+            <body className={`${outfit.className} antialiased transition-colors duration-300`} suppressHydrationWarning>
                 <StoreProvider>
                     <AuthProvider>
                         <ThemeProvider>

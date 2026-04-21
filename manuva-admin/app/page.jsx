@@ -77,7 +77,7 @@ export default function AdminDashboard() {
         setActionLoading(true)
         try {
             const token = localStorage.getItem('token')
-            const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api'
+            const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3001/api';
             const response = await fetch(`${baseUrl}/admin/analytics/export`, {
                 headers: {
                     'Authorization': `Bearer ${token}`

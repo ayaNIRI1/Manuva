@@ -4,6 +4,7 @@ import { MessageCircle, Send, ChevronLeft, Loader2, ArrowRight } from 'lucide-re
 import { useChat } from '@/lib/chat-context';
 import { useAuth } from '@/lib/auth-context';
 import { useRouter } from 'next/navigation';
+import { useLanguage } from '@/lib/language-context';
 
 const getOtherUser = (conv, currentUserId) => {
   if (!conv || !currentUserId) return null;
@@ -26,6 +27,7 @@ const Avatar = ({ name = '?', avatar, size = 10 }) => (
 
 export default function ChatPage() {
   const router = useRouter();
+  const { t, language } = useLanguage();
   const { conversations, activeConversation, messages, sendMessage, openConversation, closeConversation, fetchConversations } = useChat();
   const { user, loading: authLoading } = useAuth();
   const [currentUserId, setCurrentUserId] = useState(null);
@@ -57,25 +59,25 @@ export default function ChatPage() {
   }
 
   return (
-    <div className="min-h-screen bg-slate-50" dir="rtl">
+    <div className="min-h-screen bg-slate-50" dir={language === 'ar' ? 'rtl' : 'ltr'}>
       <div className="max-w-5xl mx-auto px-4 py-8">
         <h1 className="text-2xl font-bold text-foreground mb-6 flex items-center gap-2">
           <MessageCircle className="text-orange-500" size={26} />
-          المحادثات
+          {t('conversations')}
         </h1>
 
         <div className="bg-white rounded-2xl shadow-sm border border-slate-100 overflow-hidden flex" style={{ height: '70vh' }}>
           {/* Sidebar */}
           <div className={`w-full md:w-80 border-l border-slate-100 flex-shrink-0 ${activeConversation ? 'hidden md:flex' : 'flex'} flex-col`}>
             <div className="px-4 py-3 border-b border-slate-100">
-              <h2 className="font-semibold text-slate-600 text-sm">جميع المحادثات</h2>
+              <h2 className="font-semibold text-slate-600 text-sm">{t('all_conversations')}</h2>
             </div>
             <div className="flex-1 overflow-y-auto">
               {conversations.length === 0 && (
                 <div className="flex flex-col items-center justify-center h-full text-slate-400 gap-2 p-6 text-center">
                   <MessageCircle size={36} className="opacity-40" />
-                  <p className="text-sm">لا توجد محادثات بعد</p>
-                  <p className="text-xs opacity-70">ابدأ محادثة من صفحة أي بائع</p>
+                  <p className="text-sm">{t('no_conversations')}</p>
+                  <p className="text-xs opacity-70">{t('start_conv_hint')}</p>
                 </div>
               )}
               {conversations.map((conv) => {
@@ -85,7 +87,7 @@ export default function ChatPage() {
                   <button
                     key={conv.id}
                     onClick={() => openConversation(conv)}
-                    className={`w-full flex items-center gap-3 px-4 py-4 transition-colors border-b border-slate-50 text-right ${
+                    className={`w-full flex items-center gap-3 px-4 py-4 transition-colors border-b border-slate-50 ${language === 'ar' ? 'text-right' : 'text-left'} ${
                       isActive ? 'bg-orange-50' : 'hover:bg-slate-50'
                     }`}
                   >
@@ -102,7 +104,7 @@ export default function ChatPage() {
                         )}
                       </div>
                       <p className="text-xs text-slate-400 truncate mt-0.5">
-                        {conv.last_message || 'ابدأ المحادثة'}
+                        {conv.last_message || t('start_conv')}
                       </p>
                     </div>
                   </button>
@@ -116,7 +118,7 @@ export default function ChatPage() {
             {!activeConversation ? (
               <div className="flex-1 flex flex-col items-center justify-center text-slate-400 gap-3">
                 <MessageCircle size={48} className="opacity-30" />
-                <p className="text-sm">اختر محادثة للبدء</p>
+                <p className="text-sm">{t('choose_conv')}</p>
               </div>
             ) : (
               <>
@@ -137,7 +139,7 @@ export default function ChatPage() {
                     <p className="font-semibold text-foreground">
                       {getOtherUser(activeConversation, currentUserId)?.name}
                     </p>
-                    <p className="text-xs text-green-500">متصل</p>
+                    <p className="text-xs text-green-500">{t('online')}</p>
                   </div>
                 </div>
 
@@ -167,11 +169,10 @@ export default function ChatPage() {
                   className="flex items-center gap-2 px-4 py-3 bg-white border-t border-slate-100"
                 >
                   <input
-                    className="flex-1 bg-slate-100 rounded-full px-5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-400 transition text-right"
-                    placeholder="اكتب رسالة..."
+                    className={`flex-1 bg-slate-100 rounded-full px-5 py-2.5 text-sm outline-none focus:ring-2 focus:ring-orange-400 transition ${language === 'ar' ? 'text-right' : 'text-left'}`}
+                    placeholder={t('type_message')}
                     value={input}
                     onChange={(e) => setInput(e.target.value)}
-                    dir="rtl"
                   />
                   <button
                     type="submit"

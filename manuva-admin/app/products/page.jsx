@@ -83,7 +83,7 @@ export default function AdminProducts() {
                             <div key={product.id} className="bg-white border border-slate-200 rounded-xl p-5 flex flex-col md:flex-row md:items-center gap-4 shadow-sm">
                                 <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-slate-100 flex-shrink-0">
                                     {product.image_url ? (
-                                        <Image fill src={product.image_url.startsWith('http') ? product.image_url : `http://127.0.0.1:3001${product.image_url}`} alt={product.name} className="object-cover" />
+                                        <Image fill src={product.image_url.startsWith('http') ? product.image_url : `http://localhost:3001${product.image_url}`} alt={product.name} className="object-cover" />
                                     ) : (
                                         <div className="w-full h-full bg-slate-100 flex items-center justify-center text-slate-600 text-xs">No img</div>
                                     )}

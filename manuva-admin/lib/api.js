@@ -1,6 +1,6 @@
 export const apiRequest = async (endpoint, options = {}) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://127.0.0.1:3001/api';
+  const baseUrl = process.env.NEXT_PUBLIC_API_URL || (process.env.NEXT_PUBLIC_BACKEND_URL ? `${process.env.NEXT_PUBLIC_BACKEND_URL}/api` : 'http://localhost:3001/api');
 
   const defaultHeaders = {
     'Content-Type': 'application/json',

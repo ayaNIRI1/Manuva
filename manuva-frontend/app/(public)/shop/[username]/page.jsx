@@ -65,7 +65,7 @@ export default function StoreShop() {
                 id: store.id,
                 name: store.name,
                 description: store.bio,
-                logo: store.profile_img || '/images/default-store.jpg',
+                logo: store.profile_img || '/uploads/artisan-placeholder.png',
                 address: store.location,
                 email: store.email || 'contact@artisan.com'
             });
@@ -79,7 +79,14 @@ export default function StoreShop() {
             }
         } catch (error) {
             console.error("Failed to fetch store data:", error);
-            setStoreInfo(dummyStoreData);
+            setStoreInfo({
+                id: null,
+                name: "Store not found",
+                description: "",
+                logo: '/uploads/artisan-placeholder.png',
+                address: "",
+                email: ""
+            });
             setProducts(productDummyData);
         } finally {
             setLoading(false);
@@ -99,8 +106,8 @@ export default function StoreShop() {
             {storeInfo && (
                 <div className="max-w-7xl mx-auto bg-slate-50 rounded-xl p-6 md:p-10 mt-6 flex flex-col md:flex-row items-center gap-6 shadow-xs">
                     <Image
-                        src={storeInfo.logo}
-                        alt={storeInfo.name}
+                        src={storeInfo.logo || '/uploads/artisan-placeholder.png'}
+                        alt={storeInfo.name || 'Store'}
                         className="size-32 sm:size-38 object-cover border-2 border-slate-100 rounded-md"
                         width={200}
                         height={200}
@@ -115,10 +122,11 @@ export default function StoreShop() {
                             <div className="flex flex-wrap items-center gap-3">
                                 <button 
                                     onClick={handleToggleFollow}
-                                    className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all active:scale-95 shadow-md hover:shadow-lg ${
+                                    disabled={!storeInfo.id}
+                                    className={`flex items-center justify-center gap-2 px-6 py-2.5 rounded-full text-sm font-bold transition-all shadow-md hover:shadow-lg disabled:opacity-50 disabled:cursor-not-allowed ${
                                         isFollowing 
                                         ? "bg-slate-200 text-slate-700 hover:bg-slate-300" 
-                                        : "bg-primary text-primary-foreground hover:opacity-90"
+                                        : "bg-primary text-primary-foreground hover:opacity-90 active:scale-95"
                                     }`}
                                 >
                                     {isFollowing ? <UserMinus size={18} /> : <UserPlus size={18} />}
@@ -127,7 +135,8 @@ export default function StoreShop() {
 
                                 <button 
                                     onClick={handleStartChat}
-                                    className="flex items-center justify-center gap-2 bg-gradient-to-br from-brand-orange to-brand-dark text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-all active:scale-95"
+                                    disabled={!storeInfo.id}
+                                    className="flex items-center justify-center gap-2 bg-gradient-to-br from-brand-orange to-brand-dark text-white px-6 py-2.5 rounded-full text-sm font-bold shadow-md hover:shadow-lg transition-all active:scale-95 disabled:opacity-50 disabled:cursor-not-allowed"
                                 >
                                     <MessageCircle size={18} />
                                     محادثة

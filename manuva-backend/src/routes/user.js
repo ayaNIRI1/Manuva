@@ -118,6 +118,11 @@ router.post('/following/:sellerId', auth, async (req, res) => {
   try {
     const { sellerId } = req.params;
 
+    const isUUID = /^[0-9a-fA-F]{8}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{4}-[0-9a-fA-F]{12}$/.test(sellerId);
+    if (!isUUID) {
+      return res.status(400).json({ error: 'Invalid seller ID format' });
+    }
+
     // Check if seller exists and is an artisan
     const sellerCheck = await db.query('SELECT id, role FROM users WHERE id = $1', [sellerId]);
     if (sellerCheck.rows.length === 0) {

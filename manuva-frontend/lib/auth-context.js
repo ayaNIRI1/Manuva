@@ -17,6 +17,24 @@ export const AuthProvider = ({ children }) => {
   useEffect(() => {
     const unsubscribe = onAuthStateChanged(auth, async (firebaseUser) => {
       if (!firebaseUser) {
+        const storedToken = localStorage.getItem('token');
+        if (storedToken) {
+          try {
+            setLoading(true);
+            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+              headers: { Authorization: `Bearer ${storedToken}` }
+            });
+            if (response.ok) {
+              const data = await response.json();
+              setUser(data);
+              localStorage.setItem('role', data.role || 'customer');
+              setLoading(false);
+              return;
+            }
+          } catch (error) {
+            console.error('Failed to validate stored token', error);
+          }
+        }
         setUser(null);
         localStorage.removeItem('token');
         localStorage.removeItem('role');
@@ -69,7 +87,9 @@ export const AuthProvider = ({ children }) => {
   }, []);
 
   const logout = async () => {
-    await firebaseSignOut(auth);
+    try {
+      await firebaseSignOut(auth);
+    } catch(e) {}
     localStorage.removeItem('token');
     localStorage.removeItem('role');
     setUser(null);
@@ -85,13 +105,63 @@ export const AuthProvider = ({ children }) => {
     }
   };
 
+
+
+  const login = async (email, password) => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', data.user?.role || 'customer');
+        setUser(data.user);
+        return { success: true };
+      } else {
+        return { success: false, error: data.error || data.errors?.[0]?.msg || 'Login failed' };
+      }
+    } catch (e) {
+      return { success: false, error: 'Network error occurred. Please try again.' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
+  const register = async (name, email, password) => {
+    try {
+      setLoading(true);
+      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ name, email, password })
+      });
+      const data = await res.json();
+      if (res.ok) {
+        localStorage.setItem('token', data.token);
+        localStorage.setItem('role', data.user?.role || 'customer');
+        setUser(data.user);
+        return { success: true };
+      } else {
+        return { success: false, error: data.error || data.errors?.[0]?.msg || 'Registration failed' };
+      }
+    } catch (e) {
+      return { success: false, error: 'Network error occurred. Please try again.' };
+    } finally {
+      setLoading(false);
+    }
+  };
+
   const updateUser = (updatedData) => {
     setUser((prev) => prev ? { ...prev, ...updatedData } : null);
   };
 
   const getToken = async () => {
-    if (!auth.currentUser) return null;
-    return auth.currentUser.getIdToken();
+    if (auth.currentUser) return auth.currentUser.getIdToken();
+    return localStorage.getItem('token');
   };
 
   return (
@@ -103,9 +173,10 @@ export const AuthProvider = ({ children }) => {
         getToken,
         updateUser,
         loginWithGoogle,
+
         isAuthenticated: !!user,
-        login: async () => ({ success: false, error: 'Standard login not implemented in provider' }),
-        register: async () => ({ success: false, error: 'Standard register not implemented in provider' }),
+        login,
+        register,
       }}
     >
       {children}

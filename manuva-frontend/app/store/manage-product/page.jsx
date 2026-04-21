@@ -63,6 +63,24 @@ export default function StoreManageProducts() {
         setProducts(products.map(p => p.id === productId ? { ...p, stock: newStock } : p))
     }
 
+    const updatePrice = async (productId, newPrice) => {
+        try {
+            await apiRequest(`/products/${productId}`, {
+                method: 'PATCH',
+                body: JSON.stringify({ price: parseFloat(newPrice) })
+            })
+            toast.success(language === 'ar' ? 'تم تحديث السعر بنجاح' : 'Price updated successfully')
+        } catch (error) {
+            console.error('Update price error:', error)
+            toast.error(language === 'ar' ? 'فشل تحديث السعر' : 'Failed to update price')
+            fetchProducts() // Revert changes on error
+        }
+    }
+
+    const handlePriceChange = (productId, newPrice) => {
+        setProducts(products.map(p => p.id === productId ? { ...p, price: newPrice } : p))
+    }
+
     const toggleStatus = async (productId, currentStatus) => {
         try {
             const newStatus = currentStatus === 'approved' ? 'pending' : 'approved'
@@ -135,7 +153,21 @@ export default function StoreManageProducts() {
                                                     {product.category_name}
                                                 </span>
                                             </td>
-                                            <td className="px-6 py-4 font-extrabold text-brand-mauve">{currency}{product.price}</td>
+                                            <td className="px-6 py-4">
+                                                <div className="flex items-center">
+                                                    <span className="font-extrabold text-brand-mauve mr-1">{currency}</span>
+                                                    <input 
+                                                        type="number"
+                                                        min="0"
+                                                        step="0.01"
+                                                        value={product.price}
+                                                        onChange={(e) => handlePriceChange(product.id, e.target.value)}
+                                                        onBlur={(e) => updatePrice(product.id, e.target.value)}
+                                                        title={language === 'ar' ? 'تعديل السعر' : 'Edit Price'}
+                                                        className="w-24 px-2 py-1.5 text-left rounded-lg border-2 border-transparent hover:border-slate-200 focus:border-brand-mauve focus:ring-4 focus:ring-brand-mauve/10 transition-all font-extrabold text-brand-mauve bg-transparent focus:bg-white"
+                                                    />
+                                                </div>
+                                            </td>
                                             <td className="px-6 py-4">
                                                 <input 
                                                     type="number"

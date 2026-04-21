@@ -3,6 +3,7 @@ const http = require('http');
 const { Server } = require('socket.io');
 const cors = require('cors');
 const morgan = require('morgan');
+const compression = require('compression');
 const jwt = require('jsonwebtoken');
 require('dotenv').config();
 
@@ -124,6 +125,7 @@ io.on('connection', (socket) => {
 
 
 app.use(cors());
+app.use(compression());
 
 app.use('/api/webhooks', webhookRoutes);
 

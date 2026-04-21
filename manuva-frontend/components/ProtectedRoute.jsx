@@ -19,7 +19,7 @@ const ProtectedRoute = ({ children }) => {
     if (loading) {
         return (
             <div className="flex h-[60vh]items-center justify-center min-h-[50vh]">
-                <Image src={assets.logo} width={100} height={100} alt="Loading" className="animate-pulse" />
+                <Image src={assets.manuva_logo} width={100} height={100} alt="Loading" className="animate-pulse" />
             </div>
         );
     }

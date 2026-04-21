@@ -27,7 +27,7 @@ router.post('/cart', auth,
       await client.query('BEGIN');
 
       const productResult = await client.query(
-        'SELECT price, stock FROM products WHERE id = $1 AND status = $2',
+        'SELECT price, stock, seller_id FROM products WHERE id = $1 AND status = $2',
         [product_id, 'approved']
       );
 
@@ -37,6 +37,11 @@ router.post('/cart', auth,
       }
 
       const product = productResult.rows[0];
+
+      if (product.seller_id === buyer_id) {
+        await client.query('ROLLBACK');
+        return res.status(403).json({ error: 'You cannot add your own product to the cart' });
+      }
 
       let orderResult = await client.query(
         "SELECT id FROM orders WHERE buyer_id = $1 AND status = '1' LIMIT 1",
@@ -290,8 +295,13 @@ router.post('/', auth,
       const orderItems = [];
 
       for (const item of items) {
-        const p = await client.query('SELECT price FROM products WHERE id = $1 AND status = $2', [item.product_id, 'approved']);
+        const p = await client.query('SELECT price, seller_id FROM products WHERE id = $1 AND status = $2', [item.product_id, 'approved']);
         if (p.rows.length === 0) throw new Error(`Product ${item.product_id} not available`);
+        
+        if (p.rows[0].seller_id === req.user.id) {
+          throw new Error('You cannot buy your own product');
+        }
+
         total += p.rows[0].price * item.quantity;
         orderItems.push({ ...item, price: p.rows[0].price });
       }

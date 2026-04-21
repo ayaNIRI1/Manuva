@@ -8,9 +8,10 @@ import { useAuth } from '@/lib/auth-context';
 import { apiRequest } from '@/lib/api';
 import { useDispatch } from 'react-redux';
 import { clearCart } from '@/lib/features/cart/cartSlice';
+import { useLanguage } from '@/lib/language-context';
 
 const OrderSummary = ({ totalPrice, items }) => {
-
+    const { t } = useLanguage();
     const currency = process.env.NEXT_PUBLIC_CURRENCY_SYMBOL || '$';
 
     const router = useRouter();
@@ -30,12 +31,12 @@ const OrderSummary = ({ totalPrice, items }) => {
         e.preventDefault();
 
         if (!selectedAddress) {
-            toast.error('Please select a shipping address');
+            toast.error(t('select_shipping_address_error'));
             return;
         }
 
         if (!orderId) {
-            toast.error('No active cart found');
+            toast.error(t('no_active_cart_error'));
             return;
         }
 
@@ -87,14 +88,14 @@ const OrderSummary = ({ totalPrice, items }) => {
 
     return (
         <div className='w-full max-w-lg lg:max-w-[340px] bg-slate-50/30 border border-slate-200 text-slate-500 text-sm rounded-xl p-7'>
-            <h2 className='text-xl font-medium text-slate-600'>Payment Summary</h2>
-            <p className='text-slate-400 text-xs my-4'>Payment Method</p>
+            <h2 className='text-xl font-medium text-slate-600'>{t('payment_summary')}</h2>
+            <p className='text-slate-400 text-xs my-4'>{t('payment_method')}</p>
             <div className='flex gap-2 items-center mt-1'>
                 <input type="radio" id="CHARGILY" name='payment' onChange={() => setPaymentMethod('CHARGILY')} checked={paymentMethod === 'CHARGILY'} className='accent-gray-500' />
-                <label htmlFor="CHARGILY" className='cursor-pointer'>Chargily (Edahabia/CIB)</label>
+                <label htmlFor="CHARGILY" className='cursor-pointer'>{t('chargily')}</label>
             </div>
             <div className='my-4 py-4 border-y border-slate-200 text-slate-400'>
-                <p>Address</p>
+                <p>{t('address')}</p>
                 {
                     selectedAddress ? (
                         <div className='flex gap-2 items-center'>
@@ -106,7 +107,7 @@ const OrderSummary = ({ totalPrice, items }) => {
                             {
                                 addressList.length > 0 && (
                                     <select className='border border-slate-400 p-2 w-full my-3 outline-none rounded' onChange={(e) => setSelectedAddress(addressList[e.target.value])} >
-                                        <option value="">Select Address</option>
+                                        <option value="">{t('select_address')}</option>
                                         {
                                             addressList.map((address, index) => (
                                                 <option key={index} value={index}>{address.name}, {address.address}, {address.city}, {address.state}, {address.zip}</option>
@@ -115,7 +116,7 @@ const OrderSummary = ({ totalPrice, items }) => {
                                     </select>
                                 )
                             }
-                            <button className='flex items-center gap-1 text-slate-600 mt-1' onClick={() => setShowAddressModal(true)} >Add Address <PlusIcon size={18} /></button>
+                            <button className='flex items-center gap-1 text-slate-600 mt-1' onClick={() => setShowAddressModal(true)} >{t('add_address')} <PlusIcon size={18} /></button>
                         </div>
                     )
                 }
@@ -123,20 +124,20 @@ const OrderSummary = ({ totalPrice, items }) => {
             <div className='pb-4 border-b border-slate-200'>
                 <div className='flex justify-between'>
                     <div className='flex flex-col gap-1 text-slate-400'>
-                        <p>Subtotal:</p>
-                        <p>Shipping:</p>
+                        <p>{t('subtotal')}</p>
+                        <p>{t('shipping')}</p>
                     </div>
                     <div className='flex flex-col gap-1 font-medium text-right'>
                         <p>{currency}{totalPrice.toLocaleString()}</p>
-                        <p>Free</p>
+                        <p>{t('free')}</p>
                     </div>
                 </div>
             </div>
             <div className='flex justify-between py-4'>
-                <p>Total:</p>
+                <p>{t('total')}</p>
                 <p className='font-medium text-right'>{currency}{totalPrice.toLocaleString()}</p>
             </div>
-            <button onClick={e => toast.promise(handlePlaceOrder(e), { loading: 'placing Order...' })} className='w-full bg-primary text-primary-foreground py-2.5 rounded hover:bg-accent hover:text-accent-foreground active:scale-95 transition-all'>Place Order</button>
+            <button onClick={e => toast.promise(handlePlaceOrder(e), { loading: t('place_order') + '...' })} className='w-full bg-primary text-primary-foreground py-2.5 rounded hover:bg-accent hover:text-accent-foreground active:scale-95 transition-all'>{t('place_order')}</button>
 
             {showAddressModal && <AddressModal setShowAddressModal={setShowAddressModal} />}
 

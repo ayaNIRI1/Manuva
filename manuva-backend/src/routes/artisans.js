@@ -62,7 +62,7 @@ router.get('/:id', async (req, res) => {
        FROM users u
        LEFT JOIN products p ON u.id = p.seller_id
        LEFT JOIN reviews r ON p.id = r.product_id
-       WHERE ${whereClause} AND u.role = 'artisan' AND u.is_verified = true
+       WHERE ${whereClause} AND u.role IN ('artisan', 'admin') AND (u.is_verified = true OR u.role = 'admin')
        GROUP BY u.id`,
       [id]
     );
@@ -124,7 +124,7 @@ router.get('/:id/products', async (req, res) => {
     let sellerId = id;
     
     if (!isUUID) {
-      const userCheck = await db.query("SELECT id FROM users WHERE firebase_uid = $1 AND role = 'artisan'", [id]);
+      const userCheck = await db.query("SELECT id FROM users WHERE firebase_uid = $1 AND role IN ('artisan', 'admin')", [id]);
       if (userCheck.rows.length === 0) {
         return res.json([]);
       }
@@ -138,9 +138,8 @@ router.get('/:id/products', async (req, res) => {
        FROM products p
        LEFT JOIN categories c ON p.category_id = c.id
        LEFT JOIN reviews r ON p.id = r.product_id
-       LEFT JOIN reviews r ON p.id = r.product_id
        JOIN users u ON p.seller_id = u.id
-       WHERE p.seller_id = $1 AND p.status = 'approved' AND u.is_verified = true
+       WHERE p.seller_id = $1 AND p.status = 'approved' AND (u.is_verified = true OR u.role = 'admin')
        GROUP BY p.id, c.name
        ORDER BY p.created_at DESC
        LIMIT $2 OFFSET $3`,

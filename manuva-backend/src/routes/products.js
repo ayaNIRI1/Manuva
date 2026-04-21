@@ -180,7 +180,7 @@ router.get('/:id', async (req, res) => {
                 'name', u.name,
                 'bio', u.bio,
                 'logo', COALESCE(u.profile_img, '/uploads/artisan-placeholder.png'),
-                'username', u.firebase_uid,
+                'username', COALESCE(u.firebase_uid, u.id::text),
                 'location', u.location
               ) as store,
               COALESCE((
@@ -347,7 +347,6 @@ router.get('/featured/list', async (req, res) => {
        FROM products p
        LEFT JOIN categories c ON p.category_id = c.id
        LEFT JOIN users u ON p.seller_id = u.id
-       LEFT JOIN reviews r ON p.id = r.product_id
        LEFT JOIN reviews r ON p.id = r.product_id
        WHERE p.is_featured = true AND p.status = 'approved' AND u.is_verified = true
        GROUP BY p.id, c.name, u.name, u.profile_img

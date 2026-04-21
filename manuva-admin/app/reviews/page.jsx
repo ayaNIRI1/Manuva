@@ -88,7 +88,7 @@ export default function AdminReviews() {
                             <div className="flex items-center gap-3 md:w-44 flex-shrink-0">
                                 <div className="relative w-10 h-10 rounded-full overflow-hidden border border-slate-100 flex-shrink-0">
                                     {review.buyer_image ? (
-                                        <Image fill src={review.buyer_image.startsWith('http') ? review.buyer_image : `http://127.0.0.1:3001${review.buyer_image}`} alt={review.buyer_name} className="object-cover" />
+                                        <Image fill src={review.buyer_image.startsWith('http') ? review.buyer_image : `http://localhost:3001${review.buyer_image}`} alt={review.buyer_name} className="object-cover" />
                                     ) : (
                                         <div className="w-full h-full bg-slate-200 flex items-center justify-center text-slate-700 text-sm font-bold">{review.buyer_name?.[0]}</div>
                                     )}

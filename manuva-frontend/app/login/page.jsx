@@ -5,39 +5,16 @@ import Link from 'next/link';
 import { useRouter } from 'next/navigation';
 import { useAuth } from '@/lib/auth-context';
 import { auth } from '@/lib/firebase';
-import {
-  FacebookAuthProvider,
-  signInWithEmailAndPassword,
-} from 'firebase/auth';
 
 export default function LoginPage() {
   const router = useRouter();
-  const { loginWithGoogle } = useAuth();
+  const { login, loginWithGoogle } = useAuth();
   const [email, setEmail] = useState('');
   const [password, setPassword] = useState('');
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState('');
 
-  const syncUserWithBackend = async (firebaseUser) => {
-    const token = await firebaseUser.getIdToken();
-    const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
-      method: 'GET',
-      headers: {
-        Authorization: `Bearer ${token}`,
-      },
-    });
 
-    if (!response.ok) {
-      let errorMessage = 'Failed to sync user with backend.';
-      try {
-        const payload = await response.json();
-        errorMessage = payload.error || payload.details || errorMessage;
-      } catch (_) {
-        // Ignore JSON parsing errors and keep fallback message.
-      }
-      throw new Error(errorMessage);
-    }
-  };
 
   const handleEmailLogin = async (event) => {
     event.preventDefault();
@@ -45,9 +22,12 @@ export default function LoginPage() {
     setLoading(true);
 
     try {
-      const credential = await signInWithEmailAndPassword(auth, email, password);
-      await syncUserWithBackend(credential.user);
-      router.push('/');
+      const result = await login(email, password);
+      if (result.success) {
+        router.push('/');
+      } else {
+        setError(result.error || 'Unable to sign in right now.');
+      }
     } catch (err) {
       setError(err?.message || 'Unable to sign in right now.');
     } finally {
@@ -69,21 +49,7 @@ export default function LoginPage() {
     }
   };
 
-  const handleFacebookLogin = async () => {
-    setError('');
-    setLoading(true);
 
-    try {
-      const facebookProvider = new FacebookAuthProvider();
-      const credential = await signInWithPopup(auth, facebookProvider);
-      await syncUserWithBackend(credential.user);
-      router.push('/');
-    } catch (err) {
-      setError(err?.message || 'Facebook sign in failed.');
-    } finally {
-      setLoading(false);
-    }
-  };
 
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 flex items-center justify-center p-4">
@@ -126,13 +92,7 @@ export default function LoginPage() {
         >
           Continue with Google
         </button>
-        <button
-          onClick={handleFacebookLogin}
-          disabled={loading}
-          className="w-full mt-3 rounded-lg border border-gray-200 py-2.5 font-medium text-gray-700 hover:bg-gray-50 disabled:opacity-60 disabled:cursor-not-allowed"
-        >
-          Continue with Facebook
-        </button>
+
 
         {error ? (
           <p className="mt-4 rounded-md bg-red-50 text-red-700 text-sm px-3 py-2 break-words">{error}</p>

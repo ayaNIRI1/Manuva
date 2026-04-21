@@ -24,7 +24,8 @@ const ProductDetails = ({ product }) => {
     const dispatch = useDispatch();
 
     const router = useRouter();
-    const { isAuthenticated } = useAuth();
+    const { user, isAuthenticated } = useAuth();
+    const isOwnProduct = isAuthenticated && user?.id === product.seller_id;
 
     // Better image resolution handling for both real and dummy data
     const getFullImageUrl = (img) => {
@@ -104,23 +105,31 @@ const ProductDetails = ({ product }) => {
                     </div>
                 )}
 
-                <div className="flex items-center gap-6 mt-4">
-                    {
-                        cart[productId] && (
-                            <div className="flex flex-col gap-2">
-                                <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('quantity')}</p>
-                                <Counter productId={productId} />
-                            </div>
-                        )
-                    }
-                        <button 
-                            onClick={() => !cart[productId] ? addToCartHandler() : router.push('/cart')} 
-                            className="flex-1 bg-brand-orange text-white px-12 py-5 text-sm font-black rounded-3xl shadow-xl shadow-brand-orange/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 group"
-                        >
-                        {!cart[productId] ? t('add_to_cart') : t('view_cart')}
-                        <ArrowRight size={18} className={`${isAr ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'} transition-transform`} />
-                    </button>
-                </div>
+                {isOwnProduct ? (
+                    <div className="flex items-center mt-4">
+                        <div className="flex-1 bg-slate-100 text-slate-500 px-12 py-5 text-sm font-black rounded-3xl flex items-center justify-center border border-slate-200">
+                            {t('cannot_buy_own_product', 'You cannot buy your own product')}
+                        </div>
+                    </div>
+                ) : (
+                    <div className="flex items-center gap-6 mt-4">
+                        {
+                            cart[productId] && (
+                                <div className="flex flex-col gap-2">
+                                    <p className="text-xs font-black text-slate-400 uppercase tracking-widest">{t('quantity')}</p>
+                                    <Counter productId={productId} />
+                                </div>
+                            )
+                        }
+                            <button 
+                                onClick={() => !cart[productId] ? addToCartHandler() : router.push('/cart')} 
+                                className="flex-1 bg-brand-orange text-white px-12 py-5 text-sm font-black rounded-3xl shadow-xl shadow-brand-orange/20 hover:scale-[1.02] active:scale-95 transition-all flex items-center justify-center gap-3 group"
+                            >
+                            {!cart[productId] ? t('add_to_cart') : t('view_cart')}
+                            <ArrowRight size={18} className={`${isAr ? 'rotate-180 group-hover:-translate-x-1' : 'group-hover:translate-x-1'} transition-transform`} />
+                        </button>
+                    </div>
+                )}
 
                 <hr className="border-slate-100 my-10" />
                 
