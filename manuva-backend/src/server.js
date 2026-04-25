@@ -124,7 +124,9 @@ io.on('connection', (socket) => {
 });
 
 
-app.use(cors());
+app.use(cors({
+  origin: ['https://manuva.vercel.app', 'https://admin-manuva.vercel.app', 'http://localhost:3000', 'http://localhost:3001']
+}));
 app.use(compression());
 
 app.use('/api/webhooks', webhookRoutes);

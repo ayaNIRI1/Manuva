@@ -54,8 +54,7 @@ export default function LoginPage() {
   return (
     <div className="min-h-screen bg-gradient-to-br from-orange-50 via-white to-red-50 flex items-center justify-center p-4">
       <div className="w-full max-w-md rounded-2xl bg-white shadow-lg border border-orange-100 p-6 sm:p-8">
-        <h1 className="text-2xl font-semibold text-foreground mb-2 text-center">Welcome back</h1>
-        <p className="text-sm text-gray-500 mb-6 text-center">Sign in with Firebase</p>
+        <h1 className="text-2xl font-semibold text-foreground mb-6 text-center">Welcome back</h1>
 
         <form onSubmit={handleEmailLogin} className="space-y-4">
           <input

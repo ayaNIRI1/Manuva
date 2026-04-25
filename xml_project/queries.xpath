@@ -1,0 +1,29 @@
+1. Select all product names available in the marketplace:
+//product/name/text()
+
+2. Find all products that belong to the 'Furniture' category:
+//product[@category='Furniture']
+
+3. Get the names of artisans who have products priced strictly over 100:
+//artisan[products/product/price > 100]/name/text()
+
+4. Retrieve all orders that have a status of 'Shipped':
+//order[@status='Shipped']
+
+5. Select the email address of the customer with ID 'c1':
+//customer[@id='c1']/email/text()
+
+6. Find the names of products that are currently out of stock (stock is 0):
+//product[stock=0]/name/text()
+
+7. Calculate the total number of orders placed in the system:
+count(//order)
+
+8. Select the names of the artisans whose specialty is either 'Ceramics' or 'Pottery':
+//artisan[specialty='Ceramics' or specialty='Pottery']/name/text()
+
+9. Find the names of products ordered in order 'o1':
+//product[@id = //order[@id='o1']/items/item/@product_id]/name/text()
+
+10. Calculate the total amount (revenue) from all orders:
+sum(//order/total)
