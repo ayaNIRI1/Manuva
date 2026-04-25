@@ -125,11 +125,10 @@ io.on('connection', (socket) => {
 
 
 app.use(cors({
-  origin: [
-    'https://manuva-an.vercel.app',
-    'http://localhost:3000', 
-    'http://localhost:3001'
-  ],
+  origin: function (origin, callback) {
+    // Allow any origin
+    callback(null, true);
+  },
   credentials: true
 }));
 app.use(compression());
