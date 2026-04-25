@@ -23,7 +23,12 @@ export const AuthProvider = ({ children }) => {
 
       try {
         const token = await getToken();
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/user/profile`, {
+        let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+        baseUrl = baseUrl.replace(/\/$/, '');
+        if (!baseUrl.endsWith('/api')) {
+          baseUrl = `${baseUrl}/api`;
+        }
+        const response = await fetch(`${baseUrl}/user/profile`, {
           headers: {
             Authorization: `Bearer ${token}`
           }

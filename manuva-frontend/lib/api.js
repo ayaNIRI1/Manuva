@@ -1,6 +1,10 @@
 export const apiRequest = async (endpoint, options = {}) => {
   const token = typeof window !== 'undefined' ? localStorage.getItem('token') : null;
-  const baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+  let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+  baseUrl = baseUrl.replace(/\/$/, '');
+  if (!baseUrl.endsWith('/api')) {
+    baseUrl = `${baseUrl}/api`;
+  }
 
   const defaultHeaders = {
     'Content-Type': 'application/json',

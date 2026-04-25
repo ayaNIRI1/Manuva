@@ -10,6 +10,15 @@ import { auth, googleProvider } from '@/lib/firebase';
 
 const AuthContext = createContext({});
 
+const getApiUrl = () => {
+  let baseUrl = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:3000/api';
+  baseUrl = baseUrl.replace(/\/$/, '');
+  if (!baseUrl.endsWith('/api')) {
+    baseUrl = `${baseUrl}/api`;
+  }
+  return baseUrl;
+};
+
 export const AuthProvider = ({ children }) => {
   const [user, setUser] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -21,7 +30,7 @@ export const AuthProvider = ({ children }) => {
         if (storedToken) {
           try {
             setLoading(true);
-            const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+            const response = await fetch(`${getApiUrl()}/auth/me`, {
               headers: { Authorization: `Bearer ${storedToken}` }
             });
             if (response.ok) {
@@ -47,7 +56,7 @@ export const AuthProvider = ({ children }) => {
         const token = await firebaseUser.getIdToken(true);
         localStorage.setItem('token', token); // Legacy sync
 
-        const response = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/me`, {
+        const response = await fetch(`${getApiUrl()}/auth/me`, {
           headers: {
             Authorization: `Bearer ${token}`
           }
@@ -110,7 +119,7 @@ export const AuthProvider = ({ children }) => {
   const login = async (email, password) => {
     try {
       setLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/login`, {
+      const res = await fetch(`${getApiUrl()}/auth/login`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ email, password })
@@ -134,7 +143,7 @@ export const AuthProvider = ({ children }) => {
   const register = async (name, email, password) => {
     try {
       setLoading(true);
-      const res = await fetch(`${process.env.NEXT_PUBLIC_API_URL}/auth/register`, {
+      const res = await fetch(`${getApiUrl()}/auth/register`, {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
         body: JSON.stringify({ name, email, password })
