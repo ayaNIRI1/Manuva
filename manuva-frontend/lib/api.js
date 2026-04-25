@@ -16,8 +16,7 @@ export const apiRequest = async (endpoint, options = {}) => {
     delete headers['Content-Type'];
   }
 
-  const response = await fetch(`${baseUrl}${endpoint}`, {
-    ...options,
+const response = await fetch(`${baseUrl.replace(/\/$/, '')}/${endpoint.replace(/^\//, '')}`, {    ...options,
     headers,
   });
 
