@@ -356,7 +356,10 @@ router.get('/', auth, async (req, res) => {
 
     const result = await db.query(query, values);
     res.json(result.rows);
-  } catch (error) { res.status(500).json({ error: 'Failed to fetch orders' }); }
+  } catch (error) { 
+    console.error('❌ Fetch orders database error:', error);
+    res.status(500).json({ error: 'Failed to fetch orders', details: error.message }); 
+  }
 });
 
 // Get single order
