@@ -3,6 +3,7 @@ const { body, validationResult } = require('express-validator');
 const db = require('../config/database');
 const { auth, isArtisan, isAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { uploadToSupabase } = require('../config/supabaseStorage');
 
 const router = express.Router();
 
@@ -239,7 +240,10 @@ router.post('/', auth, isArtisan, upload.array('images', 4),
       const { name, description, price, mrp, stock, category_id, material, size, color, theme } = req.body;
     
       // Handle multiple images from upload.array('images', 4)
-      const image_urls = req.files ? req.files.map(file => `/uploads/${file.filename}`) : [];
+      let image_urls = [];
+      if (req.files && req.files.length > 0) {
+        image_urls = await Promise.all(req.files.map(file => uploadToSupabase(file)));
+      }
       const image_url = image_urls.length > 0 ? image_urls[0] : (req.body.image_url || '/uploads/artisan-placeholder.png');
 
       const result = await db.query(

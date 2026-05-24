@@ -1,15 +1,7 @@
 const multer = require('multer');
-const path = require('path');
 
-const storage = multer.diskStorage({
-  destination: (req, file, cb) => {
-    cb(null, 'uploads/');
-  },
-  filename: (req, file, cb) => {
-    const uniqueSuffix = Date.now() + '-' + Math.round(Math.random() * 1E9);
-    cb(null, uniqueSuffix + path.extname(file.originalname));
-  }
-});
+// Store files in memory buffer instead of disk to allow uploading to Supabase Storage
+const storage = multer.memoryStorage();
 
 const upload = multer({ 
   storage: storage,
@@ -17,3 +9,4 @@ const upload = multer({
 });
 
 module.exports = upload;
+

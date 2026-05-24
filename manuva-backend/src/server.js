@@ -35,6 +35,10 @@ if (!fs.existsSync(uploadsDir)) {
   console.log('📁 Created uploads directory dynamically');
 }
 
+// Ensure Supabase Storage Bucket exists dynamically on server startup
+const { ensureBucketExists } = require('./config/supabaseStorage');
+ensureBucketExists();
+
 const app = express();
 const server = http.createServer(app);
 

@@ -61,3 +61,7 @@ Thumbs.db
 *.swp
 *.swo
 *~
+
+# Scratch files
+scratch/
+

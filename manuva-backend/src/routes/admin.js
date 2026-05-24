@@ -2,6 +2,7 @@ const express = require('express');
 const db = require('../config/database');
 const { auth, isAdmin } = require('../middleware/auth');
 const upload = require('../middleware/upload');
+const { uploadToSupabase } = require('../config/supabaseStorage');
 
 const router = express.Router();
 
@@ -88,7 +89,10 @@ router.post('/categories', auth, isAdmin, upload.single('img'), async (req, res)
         const { name, description } = req.body;
         if (!name) return res.status(400).json({ error: 'Category name is required' });
 
-        const img_url = req.file ? `/uploads/${req.file.filename}` : (req.body.img || null);
+        let img_url = req.body.img || null;
+        if (req.file) {
+            img_url = await uploadToSupabase(req.file);
+        }
 
         const result = await db.query(
             'INSERT INTO categories (name, description, img, is_approved) VALUES ($1, $2, $3, true) RETURNING *',
