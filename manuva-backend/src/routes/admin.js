@@ -154,23 +154,17 @@ router.get('/products', auth, isAdmin, async (req, res) => {
     }
 });
 
-// Admin: Get all reviews (pending and approved)
+// Admin: Get all reviews
 router.get('/reviews', auth, isAdmin, async (req, res) => {
     try {
-        const { status } = req.query; // 'pending' or 'approved' or all
-        let whereClause = '';
-        if (status === 'pending') whereClause = 'WHERE r.is_approved = false';
-        if (status === 'approved') whereClause = 'WHERE r.is_approved = true';
-
         const result = await db.query(
-            `SELECT r.id, r.rating, r.comment, r.created_at, r.is_approved,
+            `SELECT r.id, r.rating, r.comment, r.created_at,
                     u.name as buyer_name, u.profile_img as buyer_image,
                     p.name as product_name, p.image_url as product_image, p.id as product_id
              FROM reviews r
              JOIN users u ON r.buyer_id = u.id
              JOIN products p ON r.product_id = p.id
-             ${whereClause}
-             ORDER BY r.is_approved ASC, r.created_at DESC`
+             ORDER BY r.created_at DESC`
         );
         res.json(result.rows);
     } catch (error) {
@@ -185,16 +179,11 @@ router.patch('/reviews/:id/approve', auth, isAdmin, async (req, res) => {
         const { id } = req.params;
         const { action } = req.body; // 'approve' or 'reject'
         if (action === 'approve') {
-            const result = await db.query(
-                'UPDATE reviews SET is_approved = true WHERE id = $1 RETURNING id, is_approved',
-                [id]
-            );
-            if (result.rows.length === 0) return res.status(404).json({ error: 'Review not found' });
-            res.json({ message: 'Comment approved', ...result.rows[0] });
+            res.json({ message: 'Comment approved', id });
         } else {
             // Reject = clear the comment text
             const result = await db.query(
-                `UPDATE reviews SET comment = NULL, is_approved = false WHERE id = $1 RETURNING id`,
+                `UPDATE reviews SET comment = NULL WHERE id = $1 RETURNING id`,
                 [id]
             );
             if (result.rows.length === 0) return res.status(404).json({ error: 'Review not found' });
