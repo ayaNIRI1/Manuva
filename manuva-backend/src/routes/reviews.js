@@ -13,11 +13,11 @@ router.get('/product/:productId', async (req, res) => {
     const offset = (page - 1) * limit;
 
     const result = await db.query(
-      `SELECT r.id, r.rating, r.comment, r.created_at, r.is_approved,
+      `SELECT r.id, r.rating, r.comment, r.created_at,
               u.name, u.profile_img
        FROM reviews r
        JOIN users u ON r.buyer_id = u.id
-       WHERE r.product_id = $1 AND r.is_approved = true
+       WHERE r.product_id = $1
        ORDER BY r.created_at DESC
        LIMIT $2 OFFSET $3`,
       [productId, limit, offset]
@@ -71,8 +71,8 @@ router.post('/', auth,
 
       // Create review
       const result = await db.query(
-        `INSERT INTO reviews (product_id, buyer_id, rating, comment, is_approved)
-         VALUES ($1, $2, $3, $4, false)
+        `INSERT INTO reviews (product_id, buyer_id, rating, comment)
+         VALUES ($1, $2, $3, $4)
          RETURNING *`,
         [product_id, req.user.id, rating, comment]
       );
