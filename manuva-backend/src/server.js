@@ -26,6 +26,14 @@ const paymentRoutes = require('./routes/payments');
 const adminRoutes = require('./routes/admin');
 
 const path = require('path');
+const fs = require('fs');
+
+// Ensure uploads directory exists dynamically on server startup
+const uploadsDir = path.join(__dirname, '../uploads');
+if (!fs.existsSync(uploadsDir)) {
+  fs.mkdirSync(uploadsDir, { recursive: true });
+  console.log('📁 Created uploads directory dynamically');
+}
 
 const app = express();
 const server = http.createServer(app);

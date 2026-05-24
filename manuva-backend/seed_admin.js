@@ -5,8 +5,8 @@ async function seedAdmin() {
   const client = await pool.connect();
   try {
     console.log('Seeding admin user...');
-    const email = 'admin@manuva.com';
-    const password = 'admin'; // simple password for local dev
+    const email = 'smanuva85@gmail.com';
+    const password = 'manuvaadmin'; 
     const hashedPassword = await bcrypt.hash(password, 10);
     const name = 'Admin User';
     const role = 'admin';

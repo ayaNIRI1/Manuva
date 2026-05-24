@@ -160,7 +160,7 @@ export default function CreateStore() {
                                 onChange={onChangeHandler} 
                                 value={storeInfo.location} 
                                 type="text" 
-                                placeholder={language === 'ar' ? "مثال: مراكش، المدينة العتيقة" : "e.g. Marrakech, Old Medina"} 
+                                placeholder={language === 'ar' ? "مثال: الجزائر العاصمة، القصبة" : "e.g. Algiers, Casbah"} 
                                 className="w-full px-5 py-3.5 bg-background border border-border rounded-2xl focus:ring-2 focus:ring-brand-mauve/20 focus:border-brand-mauve outline-none transition-all font-medium" 
                             />
                         </div>
