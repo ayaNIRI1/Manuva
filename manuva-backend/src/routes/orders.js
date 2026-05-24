@@ -44,7 +44,7 @@ router.post('/cart', auth,
       }
 
       let orderResult = await client.query(
-        "SELECT id FROM orders WHERE buyer_id = $1 AND status = '1' LIMIT 1",
+        "SELECT id FROM orders WHERE buyer_id = $1 AND status = 'cart' LIMIT 1",
         [buyer_id]
       );
 
@@ -55,7 +55,7 @@ router.post('/cart', auth,
         const newOrderResult = await client.query(
           `INSERT INTO orders (buyer_id, total, status, shipping_address)
            VALUES ($1, $2, $3, $4) RETURNING id`,
-          [buyer_id, 0, '1', JSON.stringify({})]
+          [buyer_id, 0, 'cart', JSON.stringify({})]
         );
         orderId = newOrderResult.rows[0].id;
       }
@@ -140,7 +140,7 @@ router.get('/cart', auth, async (req, res) => {
        FROM orders o
        LEFT JOIN order_items oi ON o.id = oi.order_id
        LEFT JOIN products p ON oi.product_id = p.id
-       WHERE o.buyer_id = $1 AND o.status = '1'
+       WHERE o.buyer_id = $1 AND o.status = 'cart'
        GROUP BY o.id`,
       [req.user.id]
     );
@@ -182,7 +182,7 @@ router.delete('/cart/:productId', auth, async (req, res) => {
     const buyerId = req.user.id;
     console.log(`DELETE /cart/${productId} called by buyer ${buyerId}`);
 
-    const orderResult = await client.query("SELECT id FROM orders WHERE buyer_id = $1 AND status = '1' LIMIT 1", [buyerId]);
+    const orderResult = await client.query("SELECT id FROM orders WHERE buyer_id = $1 AND status = 'cart' LIMIT 1", [buyerId]);
     
     if (orderResult.rows.length === 0) {
       console.log('No active cart found for user');
@@ -253,7 +253,7 @@ router.post('/checkout/:orderId', auth,
       await client.query('BEGIN');
 
       const orderCheck = await client.query(
-        "SELECT id, total FROM orders WHERE id = $1 AND buyer_id = $2 AND status = '1'",
+        "SELECT id, total FROM orders WHERE id = $1 AND buyer_id = $2 AND status = 'cart'",
         [orderId, req.user.id]
       );
       if (orderCheck.rows.length === 0) throw new Error('Active cart not found');
@@ -347,7 +347,7 @@ router.get('/', auth, async (req, res) => {
       FROM orders o JOIN order_items oi ON o.id = oi.order_id
       JOIN products p ON oi.product_id = p.id
       JOIN users u ON p.seller_id = u.id
-      WHERE o.buyer_id = $1 AND o.status != '1'
+      WHERE o.buyer_id = $1 AND o.status != 'cart'
     `;
     const values = [req.user.id];
     if (status) { query += ` AND o.status = $2`; values.push(status); }
@@ -434,7 +434,7 @@ router.get('/seller/orders', auth, async (req, res) => {
              )) as items
       FROM orders o JOIN order_items oi ON o.id = oi.order_id
       JOIN products p ON oi.product_id = p.id JOIN users u ON o.buyer_id = u.id
-      WHERE p.seller_id = $1 AND o.status != '1'
+      WHERE p.seller_id = $1 AND o.status != 'cart'
     `;
     const values = [req.user.id];
     if (status) { query += ` AND o.status = $2`; values.push(status); }
